@@ -1,0 +1,79 @@
+// FaqSection.jsx
+"use client"
+
+import React, { useState, useRef } from "react"
+import { motion, useInView } from "framer-motion"
+import { useLanguage } from "@/contexts/language-context"
+
+// Import components
+import { FaqHeader } from "./FaqHeader"
+import { FaqItem } from "./FaqItem"
+import { ContactCta } from "./ContactCta"
+import { translationsDataFaq } from "../../ConstData/ConstData"
+import { BackgroundEffects } from "./BackgroundEffects"
+
+export default function FaqSection() {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: false, amount: 0.1 })
+  const [searchQuery, setSearchQuery] = useState("")
+  const { t, direction, language } = useLanguage()
+  
+  const isRTL = direction === "rtl"
+
+  // Get the correct content based on language
+  const content = translationsDataFaq[language === "ar" ? "ar" : "en"]
+  const faqs = content.faqs
+
+  const filteredFaqs = faqs.filter(faq => 
+    faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const categories = [...new Set(faqs.map(faq => faq.category))]
+
+  return (
+    <section 
+      className="relative w-full py-32 overflow-hidden bg-gradient-to-b from-background/80 via-background to-background/90" 
+      id="faq"
+      dir={direction}
+    >
+      <BackgroundEffects />
+
+      <div className="container relative z-10 px-4 md:px-6" ref={ref}>
+        <FaqHeader 
+          content={content} 
+          isInView={isInView} 
+          isRTL={isRTL} 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="max-w-4xl mx-auto"
+        >
+          <div className="grid gap-6">
+            {filteredFaqs.map((faq, index) => (
+              <FaqItem 
+                key={index} 
+                faq={faq} 
+                index={index} 
+                isInView={isInView} 
+                isRTL={isRTL}
+              />
+            ))}
+          </div>
+        </motion.div>
+
+        <ContactCta 
+          content={content} 
+          isInView={isInView} 
+          isRTL={isRTL}
+        />
+      </div>
+    </section>
+  )
+}

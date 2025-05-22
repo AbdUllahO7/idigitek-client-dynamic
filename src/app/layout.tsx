@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/contexts/language-context"
 import Footer from "@/components/layout/footer"
 import Header from "@/components/layout/header"
 import NavigationTracker from "@/components/NavigationTracker"
+import QueryProvider from "@/providers/QueryProvider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,14 +26,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <QueryProvider>
 
-          <LanguageProvider>
-            <NavigationTracker/>
-            <Header />
-            {children}
-            <Footer />
+            <LanguageProvider>
+              <NavigationTracker/>
+              <Header />
+              {children}
+              <Footer />
 
-            </LanguageProvider>
+              </LanguageProvider>
+          </QueryProvider>
+
         </ThemeProvider>
       </body>
     </html>

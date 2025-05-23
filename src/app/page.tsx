@@ -21,84 +21,115 @@ import HeroSection from "@/components/Pages/Home/sections/HeroSection/hero-secti
 import IndustrySolutionsSection from "@/components/Pages/Home/sections/IndustrySolutionsSection/industry-solutions-section"
 import FeaturesSection from "@/components/Pages/Home/sections/FeaturesSection/features-section"
 import { useWebSite } from "@/lib/webSite/use-WebSite"
+import { useSections } from "@/lib/section/use-Section"
+
+// Define TypeScript interfaces for data
+interface Website {
+  id: string;
+  // Add other website properties as needed
+}
+
+interface ContentElement {
+  _id: string;
+  name: string;
+  type: string;
+  value: string | null;
+  // Add other element properties as needed
+}
+
+interface Subsection {
+  _id: string;
+  name: string;
+  elements: ContentElement[];
+  // Add other subsection properties as needed
+}
+
+interface SectionItem {
+  _id: string;
+  name: string;
+  subsections: Subsection[];
+  // Add other section item properties as needed
+}
+
+interface Section {
+  _id: string;
+  name: string;
+  sectionItems: SectionItem[];
+  // Add other section properties as needed
+}
 
 export default function LandingPage() {
-  const { direction } = useLanguage()
-  const { useGetWebsitesByUserId } = useWebSite()
-  const { data, isLoading, error } = useGetWebsitesByUserId()
+  const { direction } = useLanguage(); // Note: languageId is missing; add if needed for translations
+  const { useGetWebsitesByUserId } = useWebSite();
+  const { useGetByWebsiteId } = useSections();
+
+  const { data: websites, isLoading: websitesLoading, error: websitesError } = useGetWebsitesByUserId();
+  const websiteId = websites && websites.length > 0 ? websites[0].id : undefined;
+  const { data: sectionsData, isLoading: sectionsIsLoading, error: sectionsError } = useGetByWebsiteId(
+    websiteId || "",
+    false, // includeInactive
+    // Add languageId here if available, e.g., languageId
+  );
 
   // Add smooth scrolling behavior to the document
   useEffect(() => {
-    document.documentElement.style.scrollBehavior = "smooth"
+    document.documentElement.style.scrollBehavior = "smooth";
     return () => {
-      document.documentElement.style.scrollBehavior = ""
-    }
-  }, [])
+      document.documentElement.style.scrollBehavior = "";
+    };
+  }, []);
 
-  // Log data for debugging
-  console.log(data)
-
-  // Get sections from the first website (assuming one website per user)
-  const sections = data && data.length > 0 ? data[0].sections : []
-
-  // Map section names to components
-  const sectionComponents: { [key: string]: JSX.Element } = {
-    Hero: <HeroSection />,
-    Services: <ServicesSection />,
-    News: <NewsSection />,
-    IndustrySolutions: <IndustrySolutionsSection />,
-    Features: <FeaturesSection />,
-    Projects: <ProjectsSection />,
-    Process: <ProcessSection />,
-    Team: <TeamSection />,
-    Testimonials: <TestimonialsSection />,
-    Partners: <PartnersSectionComponent />,
-    Faq: <FaqSection />,
-    Blog: <BlogSection />,
-    Contact: <ContactSection />,
-    Cta: <CtaSection />,
-    Clients: <ClientsSection />,
-    CaseStudies: <CaseStudiesSection />,
-    TechnologyStack: <TechnologyStackSection />,
-  }
-
-  // Function to check if a section exists
-  const hasSection = (sectionName: string) => {
-    return sections.some((section: any) => section.name === sectionName)
-  }
+  // Map section names to components with section ID
+  const sectionComponents: { [key: string]: (id: string) => JSX.Element } = {
+    // Hero: (id: string) => <HeroSection id={id} />,
+    // Services: (id: string) => <ServicesSection id={id} />,
+    News: (id: string) => <NewsSection websiteId = {websiteId} sectionId={id} />,
+    // IndustrySolutions: (id: string) => <IndustrySolutionsSection id={id} />,
+    // Features: (id: string) => <FeaturesSection id={id} />,
+    // Projects: (id: string) => <ProjectsSection id={id} />,
+    // Process: (id: string) => <ProcessSection id={id} />,
+    // Team: (id: string) => <TeamSection id={id} />,
+    // Testimonials: (id: string) => <TestimonialsSection id={id} />,
+    // Partners: (id: string) => <PartnersSectionComponent id={id} />,
+    // Faq: (id: string) => <FaqSection id={id} />,
+    // Blog: (id: string) => <BlogSection id={id} />,
+    // Contact: (id: string) => <ContactSection id={id} />,
+    // Cta: (id: string) => <CtaSection id={id} />,
+    // Clients: (id: string) => <ClientsSection id={id} />,
+    // CaseStudies: (id: string) => <CaseStudiesSection id={id} />,
+    // TechnologyStack: (id: string) => <TechnologyStackSection id={id} />,
+  };
 
   // Handle loading and error states
-  if (isLoading) {
-    return <div>Loading...</div>
+  if (websitesLoading || sectionsIsLoading) {
+    return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error: {(error as Error).message}</div>
+  if (websitesError) {
+    return <div>Error: {(websitesError as Error).message}</div>;
+  }
+
+  if (sectionsError) {
+    return <div>Error: {(sectionsError as Error).message}</div>;
+  }
+
+  if (!websites || websites.length === 0) {
+    return <div>No websites found.</div>;
+  }
+
+  if (!sectionsData.data || sectionsData.data.length === 0) {
+    return <div>No sections found for the website.</div>;
   }
 
   return (
     <AnimatePresence>
-      <div className={`flex min-h-screen flex-col`} dir={direction}>
+      <div className="flex min-h-screen flex-col" dir={direction}>
         <main>
-          {hasSection("Hero") && sectionComponents["Hero"]}
-          {hasSection("Clients") && sectionComponents["Clients"]}
-          {hasSection("Services") && sectionComponents["Services"]}
-          {hasSection("News") && sectionComponents["News"]}
-          {hasSection("IndustrySolutions") && sectionComponents["IndustrySolutions"]}
-          {hasSection("Features") && sectionComponents["Features"]}
-          {hasSection("Projects") && sectionComponents["Projects"]}
-          {hasSection("Process") && sectionComponents["Process"]}
-          {hasSection("Team") && sectionComponents["Team"]}
-          {hasSection("CaseStudies") && sectionComponents["CaseStudies"]}
-          {hasSection("Testimonials") && sectionComponents["Testimonials"]}
-          {hasSection("TechnologyStack") && sectionComponents["TechnologyStack"]}
-          {hasSection("Partners") && sectionComponents["Partners"]}
-          {hasSection("Faq") && sectionComponents["Faq"]}
-          {hasSection("Blog") && sectionComponents["Blog"]}
-          {hasSection("Contact") && sectionComponents["Contact"]}
-          {hasSection("Cta") && sectionComponents["Cta"]}
+          {sectionsData.data.map((section: Section) => (
+            sectionComponents[section.name]?.(section._id) || null
+          ))}
         </main>
       </div>
     </AnimatePresence>
-  )
+  );
 }

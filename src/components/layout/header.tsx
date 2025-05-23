@@ -28,7 +28,8 @@ const navItems = [
   { id: "contact", href: "#contact", label: "Contact" },
 ]
 
-export default function Header() {
+export default function Header(sectionId) {
+  console.log("Header section id",sectionId)
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { language, direction } = useLanguage()

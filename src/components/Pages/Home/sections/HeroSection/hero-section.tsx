@@ -11,7 +11,9 @@ import DotsNavigation from "./DotsNavigation"
 import CurvedDivider from "./CurvedDivider"
 
 
-export default function HeroSection() {
+export default function HeroSection({section}) {
+
+  console.log(section)
   const { direction, language } = useLanguage()
   const scrollToSection = useScrollToSection()
   const [currentSlide, setCurrentSlide] = useState(0)

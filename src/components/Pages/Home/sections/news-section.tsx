@@ -3,73 +3,61 @@
 import { useRef, useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { motion, useInView, useAnimation, AnimatePresence } from "framer-motion"
+import { motion, useInView, AnimatePresence } from "framer-motion"
 import { ArrowRight, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
 import { Button } from "@/components/ui/button"
 import { CardContent, CardFooter } from "@/components/ui/card"
-import { ButtonSectionLink } from "@/components/SectionLinks"
 import { translationsNews } from "../ConstData/ConstData"
+import { useSectionLogic } from "@/hooks/useSectionLogic"
 
-export default function NewsSection() {
+export default function NewsSection({ sectionId, websiteId }) {
   const ref = useRef(null)
   const carouselRef = useRef(null)
   const isInView = useInView(ref, { once: false, amount: 0.2 })
-  const { language, direction } = useLanguage()
   const [activeIndex, setActiveIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  const controls = useAnimation()
 
-  // Get current language content
-  const content = translationsNews[language] || translationsNews["en"]
+  const { content, isLoading, error, refetch, direction, formatDate } = useSectionLogic({
+    sectionId,
+    websiteId,
+    fallbackTranslations: translationsNews,
+    itemsKey: "news",
+  })
 
-  // Reset active index when language changes
+
+  console.log("content data" , content)
+
+  // Reset active index on language change
   useEffect(() => {
     setActiveIndex(0)
-  }, [language])
+  }, [content.language])
 
   // Auto-play carousel
   useEffect(() => {
     let interval
-
-    if (isAutoPlaying) {
+    if (isAutoPlaying && content.news.length > 1) {
       interval = setInterval(() => {
         nextNews()
-      }, 5000) // Change slide every 5 seconds
+      }, 5000)
     }
+    return () => interval && clearInterval(interval)
+  }, [isAutoPlaying, activeIndex, content.news])
 
-    return () => {
-      if (interval) clearInterval(interval)
-    }
-  }, [isAutoPlaying, activeIndex])
-
-  // Pause auto-play on hover
   const handleMouseEnter = () => setIsAutoPlaying(false)
   const handleMouseLeave = () => setIsAutoPlaying(true)
 
-  // Function to format date based on language
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString(language === "ar" ? "ar-SA" : "en-US")
-  }
-
-  const nextNews = () => {
+  const nextNews = () =>
     setActiveIndex((prev) => (prev === content.news.length - 1 ? 0 : prev + 1))
-  }
 
-  const prevNews = () => {
+  const prevNews = () =>
     setActiveIndex((prev) => (prev === 0 ? content.news.length - 1 : prev - 1))
-  }
 
-  // Get the previous, current, and next items for the infinite carousel
   const getVisibleItems = () => {
     const items = content.news
     if (items.length <= 3) return items
 
-    // For desktop view, show 3 items
     const prevIndex = activeIndex === 0 ? items.length - 1 : activeIndex - 1
     const nextIndex = activeIndex === items.length - 1 ? 0 : activeIndex + 1
-
     return [items[prevIndex], items[activeIndex], items[nextIndex]]
   }
 
@@ -77,10 +65,8 @@ export default function NewsSection() {
     <section id="news" className="relative w-full py-20 overflow-hidden" dir={direction}>
       {/* Background elements */}
       <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-background"></div>
-
       <div className="absolute top-0 left-0 w-full h-40 bg-grid-pattern opacity-5 transform rotate-3"></div>
       <div className="absolute bottom-0 right-0 w-full h-40 bg-grid-pattern opacity-5 transform -rotate-3"></div>
-
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
@@ -124,7 +110,18 @@ export default function NewsSection() {
           </motion.p>
         </div>
 
-        {content.news.length === 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-16">
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-16">
+            <p className="text-muted-foreground">{content.error}</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4">
+              {content.retry}
+            </Button>
+          </div>
+        ) : content.news.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
             <p className="text-muted-foreground">{content.error}</p>
             <Button onClick={() => window.location.reload()} variant="outline" className="mt-4">
@@ -133,7 +130,6 @@ export default function NewsSection() {
           </div>
         ) : (
           <>
-            {/* Desktop view: Infinite Carousel */}
             <div
               ref={carouselRef}
               className="hidden md:block relative overflow-hidden"
@@ -165,7 +161,6 @@ export default function NewsSection() {
                 </AnimatePresence>
               </div>
 
-              {/* Navigation controls */}
               <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between items-center px-4 z-20">
                 <Button
                   variant="outline"
@@ -174,7 +169,7 @@ export default function NewsSection() {
                   onClick={direction === "rtl" ? nextNews : prevNews}
                 >
                   <ChevronLeft className="h-5 w-5" />
-                  <span className="sr-only">{content.previousNews}</span>
+                  <span className="sr-only">{content.previous}</span>
                 </Button>
 
                 <Button
@@ -184,12 +179,11 @@ export default function NewsSection() {
                   onClick={direction === "rtl" ? prevNews : nextNews}
                 >
                   <ChevronRight className="h-5 w-5" />
-                  <span className="sr-only">{content.nextNews}</span>
+                  <span className="sr-only">{content.next}</span>
                 </Button>
               </div>
             </div>
 
-            {/* Mobile view: Carousel */}
             <div className="md:hidden relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               <div className="overflow-hidden rounded-2xl">
                 <AnimatePresence mode="popLayout">
@@ -213,7 +207,6 @@ export default function NewsSection() {
                 </AnimatePresence>
               </div>
 
-              {/* Navigation controls */}
               <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between items-center px-4 z-20">
                 <Button
                   variant="outline"
@@ -222,7 +215,7 @@ export default function NewsSection() {
                   onClick={direction === "rtl" ? nextNews : prevNews}
                 >
                   {direction === "rtl" ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-                  <span className="sr-only">{content.previousNews}</span>
+                  <span className="sr-only">{content.previous}</span>
                 </Button>
 
                 <Button
@@ -232,21 +225,18 @@ export default function NewsSection() {
                   onClick={direction === "rtl" ? prevNews : nextNews}
                 >
                   <ChevronRight className="h-5 w-5" />
-                  <span className="sr-only">{content.nextNews}</span>
+                  <span className="sr-only">{content.next}</span>
                 </Button>
               </div>
-
-            
             </div>
           </>
         )}
-
-        
       </div>
     </section>
   )
 }
 
+// NewsCard component (unchanged)
 function NewsCard({ news, index, isInView, direction, formatDate, readMoreText }) {
   const cardRef = useRef(null)
   const cardInView = useInView(cardRef, { once: false, amount: 0.3 })
@@ -277,7 +267,6 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText }
       }}
       className="group relative overflow-hidden rounded-2xl bg-background border border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col"
     >
-      {/* Top gradient bar with animation */}
       <motion.div
         className={`h-1.5 w-full bg-gradient-to-r ${news.color}`}
         initial={{ scaleX: 0 }}
@@ -354,7 +343,6 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText }
         </motion.div>
       </CardFooter>
 
-      {/* Corner accent with animation */}
       <motion.div
         className={`absolute -bottom-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-r ${news.color} opacity-10 group-hover:opacity-20 transition-opacity duration-500`}
         initial={{ scale: 0 }}
@@ -364,4 +352,3 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText }
     </motion.div>
   )
 }
-

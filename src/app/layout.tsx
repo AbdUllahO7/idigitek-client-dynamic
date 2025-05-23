@@ -4,10 +4,8 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/contexts/language-context"
-import Footer from "@/components/layout/footer"
-import Header from "@/components/layout/header"
-import NavigationTracker from "@/components/NavigationTracker"
 import QueryProvider from "@/providers/QueryProvider"
+import RootLayoutClient from "./RootLayoutClient"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -27,19 +25,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <QueryProvider>
-
             <LanguageProvider>
-              <NavigationTracker/>
-              <Header />
-              {children}
-              <Footer />
-
-              </LanguageProvider>
+              <RootLayoutClient>{children}</RootLayoutClient>
+            </LanguageProvider>
           </QueryProvider>
-
         </ThemeProvider>
       </body>
     </html>
   )
 }
-

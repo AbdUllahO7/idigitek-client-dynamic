@@ -71,6 +71,7 @@ export default function LandingPage() {
     // Add languageId here if available, e.g., languageId
   );
 
+  localStorage.setItem("websiteId", websiteId || "");
   // Add smooth scrolling behavior to the document
   useEffect(() => {
     document.documentElement.style.scrollBehavior = "smooth";

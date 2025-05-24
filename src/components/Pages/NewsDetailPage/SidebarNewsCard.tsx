@@ -2,8 +2,12 @@ import Link from "next/link"
 import Image from "next/image"
 
 export function SidebarNewsCard({ item }) {
+
+    const websiteId = localStorage.getItem("websiteId");
+    const sectionId = localStorage.getItem("news-section-id") ;
     return (
-        <Link href={`/Pages/NewsDetailPage/${item.id}`} className="flex items-start gap-3 group">
+        <Link href={`/Pages/NewsDetailPage/${item.id}?sectionId=${sectionId}&websiteId=${websiteId}`} 
+        className="flex items-start gap-3 group">
         <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
             <Image
             src={item.image || "/placeholder.svg"}
@@ -16,13 +20,7 @@ export function SidebarNewsCard({ item }) {
             <h4 className="text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
             {item.title}
             </h4>
-            <p className="text-xs text-muted-foreground mt-1">
-            {new Date(item.date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-            })}
-            </p>
+            
         </div>
         </Link>
     )

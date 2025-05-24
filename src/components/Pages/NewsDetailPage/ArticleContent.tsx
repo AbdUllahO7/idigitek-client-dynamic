@@ -22,7 +22,7 @@ export function ArticleContent({ content }) {
         />
 
         {/* Share buttons */}
-        <div className="mt-12 flex items-center gap-4">
+        {/* <div className="mt-12 flex items-center gap-4">
             <span className="text-sm font-medium">{
                     direction === "ltr" ? "Share this article" : "مشاركة هذه المقالة"
                 }</span>
@@ -71,7 +71,7 @@ export function ArticleContent({ content }) {
                 <span className="sr-only">Share via link</span>
             </Button>
             </div>
-        </div>
+        </div> */}
         </div>
     )
 }

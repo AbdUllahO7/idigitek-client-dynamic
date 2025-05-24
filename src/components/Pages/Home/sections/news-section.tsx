@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { CardContent, CardFooter } from "@/components/ui/card"
 import { translationsNews } from "../ConstData/ConstData"
 import { useSectionLogic } from "@/hooks/useSectionLogic"
+import { useSectionContent } from "@/hooks/useSectionContent"
+import { useLanguage } from "@/contexts/language-context"
 
 export default function NewsSection({ sectionId, websiteId }) {
   const ref = useRef(null)
@@ -16,44 +18,58 @@ export default function NewsSection({ sectionId, websiteId }) {
   const isInView = useInView(ref, { once: false, amount: 0.2 })
   const [activeIndex, setActiveIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-
-  const { content, isLoading, error, refetch, direction, formatDate } = useSectionLogic({
+  const { language } = useLanguage()
+  localStorage.setItem("news-section-id", sectionId)
+  const { content, isLoading: sectionLoading, error: sectionError, refetch, direction, formatDate } = useSectionLogic({
     sectionId,
     websiteId,
     fallbackTranslations: translationsNews,
     itemsKey: "news",
   })
 
+  const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
+    sectionId,
+    websiteId,
+    fieldMappings: {
+      id: "_id",
+      image: "Background Image",
+      title: "Title",
+      excerpt: "Description",
+      readMore: "news Details",
+      date: "createdAt",
+      color: () => "from-digitek-orange to-digitek-pink"
+    }
+  })
 
-  console.log("content data" , content)
+  console.log("NewsSection - Content Items:", contentItems)
 
   // Reset active index on language change
   useEffect(() => {
     setActiveIndex(0)
-  }, [content.language])
+  }, [language])
 
   // Auto-play carousel
   useEffect(() => {
     let interval
-    if (isAutoPlaying && content.news.length > 1) {
+    if (isAutoPlaying && contentItems.length > 1) {
       interval = setInterval(() => {
         nextNews()
       }, 5000)
     }
     return () => interval && clearInterval(interval)
-  }, [isAutoPlaying, activeIndex, content.news])
+  }, [isAutoPlaying, activeIndex, contentItems])
 
   const handleMouseEnter = () => setIsAutoPlaying(false)
   const handleMouseLeave = () => setIsAutoPlaying(true)
 
   const nextNews = () =>
-    setActiveIndex((prev) => (prev === content.news.length - 1 ? 0 : prev + 1))
+    setActiveIndex((prev) => (prev === contentItems.length - 1 ? 0 : prev + 1))
 
   const prevNews = () =>
-    setActiveIndex((prev) => (prev === 0 ? content.news.length - 1 : prev - 1))
+    setActiveIndex((prev) => (prev === 0 ? contentItems.length - 1 : prev - 1))
 
   const getVisibleItems = () => {
-    const items = content.news
+    const items = contentItems
     if (items.length <= 3) return items
 
     const prevIndex = activeIndex === 0 ? items.length - 1 : activeIndex - 1
@@ -61,9 +77,11 @@ export default function NewsSection({ sectionId, websiteId }) {
     return [items[prevIndex], items[activeIndex], items[nextIndex]]
   }
 
+  const isLoading = sectionLoading || itemsLoading
+  const error = sectionError || itemsError
+
   return (
     <section id="news" className="relative w-full py-20 overflow-hidden" dir={direction}>
-      {/* Background elements */}
       <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-background"></div>
       <div className="absolute top-0 left-0 w-full h-40 bg-grid-pattern opacity-5 transform rotate-3"></div>
       <div className="absolute bottom-0 right-0 w-full h-40 bg-grid-pattern opacity-5 transform -rotate-3"></div>
@@ -112,7 +130,7 @@ export default function NewsSection({ sectionId, websiteId }) {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-muted-foreground">Loading...</p>
+            <p className="text-muted-foreground">{content.loading || "Loading..."}</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-16">
@@ -121,7 +139,7 @@ export default function NewsSection({ sectionId, websiteId }) {
               {content.retry}
             </Button>
           </div>
-        ) : content.news.length === 0 ? (
+        ) : contentItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
             <p className="text-muted-foreground">{content.error}</p>
             <Button onClick={() => window.location.reload()} variant="outline" className="mt-4">
@@ -155,6 +173,8 @@ export default function NewsSection({ sectionId, websiteId }) {
                         direction={direction}
                         formatDate={formatDate}
                         readMoreText={content.readMore}
+                        sectionId={sectionId}
+                        websiteId={websiteId}
                       />
                     ))}
                   </motion.div>
@@ -196,12 +216,14 @@ export default function NewsSection({ sectionId, websiteId }) {
                     className="w-full"
                   >
                     <NewsCard
-                      news={content.news[activeIndex]}
+                      news={contentItems[activeIndex]}
                       index={0}
                       isInView={true}
                       direction={direction}
                       formatDate={formatDate}
-                      readMoreText={content.readMore}
+                      readMoreText={contentItems[activeIndex].readMore}
+                      sectionId={sectionId}
+                      websiteId={websiteId}
                     />
                   </motion.div>
                 </AnimatePresence>
@@ -236,8 +258,7 @@ export default function NewsSection({ sectionId, websiteId }) {
   )
 }
 
-// NewsCard component (unchanged)
-function NewsCard({ news, index, isInView, direction, formatDate, readMoreText }) {
+function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, sectionId, websiteId }) {
   const cardRef = useRef(null)
   const cardInView = useInView(cardRef, { once: false, amount: 0.3 })
   const isRTL = direction === "rtl"
@@ -332,7 +353,7 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText }
           transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
         >
           <Link
-            href={`/Pages/NewsDetailPage/${news.id}`}
+            href={`/Pages/NewsDetailPage/${news.id}?sectionId=${sectionId}&websiteId=${websiteId}`}
             className="inline-flex items-center text-primary font-medium hover:underline"
           >
             {readMoreText}

@@ -5,7 +5,6 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from "
 type Language = "en" | "ar"
 type Direction = "ltr" | "rtl"
 
-// Define a recursive type for nested translations
 interface TranslationItem {
   [key: string]: string | TranslationItem;
 }
@@ -28,38 +27,45 @@ interface LanguageProviderProps {
   initialLanguage?: Language
 }
 
+const enTranslations = {
+  news: {
+    sectionLabel: "News",
+    sectionTitle: "Latest Updates",
+    sectionDescription: "Stay informed with our latest company news and updates",
+    loading: "Loading...",
+    noNews: "No news available",
+    retry: "Retry",
+    previous: "Previous",
+    next: "Next"
+  }
+}
+
+const arTranslations = {
+  news: {
+    sectionLabel: "الأخبار",
+    sectionTitle: "آخر التحديثات",
+    sectionDescription: "ابق على اطلاع بآخر أخبار وتحديثات الشركة",
+    loading: "جاري التحميل...",
+    noNews: "لا توجد أخبار متاحة",
+    retry: "إعادة المحاولة",
+    previous: "السابق",
+    next: "التالي"
+  }
+}
+
 export function LanguageProvider({ children, initialLanguage = "en" }: LanguageProviderProps) {
   const [language, setLanguage] = useState<Language>(initialLanguage)
   const [direction, setDirection] = useState<Direction>(initialLanguage === "ar" ? "rtl" : "ltr")
   const [translations, setTranslations] = useState<Translations>({
-    en: {},
-    ar: {},
+    en: enTranslations,
+    ar: arTranslations
   })
-
-  useEffect(() => {
-    // Load translations
-    const loadTranslations = async () => {
-      try {
-        // In a real app, you would import these from files
-        // For this demo, we'll define them inline
-       
-      } catch (error) {
-        console.error("Failed to load translations:", error)
-      }
-    }
-
-    loadTranslations()
-  }, [])
 
   useEffect(() => {
     // Update direction when language changes
     setDirection(language === "ar" ? "rtl" : "ltr")
-
-    // Update document direction
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr"
     document.documentElement.lang = language
-
-    // Store language preference
     localStorage.setItem("language", language)
   }, [language])
 
@@ -109,13 +115,4 @@ export function useLanguage() {
     throw new Error("useLanguage must be used within a LanguageProvider")
   }
   return context
-}
-
-// English translations
-
-
-// Arabic translations
-const arTranslations = {
-
-
 }

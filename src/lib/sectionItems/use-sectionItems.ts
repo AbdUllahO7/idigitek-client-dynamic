@@ -1,111 +1,128 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../api-client';
+import { SectionItem } from '@/api/types/sectionItem/sectionItem.type';
 
-// Base SectionItems hook
+
+// Base section item hook
 export function useSectionItems() {
-    const queryClient = useQueryClient();
-    const endpoint = '/sections/client';
+  const queryClient = useQueryClient();
+  const endpoint = '/section-items';
 
-    // Query keys to prevent cache conflicts
-    const sectionItemsBySectionKey = (sectionId: string) => ['sectionItems', 'section', sectionId];
-    const sectionItemsByWebsiteKey = (websiteId: string) => ['sectionItems', 'website', websiteId];
-    const sectionItemByIdKey = (id: string) => ['sectionItems', 'item', id];
+  // Query keys
+  const sectionItemsKey = ['sectionItems'];
+  const sectionItemKey = (id: string) => [...sectionItemsKey, id];
+  const sectionItemsBySectionKey = (sectionId: string) => [...sectionItemsKey, 'section', sectionId];
+  const sectionItemsByWebSiteKey = (websiteId: string) => [...sectionItemsKey, 'website', websiteId];
 
-    // Get section items by section ID (public access)
-    const useGetSectionItemsBySectionId = (
-        sectionId: string,
-        activeOnly: boolean = true,
-        limit: number = 100,
-        skip: number = 0,
-        includeSubSectionCount: boolean = false,
-        languageId?: string
-    ) => {
-        return useQuery({
-            queryKey: sectionItemsBySectionKey(sectionId),
-            queryFn: async () => {
-                const params = new URLSearchParams();
-                if (!activeOnly) params.append('activeOnly', 'false');
-                params.append('limit', limit.toString());
-                params.append('skip', skip.toString());
-                if (includeSubSectionCount) params.append('includeSubSectionCount', 'true');
-                if (languageId) params.append('languageId', languageId);
-
-                const { data } = await apiClient.get(`${endpoint}/section/${sectionId}?${params.toString()}`);
-                return data?.data || [];
-            },
-            refetchOnMount: true,
-            staleTime: 10 * 1000, // 10 seconds
-            enabled: !!sectionId,
+  // Get all section items
+  const useGetAll = (activeOnly = true, limit = 100, skip = 0, includeSubSectionCount = false) => {
+    return useQuery({
+      queryKey: [...sectionItemsKey, { activeOnly, limit, skip, includeSubSectionCount }],
+      queryFn: async () => {
+        const { data } = await apiClient.get(endpoint, {
+          params: { activeOnly, limit, skip, includeSubSectionCount }
         });
-    };
+        return data;
+      }
+    });
+  };
 
-    // Get section items by website ID (public access)
-    const useGetSectionItemsByWebSiteId = (
-        websiteId: string,
-        activeOnly: boolean = true,
-        limit: number = 100,
-        skip: number = 0,
-        includeSubSectionCount: boolean = false,
-        languageId?: string
-    ) => {
-        return useQuery({
-            queryKey: sectionItemsByWebsiteKey(websiteId),
-            queryFn: async () => {
-                const params = new URLSearchParams();
-                if (!activeOnly) params.append('activeOnly', 'false');
-                params.append('limit', limit.toString());
-                params.append('skip', skip.toString());
-                if (includeSubSectionCount) params.append('includeSubSectionCount', 'true');
-                if (languageId) params.append('languageId', languageId);
-
-                const { data } = await apiClient.get(`${endpoint}/website/${websiteId}?${params.toString()}`);
-                return data?.data || [];
-            },
-            refetchOnMount: true,
-            staleTime: 10 * 1000, // 10 seconds
-            enabled: !!websiteId,
+  // Get a single section item by ID
+  const useGetById = (id: string, populateSection = true, includeSubSections = false) => {
+    return useQuery({
+      queryKey: [...sectionItemKey(id), { populateSection, includeSubSections }],
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/${id}`, {
+          params: { populate: populateSection, includeSubSections }
         });
-    };
+        return data;
+      },
+      enabled: !!id
+    });
+  };
 
-    // Get a single section item by ID (public access)
-    const useGetSectionItemById = (
-        id: string,
-        populateSection: boolean = true,
-        includeSubSections: boolean = false,
-        languageId?: string
-    ) => {
-        return useQuery({
-            queryKey: sectionItemByIdKey(id),
-            queryFn: async () => {
-                const params = new URLSearchParams();
-                if (!populateSection) params.append('populate', 'false');
-                if (includeSubSections) params.append('includeSubSections', 'true');
-                if (languageId) params.append('languageId', languageId);
-
-                const { data } = await apiClient.get(`${endpoint}/${id}?${params.toString()}`);
-                return data?.data || null;
-            },
-            refetchOnMount: true,
-            staleTime: 10 * 1000, // 10 seconds
-            enabled: !!id,
+  // Get section items by section ID
+  const useGetBySectionId = (
+    sectionId: string, 
+    activeOnly = true, 
+    limit = 100, 
+    skip = 0, 
+    includeSubSectionCount = false
+  ) => {
+    return useQuery({
+      queryKey: [...sectionItemsBySectionKey(sectionId), { activeOnly, limit, skip, includeSubSectionCount }],
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/section/${sectionId}`, {
+          params: { activeOnly, limit, skip, includeSubSectionCount }
         });
-    };
+        return data;
+      },
+      enabled: !!sectionId && sectionId !== "null"
+    });
+  };
 
-    // Reset section items cache for a specific section, website, or all section items
-    const resetSectionItemsCache = (sectionId?: string, websiteId?: string) => {
-        if (sectionId) {
-            queryClient.invalidateQueries({ queryKey: sectionItemsBySectionKey(sectionId) });
-        } else if (websiteId) {
-            queryClient.invalidateQueries({ queryKey: sectionItemsByWebsiteKey(websiteId) });
-        } else {
-            queryClient.invalidateQueries({ queryKey: ['sectionItems'] });
+  // Get section items by WebSite ID - NEW FUNCTION
+  const useGetByWebSiteId = (
+    websiteId: string,
+    activeOnly = true,
+    limit = 100,
+    skip = 0,
+    includeSubSectionCount = false
+  ) => {
+    return useQuery({
+      queryKey: [...sectionItemsByWebSiteKey(websiteId), { activeOnly, limit, skip, includeSubSectionCount }],
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}`, {
+          params: { activeOnly, limit, skip, includeSubSectionCount }
+        });
+        return data;
+      },
+      enabled: !!websiteId && websiteId !== "null"
+    });
+  };
+
+  // Create a new section item
+  const useCreate = () => {
+    return useMutation({
+      mutationFn: async (createDto: Omit<SectionItem, '_id'>) => {
+        try {
+          const { data } = await apiClient.post(endpoint, createDto);
+          return data;
+        } catch (error: any) {
+          if (error.message?.includes('duplicate') || 
+              error.message?.includes('E11000') || 
+              error.message?.includes('already exists')) {
+            const enhancedError = new Error(`A section item with this name already exists.`);
+            throw enhancedError;
+          }
+          throw error;
         }
-    };
+      },
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: sectionItemsKey });
+        if (data._id) {
+          queryClient.setQueryData(sectionItemKey(data._id), data);
+        }
+        if (data.section) {
+          queryClient.invalidateQueries({ queryKey: sectionItemsBySectionKey(data.section) });
+        }
+        // Add invalidation for WebSite
+        if (data.WebSite) {
+          queryClient.invalidateQueries({ queryKey: sectionItemsByWebSiteKey(data.WebSite) });
+        }
+      },
+    });
+  };
 
-    return {
-        useGetSectionItemsBySectionId,
-        useGetSectionItemsByWebSiteId,
-        useGetSectionItemById,
-        resetSectionItemsCache,
-    };
+
+
+
+
+  // Return all hooks
+  return {
+    useGetAll,
+    useGetById,
+    useGetBySectionId,
+    useGetByWebSiteId, 
+  };
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import { use } from "react"
+import { useSearchParams } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 import { translationsNews } from "@/components/Pages/Home/ConstData/ConstData"
 import { NotFound } from "@/components/Pages/NewsDetailPage/NotFound"
@@ -9,30 +10,88 @@ import { ArticleContent } from "@/components/Pages/NewsDetailPage/ArticleContent
 import { Sidebar } from "@/components/Pages/NewsDetailPage/Sidebar"
 import { RelatedArticles } from "@/components/Pages/NewsDetailPage/RelatedArticles"
 import { NewsHero } from "@/components/Pages/NewsDetailPage/NewsHero"
+import { useSectionContent } from "@/hooks/useSectionContent"
+
+// Define the shape of a news item
+interface NewsItem {
+  id: string
+  title: string
+  excerpt: string
+  image: string
+  backLinkText: string
+  category: string
+}
+
+// Define field mappings for the news data, aligned with NewsSection
+const fieldMappings = {
+  id: "_id",
+  title: "Title",
+  excerpt: "Description",
+  image: "Background Image",
+  backLinkText: "Back Link Text",
+  category: "sectionItem.name",
+  data : "createdAt",
+}
 
 export default function NewsDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { language, direction } = useLanguage()
-  
+  const searchParams = useSearchParams()
+
   // Unwrap params using React.use()
   const resolvedParams = use(params)
   const newsId = resolvedParams.id
-  
+  const sectionId = searchParams.get("sectionId") 
+  const websiteId = searchParams.get("websiteId") 
+
+  // Call useSectionContent at the top level
+  const { contentItems, isLoading, error } = useSectionContent({
+    sectionId,
+    websiteId,
+    fieldMappings,
+  })
+
+
+
   // Get translations for the current language
   const t = translationsNews[language] || translationsNews.en
-  
-  // Access the news array from the translations
-  const newsArray = t.news || []
-  
+
+  // Validate params after hook calls
+  if (!newsId || !sectionId || !websiteId) {
+    console.error("Missing required params:", { newsId, sectionId, websiteId })
+    return <NotFound t={t} />
+  }
+
   // Find the current news article
-  const currentNews = newsArray.find((news) => news.id === newsId)
+  const currentNews = contentItems.find((item: NewsItem) => item.id === newsId) as NewsItem | undefined
 
   // Find related news (same category, excluding current)
   const relatedNews = currentNews
-    ? newsArray.filter((news) => news.category === currentNews.category && news.id !== currentNews.id).slice(0, 3)
+    ? contentItems
+        .filter((item: NewsItem) => item.category === currentNews.category && item.id !== currentNews.id)
+        .slice(0, 3) as NewsItem[]
     : []
 
-  // If news not found
+  // Handle loading state
+  if (isLoading) {
+    return <div className="min-h-screen bg-background" dir={direction}>Loading...</div>
+  }
+
+  // Handle error state
+  if (error) {
+    console.error("Error fetching news data:", error)
+    return (
+      <div className="min-h-screen bg-background" dir={direction}>
+        <div className="container px-4 md:px-6 py-8">
+          <h2 className="text-2xl font-bold text-red-600">Error</h2>
+          <p>{error.message || "Failed to load news article. Please try again later."}</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Handle not found state
   if (!currentNews) {
+    console.warn("No news article found for ID:", newsId)
     return <NotFound t={t} />
   }
 
@@ -51,14 +110,12 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
           <ArticleContent content={currentNews.excerpt} />
           
           {/* Sidebar with related articles */}
-          <Sidebar currentNews={currentNews} allNews={newsArray} />
+          <Sidebar currentNews={currentNews} allNews={contentItems} />
         </div>
       </section>
 
       {/* Related articles section */}
       <RelatedArticles relatedNews={relatedNews} t={t} />
-
-    
     </div>
   )
 }

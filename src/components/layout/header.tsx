@@ -13,29 +13,83 @@ import { LanguageToggle } from "@/components/language-toggle"
 import { useLanguage } from "@/contexts/language-context"
 import { useScrollToSection } from "@/hooks/use-scroll-to-section"
 import { useRouter, usePathname } from "next/navigation"
+import { useSectionContent } from "@/hooks/useSectionContent"
 
-const navItems = [
-  { id: "services", href: "#services", label: "Services" },
-  { id: "news", href: "#news", label: "News" },
-
-  { id: "features", href: "#features", label: "Features" },
-  { id: "projects", href: "#projects", label: "Projects" },
-  { id: "team", href: "#team", label: "Our Team" },
-  { id: "caseStudies", href: "#caseStudies", label: "Case Studies" },
-  { id: "partners", href: "#partners", label: "Partners" },
-  { id: "faq", href: "/faq", label: "FAQ" },
-  { id: "blog", href: "/blog", label: "Blog" },
-  { id: "contact", href: "#contact", label: "Contact" },
-]
-
-export default function Header(sectionId) {
-  console.log("Header section id",sectionId)
+export default function Header({ sectionId , logo }: { sectionId: string  , logo?: string }) {
+  console.log("Header section id", sectionId)
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { language, direction } = useLanguage()
   const scrollToSection = useScrollToSection()
   const router = useRouter()
   const pathname = usePathname()
+  const websiteId = localStorage.getItem("websiteId")
+  
+  console.log(logo ? "Logo provided" : "No logo provided")
+
+  console.log("Website ID from localStorage:", websiteId)
+  console.log("Section ID:", sectionId)
+
+  // Create dynamic field mappings for nav items
+  const createNavItemMappings = () => {
+    const mappings: Record<string, string> = {}
+    // Create mappings for multiple nav items (adjust the number as needed)
+    for (let i = 1; i <= 20; i++) {
+      mappings[`navitem${i}`] = `Nav Item ${i}`
+      mappings[`navlink${i}`] = `Nav Link ${i}`
+      mappings[`navorder${i}`] = `Nav Order ${i}`
+    }
+    return mappings
+  }
+
+  const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
+    sectionId: sectionId,
+    websiteId,
+    fieldMappings: createNavItemMappings()
+  })
+
+  console.log("Content Items in Header:", contentItems)
+
+  // Process content items to create nav items
+  const generateNavItemsFromDatabase = () => {
+    if (!contentItems || contentItems.length === 0) {
+      return []
+    }
+
+    const navItems: Array<{
+      id: string
+      href: string
+      label: string
+      order: number
+    }> = []
+
+    contentItems.forEach((item) => {
+      // Extract all nav items from each content item
+      for (let i = 1; i <= 20; i++) {
+        const navItemName = item[`navitem${i}`]
+        const navItemLink = item[`navlink${i}`]
+        const navItemOrder = item[`navorder${i}`]
+
+        if (navItemName && navItemName.trim() !== "") {
+          navItems.push({
+            id: navItemName.toLowerCase().replace(/\s+/g, ''),
+            href: navItemLink && navItemLink.startsWith('#') ? navItemLink : `#${navItemName.toLowerCase().replace(/\s+/g, '')}`,
+            label: navItemName,
+            order: navItemOrder ? parseInt(navItemOrder) : i
+          })
+        }
+      }
+    })
+
+    // Sort by order and remove duplicates
+    return navItems
+      .sort((a, b) => a.order - b.order)
+      .filter((item, index, self) => 
+        index === self.findIndex(t => t.id === item.id)
+      )
+  }
+
+  const navItems = generateNavItemsFromDatabase()
 
   // Define translations inside the component
   const HeaderTranslations = {
@@ -52,7 +106,18 @@ export default function Header(sectionId) {
         requestDemo: "Request Demo",
         blog: "Blog",
         faq: "FAQ",
-        demo: "Demo"
+        demo: "Demo",
+        home: "Home",
+        aboutus: "About Us",
+        portfolio: "Portfolio",
+        testimonials: "Testimonials",
+        clients: "Clients",
+        process: "Process",
+        ourprocess: "Our Process",
+        clientcomments: "Client Comments",
+        chooseus: "Why Choose Us",
+        industrysolutions: "Industry Solutions",
+        technologystack: "Technology Stack"
       },
     },
     ar: {
@@ -68,21 +133,35 @@ export default function Header(sectionId) {
         requestDemo: "طلب عرض توضيحي",
         blog: "المدونة",
         faq: "الاسئلة الشائعة",
-        demo: "طلب عرض"
+        demo: "طلب عرض",
+        home: "الرئيسية",
+        aboutus: "معلومات عنا",
+        portfolio: "الأعمال",
+        testimonials: "آراء العملاء",
+        clients: "العملاء",
+        process: "العملية",
+        ourprocess: "عمليتنا",
+        clientcomments: "تعليقات العميل",
+        chooseus: "لماذا تختارنا",
+        industrysolutions: "حلول الصناعة",
+        technologystack: "مجموعة التقنيات"
       },
     }
   }
 
   // Create a custom translation function that uses HeaderTranslations
-  const translate = (key) => {
+  const translate = (key: string) => {
     try {
       // Handle case where key is directly "header.X"
       if (key.startsWith('header.')) {
         const itemKey = key.replace('header.', '')
-        return HeaderTranslations[language].header[itemKey] || key
+        return HeaderTranslations[language]?.header?.[itemKey] || itemKey
       }
       
-      return key
+      // Convert section names with spaces to translation keys
+      const translationKey = key.toLowerCase().replace(/\s+/g, '')
+      
+      return HeaderTranslations[language]?.header?.[translationKey] || key
     } catch (error) {
       console.error('Translation error:', error)
       return key
@@ -145,6 +224,28 @@ export default function Header(sectionId) {
     setIsOpen(false)
   }
 
+  // Show loading state while fetching nav items
+  if (itemsLoading) {
+    return (
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
+        <div className="container flex h-16 items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
+              <Image
+                src="/assets/iDIGITEK.webp"
+                alt="iDIGITEK Logo"
+                width={120}
+                height={40}
+                className="h-8 w-auto"
+              />
+            </Link>
+          </div>
+          <div className="text-sm text-muted-foreground">Loading navigation...</div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
@@ -167,7 +268,7 @@ export default function Header(sectionId) {
         >
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/assets/iDIGITEK.webp"
+              src={logo}
               alt="iDIGITEK Logo"
               width={120}
               height={40}
@@ -199,7 +300,7 @@ export default function Header(sectionId) {
                 onClick={(e) => handleNavClick(e, item.id)}
                 className="text-sm font-medium hover:text-primary"
               >
-                {translate(`header.${item.id}`)}
+                {translate(item.label)}
               </Link>
             </motion.div>
           ))}
@@ -229,7 +330,7 @@ export default function Header(sectionId) {
 interface MobileNavProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
-  navItems: { label: string; href: string; id: string }[]
+  navItems: { label: string; href: string; id: string; order: number }[]
   handleNavClick: (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => void
   requestDemoText: string
   translate: (key: string) => string
@@ -272,7 +373,7 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick, requestDemoTex
                     className="text-lg font-medium text-white hover:text-primary"
                     onClick={(e) => handleNavClick(e, item.id)}
                   >
-                    {translate(`header.${item.id}`)}
+                    {translate(item.label)}
                   </Link>
                 </motion.div>
               ))}

@@ -60,6 +60,8 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
     // languageId // Pass languageId for translations
   );
 
+  console.log("Websites:", websites);
+
 
   // Find the Header section
   const headerSection = sectionsData?.data.find((section: Section) => section.name === "Header");
@@ -85,7 +87,7 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
   return (
     <div dir={direction}>
       <NavigationTracker />
-      {headerSectionId ? <Header sectionId={headerSectionId} /> : <Header />}
+      {headerSectionId ? <Header logo={websites[0].logo}  sectionId={headerSectionId}/> : <Header logo={websites[0].logo} sectionId={headerSectionId} />}
       {children}
       <Footer />
     </div>

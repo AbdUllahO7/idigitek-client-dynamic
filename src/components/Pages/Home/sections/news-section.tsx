@@ -41,7 +41,6 @@ export default function NewsSection({ sectionId, websiteId }) {
     }
   })
 
-  console.log("NewsSection - Content Items:", contentItems)
 
   // Reset active index on language change
   useEffect(() => {

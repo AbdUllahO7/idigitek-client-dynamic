@@ -5,11 +5,10 @@ import { motion } from "framer-motion"
 
 interface IndustryCardProps {
   industry: {
-    name: string
-    description: string
-    icon: string
+    title: string
+    excerpt: string
+    image: string
     color: string
-    bgColor: string
   }
   index: number
   isInView: boolean
@@ -32,16 +31,15 @@ export default function IndustryCard({ industry, index, isInView }: IndustryCard
       <div className="p-6 md:p-8">
         <div className="flex flex-col items-center text-center">
           <IndustryIcon 
-            icon={industry.icon} 
-            name={industry.name} 
-            bgColor={industry.bgColor} 
+            icon={industry.image} 
+            name={industry.title} 
           />
 
           <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
-            {industry.name}
+            {industry.title}
           </h3>
 
-          <p className="text-muted-foreground text-sm mb-6">{industry.description}</p>
+          <p className="text-muted-foreground text-sm mb-6">{industry.excerpt}</p>
         </div>
       </div>
 
@@ -54,19 +52,18 @@ export default function IndustryCard({ industry, index, isInView }: IndustryCard
 interface IndustryIconProps {
   icon: string
   name: string
-  bgColor: string
 }
 
-function IndustryIcon({ icon, name, bgColor }: IndustryIconProps) {
+function IndustryIcon({ icon, name }: IndustryIconProps) {
   return (
     <div
-      className={`relative w-16 h-16 mb-6 rounded-2xl ${bgColor} p-3 group-hover:scale-110 transition-transform duration-500`}
+      className={`relative w-16 h-16 mb-6 rounded-2xl bg-white p-3 group-hover:scale-110 transition-transform duration-500`}
     >
       <Image
         src={icon || "/placeholder.svg"}
         alt={name}
-        width={64}
-        height={64}
+        width={94}
+        height={94}
         className="w-full h-full object-contain"
       />
 

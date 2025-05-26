@@ -8,20 +8,19 @@ import { ArrowRight } from "lucide-react"
 import SlideContent from "./SlideContent"
 import SlideImage from "./SlideImage"
 
-
 interface HeroSlideProps {
   slide: {
-    titleEn: string
-    titleAr: string
-    descriptionEn: string
-    descriptionAr: string
-    color: string
+    id: string
     image: string
+    title: string
+    excerpt: string
+    exploreButton: string
+    requestButton: string
+    color: string
   }
   index: number
   direction: string
   language: string
-  getCurrentSlideText: (slide: any) => { title: string; description: string }
   handleNavClick: (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => void
 }
 
@@ -30,11 +29,8 @@ export default function HeroSlide({
   index,
   direction,
   language,
-  getCurrentSlideText,
   handleNavClick
 }: HeroSlideProps) {
-  const { title, description } = getCurrentSlideText(slide)
-
   return (
     <motion.div
       key={index}
@@ -46,8 +42,8 @@ export default function HeroSlide({
     >
       {/* Content */}
       <SlideContent
-        title={title}
-        description={description}
+        title={slide.title}
+        description={slide.excerpt}
         color={slide.color}
         direction={direction}
       >
@@ -58,25 +54,25 @@ export default function HeroSlide({
             className={`bg-gradient-to-r ${slide.color} hover:opacity-90 text-white shadow-lg`}
           >
             <Link href="#demo" onClick={(e) => handleNavClick(e, "demo")}>
-              {language === 'en' ? "Request Demo" : "طلب عرض توضيحي"}
-              {direction === 'ltr' && <ArrowRight className="ml-2 h-4 w-4" />}
-              {direction === 'rtl' && <ArrowRight className="mr-2 h-4 w-4 transform scale-x-[-1]" />}
+              {language === "en" ? slide.requestButton || "Request Demo" : slide.requestButton || "طلب عرض توضيحي"}
+              {direction === "ltr" && <ArrowRight className="ml-2 h-4 w-4" />}
+              {direction === "rtl" && <ArrowRight className="mr-2 h-4 w-4 transform scale-x-[-1]" />}
             </Link>
           </Button>
 
           <Button asChild variant="outline" size="lg" className="border-2 shadow-sm">
             <Link href="#services" onClick={(e) => handleNavClick(e, "services")}>
-              {language === 'en' ? "Explore Solutions" : "استكشاف الحلول"}
+              {language === "en" ? slide.exploreButton || "Explore Solutions" : slide.exploreButton || "استكشاف الحلول"}
             </Link>
           </Button>
         </div>
       </SlideContent>
 
       {/* Image */}
-      <SlideImage 
-        image={slide.image || "/placeholder.svg"} 
-        title={title} 
-        color={slide.color} 
+      <SlideImage
+        image={slide.image || "/placeholder.svg"}
+        title={slide.title}
+        color={slide.color}
       />
     </motion.div>
   )

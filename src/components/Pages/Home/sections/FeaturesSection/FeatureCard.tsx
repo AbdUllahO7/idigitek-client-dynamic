@@ -1,37 +1,58 @@
 "use client"
 
 import { motion } from "framer-motion"
-import type React from "react"
+import React from "react"
+import { useLanguage } from "@/contexts/language-context"
+import { LineChart, Clock, Car, MonitorSmartphone, Settings, CreditCard, Headphones, MessageSquare } from "lucide-react"
+
+// Icon mapping for string-based icons
+const iconMap: { [key: string]: React.ReactNode } = {
+    "LineChart": <LineChart />,
+    "Clock": <Clock />,
+    "Car": <Car className="" />,
+    "MonitorSmartphone": <MonitorSmartphone className="" />,
+    "Settings": <Settings className="" />,
+    "CreditCard": <CreditCard className="" />,
+    "MessageSquare": <MessageSquare className="" />,
+    "Headphones": <Headphones className="" />
+}
 
 interface FeatureCardProps {
   feature: {
     title: string
-    description: string
-    icon: React.ReactNode
+    excerpt: string
+    icon: React.ReactNode | string // Allow string or ReactNode
     color: string
-    delay: number
   }
   isInView: boolean
 }
 
 export default function FeatureCard({ feature, isInView }: FeatureCardProps) {
+  // Determine the icon to render
+  const renderIcon = () => {
+    if (React.isValidElement(feature.icon)) {
+      return feature.icon // If it's already a React element, use it
+    }
+    return iconMap[feature.icon as string] || null // Map string to component, fallback to null
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.6, delay: feature.delay }}
+      transition={{ duration: 0.6 }}
       className="group flex items-start gap-4 rounded-xl p-1 transition-all duration-300 hover:bg-gradient-to-r hover:from-digitek-pink/5 hover:to-digitek-orange/5"
     >
       <div
         className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${feature.color} text-white shadow-md group-hover:scale-110 transition-transform duration-300`}
       >
-        {feature.icon}
+        {renderIcon()}
       </div>
       <div className="space-y-1">
         <h3 className="text-xl font-semibold group-hover:text-primary transition-colors duration-300">
           {feature.title}
         </h3>
-        <p className="text-muted-foreground">{feature.description}</p>
+        <p className="text-muted-foreground">{feature.excerpt}</p>
       </div>
     </motion.div>
   )

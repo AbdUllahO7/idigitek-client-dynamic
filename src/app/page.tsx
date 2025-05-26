@@ -22,6 +22,7 @@ import IndustrySolutionsSection from "@/components/Pages/Home/sections/IndustryS
 import FeaturesSection from "@/components/Pages/Home/sections/FeaturesSection/features-section";
 import { useWebSite } from "@/lib/webSite/use-WebSite";
 import { useSections } from "@/lib/section/use-Section";
+import { useScrollToSection } from "@/hooks/use-scroll-to-section";
 
 // Define TypeScript interfaces for data
 interface Website {
@@ -60,6 +61,7 @@ export default function LandingPage() {
   const { direction } = useLanguage();
   const { useGetWebsitesByUserId } = useWebSite();
   const { useGetByWebsiteId } = useSections();
+  const scrollToSection = useScrollToSection(); // Import the hook
 
   const { data: websites, isLoading: websitesLoading, error: websitesError } = useGetWebsitesByUserId();
   const websiteId = websites && websites.length > 0 ? websites[0].id : undefined;
@@ -70,12 +72,31 @@ export default function LandingPage() {
 
   localStorage.setItem("websiteId", websiteId || "");
 
+  // Set smooth scrolling globally
   useEffect(() => {
     document.documentElement.style.scrollBehavior = "smooth";
     return () => {
       document.documentElement.style.scrollBehavior = "";
     };
   }, []);
+
+  // Scroll to section based on URL hash (subName) on page load
+  useEffect(() => {
+    if (typeof window !== "undefined" && sectionsData?.data) {
+      const hash = window.location.hash; // e.g., #news
+      if (hash) {
+        const subName = hash.substring(1); // Remove # to get subName (e.g., "news")
+        const targetSection = sectionsData.data.find(
+          (section: Section) => section.subName.toLowerCase() === subName.toLowerCase()
+        );
+        if (targetSection) {
+          setTimeout(() => {
+            scrollToSection(targetSection._id); // Scroll to section._id
+          }, 500); // Delay to ensure sections are rendered
+        }
+      }
+    }
+  }, [sectionsData, scrollToSection]);
 
   // Map section names to components with section ID
   const sectionComponents: { [key: string]: (id: string, websiteId?: string) => JSX.Element } = {
@@ -85,9 +106,8 @@ export default function LandingPage() {
       <IndustrySolutionsSection websiteId={websiteId} sectionId={id} />
     ),
     // Contact: (id: string, websiteId?: string) => <ContactSection websiteId={websiteId} sectionId={id} />,
-    // // Add other sections as needed
     // Services: (id: string, websiteId?: string) => <ServicesSection websiteId={websiteId} sectionId={id} />,
-    // Features: (id: string, websiteId?: string) => <FeaturesSection websiteId={websiteId} sectionId={id} />,
+    whyChooseUs: (id: string, websiteId?: string) => <FeaturesSection  websiteId={websiteId} sectionId={id}/>,
     // Projects: (id: string, websiteId?: string) => <ProjectsSection websiteId={websiteId} sectionId={id} />,
     // Process: (id: string, websiteId?: string) => <ProcessSection websiteId={websiteId} sectionId={id} />,
     // Team: (id: string, websiteId?: string) => <TeamSection websiteId={websiteId} sectionId={id} />,
@@ -126,8 +146,8 @@ export default function LandingPage() {
     return <div>No sections found for the website.</div>;
   }
 
-  // Separate footer section (e.g., Contact) and sort other sections by order
-  const footerSectionName = "Contact"; // Adjust if your footer is named differently, e.g., "Cta"
+  // Separate footer section and sort other sections by order
+  const footerSectionName = "Contact";
   const footerSection = sectionsData.data.find(
     (section: Section) => section.subName === footerSectionName
   );
@@ -140,11 +160,17 @@ export default function LandingPage() {
       <div className="flex min-h-screen flex-col" dir={direction}>
         <main>
           {/* Render sorted non-footer sections */}
-          {nonFooterSections.map((section: Section) =>
-            sectionComponents[section.subName]?.(section._id, websiteId) || null
-          )}
+          {nonFooterSections.map((section: Section) => (
+            <div key={section._id} id={section._id}>
+              {sectionComponents[section.subName]?.(section._id, websiteId) || null}
+            </div>
+          ))}
           {/* Always render footer section last */}
-          {footerSection && sectionComponents[footerSection.subName]?.(footerSection._id, websiteId)}
+          {footerSection && (
+            <div key={footerSection._id} id={footerSection._id}>
+              {sectionComponents[footerSection.subName]?.(footerSection._id, websiteId)}
+            </div>
+          )}
         </main>
       </div>
     </AnimatePresence>

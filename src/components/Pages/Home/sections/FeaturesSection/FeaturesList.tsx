@@ -7,10 +7,9 @@ import FeatureCard from "./FeatureCard"
 interface FeaturesListProps {
     features: Array<{
         title: string
-        description: string
+        excerpt: string
         icon: React.ReactNode
         color: string
-        delay: number
     }>
     isInView: boolean
 }
@@ -20,7 +19,7 @@ export default function FeaturesList({ features, isInView }: FeaturesListProps) 
         <>
         <div className="mt-10 grid gap-6">
             {features.map((feature, index) => (
-            <FeatureCard key={index} feature={feature} isInView={isInView} />
+                <FeatureCard key={index} feature={feature} isInView={isInView} />
             ))}
         </div>
 

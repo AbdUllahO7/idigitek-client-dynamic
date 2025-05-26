@@ -44,7 +44,6 @@ export default function IndustrySolutionsSection({ sectionId, websiteId }) {
     },
   })
 
-  console.log("contentItems:", contentItems)
 
   return (
     <section id="industry" className="relative w-full py-12 overflow-hidden" dir={direction}>

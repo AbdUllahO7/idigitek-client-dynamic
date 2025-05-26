@@ -1,13 +1,12 @@
 "use client"
 
 import type React from "react"
-
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "@/components/ui/framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageToggle } from "@/components/language-toggle"
 import { useLanguage } from "@/contexts/language-context"
@@ -15,80 +14,58 @@ import { useScrollToSection } from "@/hooks/use-scroll-to-section"
 import { useRouter, usePathname } from "next/navigation"
 import { useSectionContent } from "@/hooks/useSectionContent"
 
-export default function Header({ sectionId , logo }: { sectionId: string  , logo?: string }) {
-  console.log("Header section id", sectionId)
-  const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+interface NavItem {
+  id: string
+  href: string
+  label: string
+  order: number
+}
+
+interface HeaderProps {
+  sectionId: string
+  logo?: string
+}
+
+export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp" }: HeaderProps) {
   const { language, direction } = useLanguage()
   const scrollToSection = useScrollToSection()
   const router = useRouter()
   const pathname = usePathname()
   const websiteId = localStorage.getItem("websiteId")
-  
+  const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
-
-
-  // Create dynamic field mappings for nav items
-  const createNavItemMappings = () => {
-    const mappings: Record<string, string> = {}
-    // Create mappings for multiple nav items (adjust the number as needed)
-    for (let i = 1; i <= 13; i++) {
-      mappings[`navitem${i}`] = `Nav Item ${i}`
-      mappings[`navlink${i}`] = `Nav Link ${i}`
-      mappings[`navorder${i}`] = `Nav Order ${i}`
+  // Define field mappings for navigation items with dynamic {index}
+  const navFieldMappings = {
+    
+    id: (subsection: any, index?: number) =>
+      subsection.elements?.find(el => el.name === `Nav Item ${index !== undefined ? index + 1 : 1}`)?.defaultContent
+        ?.toLowerCase()
+        .replace(/\s+/g, '') || `${subsection._id}-${index || 0}`,
+    label: "Nav Item {index}",
+    href: (subsection: any, index?: number) => {
+      const link = subsection.elements?.find(el => el.name === `Nav Link ${index !== undefined ? index + 1 : 1}`)?.defaultContent || ""
+      return link.startsWith('#') ? link : `#${subsection.elements?.find(el => el.name === `Nav Item ${index !== undefined ? index + 1 : 1}`)?.defaultContent?.toLowerCase().replace(/\s+/g, '') || ''}`
+    },
+    order: (subsection: any, index?: number) => {
+      const order = subsection.elements?.find(el => el.name === `Nav Order ${index !== undefined ? index + 1 : 1}`)?.defaultContent
+      return order ? parseInt(order) : (index || 0)
     }
-    return mappings
   }
 
-  const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
-    sectionId: sectionId,
+  // Filter valid navigation items
+  const navFilter = (item: NavItem) => item.label && item.label.trim() !== ""
+
+  const { contentItems: navItems, isLoading, error } = useSectionContent<NavItem>({
+    sectionId,
     websiteId,
-    fieldMappings: createNavItemMappings()
+    fieldMappings: navFieldMappings,
+    maxItemsPerSubsection: 13, // Adjust based on max number of nav items
+    filter: navFilter
   })
 
 
-  // Process content items to create nav items
-  const generateNavItemsFromDatabase = () => {
-    if (!contentItems || contentItems.length === 0) {
-      return []
-    }
-
-    const navItems: Array<{
-      id: string
-      href: string
-      label: string
-      order: number
-    }> = []
-
-    contentItems.forEach((item) => {
-      // Extract all nav items from each content item
-      for (let i = 1; i <= 13; i++) {
-        const navItemName = item[`navitem${i}`]
-        const navItemLink = item[`navlink${i}`]
-        const navItemOrder = item[`navorder${i}`]
-
-        if (navItemName && navItemName.trim() !== "") {
-          navItems.push({
-            id: navItemName.toLowerCase().replace(/\s+/g, ''),
-            href: navItemLink && navItemLink.startsWith('#') ? navItemLink : `#${navItemName.toLowerCase().replace(/\s+/g, '')}`,
-            label: navItemName,
-            order: navItemOrder ? parseInt(navItemOrder) : i
-          })
-        }
-      }
-    })
-
-    // Sort by order and remove duplicates
-    return navItems
-      .sort((a, b) => a.order - b.order)
-      .filter((item, index, self) => 
-        index === self.findIndex(t => t.id === item.id)
-      )
-  }
-
-  const navItems = generateNavItemsFromDatabase()
-
-
+  console.log("navItems:", navItems)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -99,73 +76,63 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Prevent scrolling when mobile menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden"
     } else {
       document.body.style.overflow = "unset"
     }
-
     return () => {
       document.body.style.overflow = "unset"
     }
   }, [isOpen])
 
-  // Check for hash in URL after page loads or changes
   useEffect(() => {
-    // Check if there's a hash in the URL when the component mounts
     if (typeof window !== 'undefined') {
-      const hash = window.location.hash;
+      const hash = window.location.hash
       if (hash) {
-        // Remove the # character
-        const sectionId = hash.substring(1);
-        // Small timeout to ensure the page has fully loaded
+        const sectionId = hash.substring(1)
         setTimeout(() => {
-          scrollToSection(sectionId);
-        }, 500);
+          scrollToSection(sectionId)
+        }, 500)
       }
     }
-  }, [pathname, scrollToSection]);
+  }, [pathname, scrollToSection])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
-    
-    // Get the current path and the home path
     const homePath = '/'
     const currentPath = pathname
-    
+
     if (currentPath === homePath) {
-      // If already on home page, just scroll to the section
       scrollToSection(sectionId)
     } else {
-      // If on another page, navigate to home page with hash
       router.push(`/${sectionId !== 'home' ? `#${sectionId}` : ''}`)
     }
-    
     setIsOpen(false)
   }
 
-  // Show loading state while fetching nav items
-  if (itemsLoading) {
+  if (isLoading || error) {
     return (
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/assets/iDIGITEK.webp"
-                alt="iDIGITEK Logo"
+                src={logo}
+                alt="Logo"
                 width={120}
                 height={40}
                 className="h-8 w-auto"
               />
             </Link>
           </div>
-          <div className="text-sm text-muted-foreground">Loading navigation...</div>
+          <div className="text-sm text-muted-foreground">
+            {isLoading ? "Loading navigation..." : "No navigation available"}
+          </div>
         </div>
       </header>
-    );
+    )
   }
 
   return (
@@ -191,7 +158,7 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
           <Link href="/" className="flex items-center gap-2">
             <Image
               src={logo}
-              alt="iDIGITEK Logo"
+              alt="Logo"
               width={120}
               height={40}
               className={`h-8 w-auto ${isOpen ? "brightness-200 contrast-200" : ""}`}
@@ -227,15 +194,6 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <LanguageToggle />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              
-            </motion.div>
           </div>
         </nav>
       </div>
@@ -246,11 +204,11 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
 interface MobileNavProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
-  navItems: { label: string; href: string; id: string; order: number }[]
+  navItems: NavItem[]
   handleNavClick: (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => void
 }
 
-function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick}: MobileNavProps) {
+function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick }: MobileNavProps) {
   const { direction } = useLanguage()
 
   return (
@@ -295,7 +253,6 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick}: MobileNavProp
                 <ThemeToggle />
                 <LanguageToggle />
               </div>
-          
             </nav>
           </motion.div>
         )}

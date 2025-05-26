@@ -3,14 +3,17 @@
 import { motion } from "framer-motion"
 import IndustryCard from "./IndustryCard"
 
+interface Industry {
+  id: string
+  title: string
+  excerpt: string
+  image: string
+  color: string
+  order?: number
+}
+
 interface IndustriesGridProps {
-  industries: Array<{
-    name: string
-    description: string
-    icon: string
-    color: string
-    bgColor: string
-  }>
+  industries: Industry[]
   isInView: boolean
 }
 
@@ -20,7 +23,7 @@ export default function IndustriesGrid({ industries, isInView }: IndustriesGridP
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
         {industries.map((industry, index) => (
           <IndustryCard 
-            key={index} 
+            key={industry.id || index}  // Use id for better React keys
             industry={industry} 
             index={index} 
             isInView={isInView} 

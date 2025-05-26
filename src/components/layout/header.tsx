@@ -25,16 +25,14 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
   const pathname = usePathname()
   const websiteId = localStorage.getItem("websiteId")
   
-  console.log(logo ? "Logo provided" : "No logo provided")
 
-  console.log("Website ID from localStorage:", websiteId)
-  console.log("Section ID:", sectionId)
+
 
   // Create dynamic field mappings for nav items
   const createNavItemMappings = () => {
     const mappings: Record<string, string> = {}
     // Create mappings for multiple nav items (adjust the number as needed)
-    for (let i = 1; i <= 20; i++) {
+    for (let i = 1; i <= 13; i++) {
       mappings[`navitem${i}`] = `Nav Item ${i}`
       mappings[`navlink${i}`] = `Nav Link ${i}`
       mappings[`navorder${i}`] = `Nav Order ${i}`
@@ -48,7 +46,6 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
     fieldMappings: createNavItemMappings()
   })
 
-  console.log("Content Items in Header:", contentItems)
 
   // Process content items to create nav items
   const generateNavItemsFromDatabase = () => {
@@ -65,7 +62,7 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
 
     contentItems.forEach((item) => {
       // Extract all nav items from each content item
-      for (let i = 1; i <= 20; i++) {
+      for (let i = 1; i <= 13; i++) {
         const navItemName = item[`navitem${i}`]
         const navItemLink = item[`navlink${i}`]
         const navItemOrder = item[`navorder${i}`]
@@ -91,82 +88,7 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
 
   const navItems = generateNavItemsFromDatabase()
 
-  // Define translations inside the component
-  const HeaderTranslations = {
-    en: {
-      header: {
-        services: "Services",
-        news: "News",
-        features: "Features",
-        projects: "Projects",
-        team: "Our Team",
-        caseStudies: "Case Studies",
-        partners: "Partners",
-        contact: "Contact",
-        requestDemo: "Request Demo",
-        blog: "Blog",
-        faq: "FAQ",
-        demo: "Demo",
-        home: "Home",
-        aboutus: "About Us",
-        portfolio: "Portfolio",
-        testimonials: "Testimonials",
-        clients: "Clients",
-        process: "Process",
-        ourprocess: "Our Process",
-        clientcomments: "Client Comments",
-        chooseus: "Why Choose Us",
-        industrysolutions: "Industry Solutions",
-        technologystack: "Technology Stack"
-      },
-    },
-    ar: {
-      header: {
-        services: "الخدمات",
-        features: "المميزات",
-        team: "فريقنا",
-        projects: "المشاريع",
-        news: "الاخبار",
-        caseStudies: "دراسات الحالة",
-        partners: "الشركاء",
-        contact: "اتصل بنا",
-        requestDemo: "طلب عرض توضيحي",
-        blog: "المدونة",
-        faq: "الاسئلة الشائعة",
-        demo: "طلب عرض",
-        home: "الرئيسية",
-        aboutus: "معلومات عنا",
-        portfolio: "الأعمال",
-        testimonials: "آراء العملاء",
-        clients: "العملاء",
-        process: "العملية",
-        ourprocess: "عمليتنا",
-        clientcomments: "تعليقات العميل",
-        chooseus: "لماذا تختارنا",
-        industrysolutions: "حلول الصناعة",
-        technologystack: "مجموعة التقنيات"
-      },
-    }
-  }
 
-  // Create a custom translation function that uses HeaderTranslations
-  const translate = (key: string) => {
-    try {
-      // Handle case where key is directly "header.X"
-      if (key.startsWith('header.')) {
-        const itemKey = key.replace('header.', '')
-        return HeaderTranslations[language]?.header?.[itemKey] || itemKey
-      }
-      
-      // Convert section names with spaces to translation keys
-      const translationKey = key.toLowerCase().replace(/\s+/g, '')
-      
-      return HeaderTranslations[language]?.header?.[translationKey] || key
-    } catch (error) {
-      console.error('Translation error:', error)
-      return key
-    }
-  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -282,8 +204,6 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
           setIsOpen={setIsOpen}
           navItems={navItems}
           handleNavClick={handleNavClick}
-          requestDemoText={translate("header.requestDemo")}
-          translate={translate}
         />
 
         <nav className="hidden md:flex items-center gap-6">
@@ -300,7 +220,7 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
                 onClick={(e) => handleNavClick(e, item.id)}
                 className="text-sm font-medium hover:text-primary"
               >
-                {translate(item.label)}
+                {item.label}
               </Link>
             </motion.div>
           ))}
@@ -314,11 +234,7 @@ export default function Header({ sectionId , logo }: { sectionId: string  , logo
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Button asChild className="btn-gradient text-white">
-                <Link href="#demo" onClick={(e) => handleNavClick(e, "demo")}>
-                  {translate("header.requestDemo")}
-                </Link>
-              </Button>
+              
             </motion.div>
           </div>
         </nav>
@@ -332,11 +248,9 @@ interface MobileNavProps {
   setIsOpen: (isOpen: boolean) => void
   navItems: { label: string; href: string; id: string; order: number }[]
   handleNavClick: (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => void
-  requestDemoText: string
-  translate: (key: string) => string
 }
 
-function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick, requestDemoText, translate }: MobileNavProps) {
+function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick}: MobileNavProps) {
   const { direction } = useLanguage()
 
   return (
@@ -373,7 +287,7 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick, requestDemoTex
                     className="text-lg font-medium text-white hover:text-primary"
                     onClick={(e) => handleNavClick(e, item.id)}
                   >
-                    {translate(item.label)}
+                    {item.label}
                   </Link>
                 </motion.div>
               ))}
@@ -381,18 +295,7 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick, requestDemoTex
                 <ThemeToggle />
                 <LanguageToggle />
               </div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, duration: 0.3 }}
-                className="mt-4"
-              >
-                <Button asChild className="w-full btn-gradient text-white">
-                  <Link href="#demo" onClick={(e) => handleNavClick(e, "demo")}>
-                    {requestDemoText}
-                  </Link>
-                </Button>
-              </motion.div>
+          
             </nav>
           </motion.div>
         )}

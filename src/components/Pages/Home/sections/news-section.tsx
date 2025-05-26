@@ -26,6 +26,7 @@ export default function NewsSection({ sectionId, websiteId }) {
     itemsKey: "news",
   })
 
+
   const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
     sectionId,
     websiteId,

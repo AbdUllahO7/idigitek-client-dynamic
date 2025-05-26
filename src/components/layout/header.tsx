@@ -37,6 +37,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp" }: He
 
   // Define field mappings for navigation items with dynamic {index}
   const navFieldMappings = {
+    
     id: (subsection: any, index?: number) =>
       subsection.elements?.find(el => el.name === `Nav Item ${index !== undefined ? index + 1 : 1}`)?.defaultContent
         ?.toLowerCase()
@@ -62,6 +63,9 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp" }: He
     maxItemsPerSubsection: 13, // Adjust based on max number of nav items
     filter: navFilter
   })
+
+
+  console.log("navItems:", navItems)
 
   useEffect(() => {
     const handleScroll = () => {

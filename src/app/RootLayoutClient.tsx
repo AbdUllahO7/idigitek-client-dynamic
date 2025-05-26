@@ -39,6 +39,7 @@ interface SectionItem {
 interface Section {
   _id: string;
   name: string;
+  subName: string;
   sectionItems: SectionItem[];
   // Add other section properties as needed
 }
@@ -61,12 +62,12 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
   );
 
   console.log("Websites:", websites);
-
+  console.log("Sections Data:", sectionsData);
 
   // Find the Header section
-  const headerSection = sectionsData?.data.find((section: Section) => section.name === "Header");
+  const headerSection = sectionsData?.data.find((section: Section) => section.subName === "Header");
   const headerSectionId = headerSection?._id;
-
+  console.log("Header Section ID:", headerSectionId);
   // Handle loading and error states
   if (websitesLoading || sectionsIsLoading) {
     return <div>Loading...</div>;

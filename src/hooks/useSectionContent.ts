@@ -1,28 +1,36 @@
 import { useLanguage } from "@/contexts/language-context"
 import { useSectionItems } from "@/lib/sectionItems/use-sectionItems"
 import { useSubSections } from "@/lib/subSections/use-subSections"
+import { useMemo } from "react"
 
-export function useSectionContent({
-  sectionId,
-  websiteId,
-  fieldMappings
-}: {
+interface UseSectionContentProps<T extends { order?: number }> {
   sectionId: string
   websiteId: string
-  fieldMappings: Record<string, any>
-}) {
+  fieldMappings: Record<string, string | ((subsection: any, index?: number) => any)>
+  maxItemsPerSubsection?: number // For numbered fields (e.g., Hero 1, Hero 2)
+  filter?: (item: T) => boolean
+}
+
+export function useSectionContent<T extends {
+  id: any 
+  order?: number 
+}>({
+  sectionId,
+  websiteId,
+  fieldMappings,
+  maxItemsPerSubsection = 1,
+  filter
+}: UseSectionContentProps<T>) {
   const { language } = useLanguage()
   const { useGetBySectionId } = useSectionItems()
   const { useGetBySectionItemIds } = useSubSections()
 
   // Fetch section items
-  const { data: sectionItems } = useGetBySectionId(sectionId)
-
-  // Extract section item IDs
+  const { data: sectionItems, error: sectionError } = useGetBySectionId(sectionId)
   const sectionItemIds = sectionItems?.data?.map(item => item._id) || []
 
-  // Fetch subsections for all section item IDs
-  const { data: subSections } = useGetBySectionItemIds(
+  // Fetch subsections
+  const { data: subSections, error: subSectionsError } = useGetBySectionItemIds(
     sectionItemIds,
     true, // activeOnly
     100, // limit
@@ -31,71 +39,75 @@ export function useSectionContent({
   )
 
   // Transform subsections into content items
-  const contentItems = subSections?.data?.map(subsection => {
-    const getTranslation = (element, lang) => {
-      const translation = element?.translations?.find(t => t.language.languageID === lang)
-      return translation?.content || element?.defaultContent || ""
-    }
+  const contentItems: T[] = useMemo(() => {
+    if (!subSections?.data) return []
 
-    const getElementValue = (element, lang) => {
-      // Check if this is an image element
-      if (element?.type === "image") {
-        // For image elements, prioritize imageUrl over translations/defaultContent
-        return element?.imageUrl || element?.defaultContent || ""
-      }
-      
-      // For non-image elements, use the regular translation logic
-      return getTranslation(element, lang)
-    }
+    const items: T[] = []
 
-    const item: Record<string, any> = {}
+    subSections.data.forEach((subsection, subsectionIndex) => {
+      // Determine how many items to extract from this subsection
+      const iterations = maxItemsPerSubsection > 1 ? maxItemsPerSubsection : 1
 
-    Object.entries(fieldMappings).forEach(([key, mapping]) => {
-      if (typeof mapping === "function") {
-        // Handle computed fields (e.g., static values or derived data)
-        item[key] = mapping(subsection)
-        return
-      }
+      for (let i = 0; i < iterations; i++) {
+        const item: Record<string, any> = {}
 
-      if (mapping.includes(".")) {
-        // Handle nested properties (e.g., "sectionItem.name")
-        const parts = mapping.split(".")
-        let value = subsection
-        for (const part of parts) {
-          value = value?.[part]
-          if (value === undefined) break
+        let hasValidFields = false
+        Object.entries(fieldMappings).forEach(([key, mapping]) => {
+          if (typeof mapping === "function") {
+            item[key] = mapping(subsection, i)
+            if (item[key]) hasValidFields = true
+            return
+          }
+
+          // Replace {index} in field names (e.g., "Hero {index} - Image" -> "Hero 1 - Image")
+          const fieldName = maxItemsPerSubsection > 1 ? mapping.replace("{index}", String(i + 1)) : mapping
+
+          if (fieldName === "_id") {
+            item[key] = subsection._id
+            hasValidFields = true
+            return
+          }
+
+          if (fieldName === "createdAt") {
+            item[key] = new Date(subsection.createdAt)
+            hasValidFields = true
+            return
+          }
+
+          const element = subsection.elements?.find(el => el.name === fieldName)
+          if (element) {
+            const getTranslation = (el, lang) =>
+              el?.translations?.find(t => t.language.languageID === lang)?.content || el?.defaultContent || ""
+            item[key] = element.type === "image" ? element.imageUrl || element.defaultContent || "" : getTranslation(element, language)
+            if (item[key]) hasValidFields = true
+          } else {
+            item[key] = ""
+          }
+        })
+
+        // Add order field if not explicitly mapped, ensuring type safety
+        if (!("order" in item) && subsection.order !== undefined) {
+          item.order = subsection.order ?? (subsectionIndex * iterations + i)
         }
-        item[key] = value || ""
-        return
-      }
 
-      if (mapping === "_id") {
-        // Handle direct _id access
-        item[key] = subsection._id
-        return
-      }
-
-      if (mapping === "createdAt") {
-        // Handle date fields
-        item[key] = new Date(subsection.createdAt)
-        return
-      }
-
-      // Handle element-based fields with translations
-      const element = subsection.elements?.find(el => el.name === mapping)
-      if (element) {
-        item[key] = getElementValue(element, language)
-      } else {
-        item[key] = ""
+        // Only add the item if it has valid fields and passes the filter
+        if (hasValidFields && (!filter || filter(item as T))) {
+          items.push(item as T)
+        }
       }
     })
 
-    return item
-  }) || []
+    // Sort items with type-safe access to order
+    return items.sort((a, b) => {
+      const aOrder = "order" in a ? a.order ?? 0 : 0
+      const bOrder = "order" in b ? b.order ?? 0 : 0
+      return aOrder - bOrder
+    })
+  }, [subSections, language, fieldMappings, maxItemsPerSubsection, filter])
 
   return {
     contentItems,
     isLoading: !subSections && !sectionItems,
-    error: subSections?.error || sectionItems?.error
+    error: subSectionsError || sectionError
   }
 }

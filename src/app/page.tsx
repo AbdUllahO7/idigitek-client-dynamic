@@ -82,7 +82,7 @@ export default function LandingPage() {
 
   // Map section names to components with section ID
   const sectionComponents: { [key: string]: (id: string) => JSX.Element } = {
-    // Hero: (id: string) => <HeroSection id={id} />,
+    Hero: (id: string) => <HeroSection websiteId = {websiteId} sectionId={id} />,
     // Services: (id: string) => <ServicesSection id={id} />,
     News: (id: string) => <NewsSection websiteId = {websiteId} sectionId={id} />,
     // IndustrySolutions: (id: string) => <IndustrySolutionsSection id={id} />,

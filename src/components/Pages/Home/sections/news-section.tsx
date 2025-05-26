@@ -7,7 +7,6 @@ import { motion, useInView, AnimatePresence } from "framer-motion"
 import { ArrowRight, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CardContent, CardFooter } from "@/components/ui/card"
-import { translationsNews } from "../ConstData/ConstData"
 import { useSectionLogic } from "@/hooks/useSectionLogic"
 import { useSectionContent } from "@/hooks/useSectionContent"
 import { useLanguage } from "@/contexts/language-context"
@@ -19,11 +18,11 @@ export default function NewsSection({ sectionId, websiteId }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const { language } = useLanguage()
-  localStorage.setItem("news-section-id", sectionId)
+
+  
   const { content, isLoading: sectionLoading, error: sectionError, refetch, direction, formatDate } = useSectionLogic({
     sectionId,
     websiteId,
-    fallbackTranslations: translationsNews,
     itemsKey: "news",
   })
 
@@ -220,7 +219,7 @@ export default function NewsSection({ sectionId, websiteId }) {
                       isInView={true}
                       direction={direction}
                       formatDate={formatDate}
-                      readMoreText={contentItems[activeIndex].readMore}
+                      readMoreText={content.readMore}
                       sectionId={sectionId}
                       websiteId={websiteId}
                     />

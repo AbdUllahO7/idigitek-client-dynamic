@@ -131,7 +131,7 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       className="relative w-full overflow-hidden bg-gradient-to-b from-background to-muted"
-      id="hero"
+      id="Hero"
       dir={direction}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

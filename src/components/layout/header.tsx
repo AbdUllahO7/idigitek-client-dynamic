@@ -24,9 +24,10 @@ interface NavItem {
 interface HeaderProps {
   sectionId: string
   logo?: string
+  subName?: string // Added to accept subName as a prop
 }
 
-export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp" }: HeaderProps) {
+export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subName }: HeaderProps) {
   const { language, direction } = useLanguage()
   const scrollToSection = useScrollToSection()
   const router = useRouter()
@@ -37,7 +38,6 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp" }: He
 
   // Define field mappings for navigation items with dynamic {index}
   const navFieldMappings = {
-    
     id: (subsection: any, index?: number) =>
       subsection.elements?.find(el => el.name === `Nav Item ${index !== undefined ? index + 1 : 1}`)?.defaultContent
         ?.toLowerCase()
@@ -60,12 +60,9 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp" }: He
     sectionId,
     websiteId,
     fieldMappings: navFieldMappings,
-    maxItemsPerSubsection: 13, // Adjust based on max number of nav items
+    maxItemsPerSubsection: 13,
     filter: navFilter
   })
-
-
-  console.log("navItems:", navItems)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,7 +86,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp" }: He
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const hash = window.location.hash
+      const hash = window.location.hash || (subName ? `#${subName}` : '') // Use subName if provided
       if (hash) {
         const sectionId = hash.substring(1)
         setTimeout(() => {
@@ -97,17 +94,20 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp" }: He
         }, 500)
       }
     }
-  }, [pathname, scrollToSection])
+  }, [pathname, scrollToSection, subName]) // Added subName to dependencies
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
     const homePath = '/'
     const currentPath = pathname
 
+    // Check if subName matches the sectionId or is provided
+    const targetSectionId = subName && sectionId === subName ? subName : sectionId
+
     if (currentPath === homePath) {
-      scrollToSection(sectionId)
+      scrollToSection(targetSectionId)
     } else {
-      router.push(`/${sectionId !== 'home' ? `#${sectionId}` : ''}`)
+      router.push(`/${targetSectionId !== 'home' ? `#${targetSectionId}` : ''}`)
     }
     setIsOpen(false)
   }
@@ -184,7 +184,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp" }: He
             >
               <Link
                 href={item.href}
-                onClick={(e) => handleNavClick(e, item.id)}
+                onClick={(e) => handleNavClick(e, subName && subName === item.label ? subName : item.id)} // Use subName if it matches label
                 className="text-sm font-medium hover:text-primary"
               >
                 {item.label}
@@ -243,7 +243,7 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick }: MobileNavPro
                   <Link
                     href={item.href}
                     className="text-lg font-medium text-white hover:text-primary"
-                    onClick={(e) => handleNavClick(e, item.id)}
+                    onClick={(e) => handleNavClick(e, item.id)} // Use item.id for mobile nav
                   >
                     {item.label}
                   </Link>

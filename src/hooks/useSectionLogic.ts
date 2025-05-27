@@ -78,6 +78,7 @@ export function useSectionLogic({
         sectionTitle: "",
         sectionDescription: "",
         readMore: "",
+        section: "",
         [itemsKey]: [],
         error: fallbackTranslations[language]?.error || fallbackTranslations["en"]?.error || "Error loading content",
         retry: fallbackTranslations[language]?.retry || fallbackTranslations["en"]?.retry || "Retry",
@@ -105,6 +106,12 @@ export function useSectionLogic({
               break
             case "news Details":
               content.readMore = translation.content
+              break
+            case "project Details":
+              content.readMore = translation.content
+              break
+          case "section":
+              content.section = translation.section
               break
           }
         }

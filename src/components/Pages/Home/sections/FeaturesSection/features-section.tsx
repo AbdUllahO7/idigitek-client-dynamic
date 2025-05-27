@@ -33,7 +33,6 @@ export default function FeaturesSection({ sectionId, websiteId }) {
       })
   const featureFilter = (item: Features) => item.title && item.title.trim() !== ""
 
-  console.log("FeaturesSection content:", content)
 
 
     const heroFieldMappings = {
@@ -59,7 +58,6 @@ export default function FeaturesSection({ sectionId, websiteId }) {
     filter: featureFilter
   })
 
-  console.log("FeaturesSection contentItems:", contentItems)
 
 
   return (

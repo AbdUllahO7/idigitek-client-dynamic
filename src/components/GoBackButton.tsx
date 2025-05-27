@@ -9,12 +9,14 @@ interface GoBackButtonProps {
   sectionName: string;
   textDirection?: string;
   className?: string;
+  title?: string;
 }
 
 export function GoBackButton({ 
   sectionName, 
   textDirection = "ltr",
-  className = ""
+  className = "",
+  title 
 }: GoBackButtonProps) {
   const router = useRouter();
   const pathname = usePathname();

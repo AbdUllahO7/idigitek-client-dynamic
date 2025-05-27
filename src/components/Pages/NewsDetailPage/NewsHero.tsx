@@ -13,10 +13,7 @@ export function NewsHero({ news, t }) {
   const isHeaderInView = useInView(headerRef, { once: true })
   const { language } = useLanguage()
 
-  // Debug log to inspect news object
-  if (process.env.NODE_ENV === "development") {
-    console.log("NewsHero rendered with news:", news)
-  }
+
 
   // Default color if not provided
   const color = news.color || "from-digitek-orange to-digitek-pink"

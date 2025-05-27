@@ -61,13 +61,10 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
     // languageId // Pass languageId for translations
   );
 
-  console.log("Websites:", websites);
-  console.log("Sections Data:", sectionsData);
 
   // Find the Header section
   const headerSection = sectionsData?.data.find((section: Section) => section.subName === "Header");
   const headerSectionId = headerSection?._id;
-  console.log("Header Section ID:", headerSectionId);
   // Handle loading and error states
   if (websitesLoading || sectionsIsLoading) {
     return <div>Loading...</div>;

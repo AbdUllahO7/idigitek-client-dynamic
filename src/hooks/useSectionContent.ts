@@ -14,6 +14,7 @@ interface UseSectionContentProps<T extends { order?: number }> {
 export function useSectionContent<T extends {
   id: any 
   order?: number 
+  isMain?: boolean
 }>({
   sectionId,
   websiteId,
@@ -88,6 +89,9 @@ export function useSectionContent<T extends {
         // Add order field if not explicitly mapped, ensuring type safety
         if (!("order" in item) && subsection.order !== undefined) {
           item.order = subsection.order ?? (subsectionIndex * iterations + i)
+        }
+        if (!("isMain" in item) && subsection.isMain !== undefined) {
+          item.isMain = subsection.isMain ?? (subsectionIndex * iterations + i)
         }
 
         // Only add the item if it has valid fields and passes the filter

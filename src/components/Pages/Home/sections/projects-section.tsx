@@ -1,59 +1,124 @@
-"use client"
+"use client";
 
-import { useRef, useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { motion, AnimatePresence, useInView } from "framer-motion"
-import {ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
-import { Button } from "@/components/ui/button"
-import { CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { translationsProject } from "../ConstData/ConstData"
-import { ButtonSectionLink } from "@/components/SectionLinks"
+import { useRef, useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
+import { Button } from "@/components/ui/button";
+import { CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useSectionLogic } from "@/hooks/useSectionLogic";
+import { useSectionContent } from "@/hooks/useSectionContent";
+import { useSectionItems } from "@/lib/sectionItems/use-sectionItems";
 
-export default function ProjectsSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, amount: 0.2 })
-  const { language, direction } = useLanguage()
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [direction1, setDirection1] = useState(0) // -1 for left, 1 for right
+export default function ProjectsSection({ sectionId, websiteId }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, amount: 0.2 });
+  const {  direction } = useLanguage();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [direction1, setDirection1] = useState(0); // -1 for left, 1 for right
 
-  // Get current language content
-  const content = translationsProject[language] || translationsProject["en"]
+  const { content, isLoading: sectionLoading, error: sectionError, formatDate } = useSectionLogic({
+    sectionId,
+    websiteId,
+    itemsKey: "projects",
+  });
+
+  
+
+
+  const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
+    sectionId,
+    websiteId,
+    fieldMappings: {
+      id: "_id",
+      image: "Background Image",
+      title: "Title",
+      excerpt: "Description",
+      readMore: "Back Link Text",
+      category: "Category",
+      date: "createdAt",
+      section : "section",
+      color: () => "from-digitek-orange to-digitek-pink",
+    },
+  });
+
+  // Validate that all required fields are non-empty
+  const requiredFields = ["id", "image", "title", "excerpt", "category", "date"];
+  const projects = (contentItems || []).filter((project) =>
+    requiredFields.every(
+      (field) => project[field] != null && project[field] !== "" && project[field] !== undefined
+    )
+  );
+
+
+
+
+  // Ensure activeIndex is valid
+  useEffect(() => {
+    if (projects.length > 0 && activeIndex >= projects.length) {
+      setActiveIndex(0);
+    }
+  }, [projects.length, activeIndex]);
 
   // Auto-rotate carousel
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDirection1(1)
-      setActiveIndex((prev) => (prev === content.projects.length - 1 ? 0 : prev + 1))
-    }, 5000)
+    if (projects.length <= 1) return; // No need to rotate if 0 or 1 project
+    const timer = setInterval(() => {
+      setDirection1(1);
+      setActiveIndex((prev) => (prev === projects.length - 1 ? 0 : prev + 1));
+    }, 5000);
 
-    return () => clearTimeout(timer)
-  }, [activeIndex, content.projects.length])
+    return () => clearInterval(timer);
+  }, [projects.length]);
 
   const nextProject = () => {
-    setDirection1(1)
-    setActiveIndex((prev) => (prev === content.projects.length - 1 ? 0 : prev + 1))
-  }
+    if (projects.length <= 1) return;
+    setDirection1(1);
+    setActiveIndex((prev) => (prev === projects.length - 1 ? 0 : prev + 1));
+  };
 
   const prevProject = () => {
-    setDirection1(-1)
-    setActiveIndex((prev) => (prev === 0 ? content.projects.length - 1 : prev - 1))
-  }
+    if (projects.length <= 1) return;
+    setDirection1(-1);
+    setActiveIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
+  };
 
   // Get visible projects for desktop view (3 at a time)
   const getVisibleProjects = () => {
-    const totalProjects = content.projects.length
-    if (totalProjects <= 3) return content.projects
-
-    const projects = []
+    if (projects.length <= 3) return projects;
+    const visibleProjects = [];
     for (let i = 0; i < 3; i++) {
-      const index = (activeIndex + i) % totalProjects
-      projects.push(content.projects[index])
+      const index = (activeIndex + i) % projects.length;
+      visibleProjects.push(projects[index]);
     }
-    return projects
+    return visibleProjects;
+  };
+
+  // Create a slug function
+  const createSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .trim();
+  };
+
+
+
+  if (sectionError || itemsError) {
+    return (
+      <section className="relative w-full py-20" id="projects" dir={direction}>
+        <div className="container text-center text-red-500">
+          Error: {sectionError?.message || itemsError?.message || "Failed to load projects"}
+        </div>
+      </section>
+    );
   }
+
+
 
   // Variants for animations
   const containerVariants = {
@@ -69,24 +134,14 @@ export default function ProjectsSection() {
       opacity: 0,
       transition: { staggerChildren: 0.05, staggerDirection: -1 },
     },
-  }
-
-  // Create a slug function to create URL-friendly links for projects
-  const createSlug = (title: string) => {
-    return title.toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .trim();
-  }
+  };
 
   return (
     <section className="relative w-full py-20 overflow-hidden" id="projects" dir={direction}>
       {/* Background elements */}
       <div className="absolute inset-0 bg-gradient-to-b from-background to-muted/30"></div>
-
       <div className="absolute top-0 right-0 w-full h-40 bg-grid-pattern opacity-5 transform rotate-3"></div>
       <div className="absolute bottom-0 left-0 w-full h-40 bg-grid-pattern opacity-5 transform -rotate-3"></div>
-
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
@@ -108,7 +163,7 @@ export default function ProjectsSection() {
             transition={{ duration: 0.6 }}
             className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium"
           >
-            {content.sectionTitle}
+            {content.sectionLabel || "Projects"}
           </motion.div>
 
           <motion.h2
@@ -117,7 +172,7 @@ export default function ProjectsSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight max-w-3xl"
           >
-            {content.mainTitle}
+            {content.sectionTitle || "Our Projects"}
           </motion.h2>
 
           <motion.p
@@ -126,7 +181,7 @@ export default function ProjectsSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-2xl text-muted-foreground text-lg"
           >
-            {content.mainDescription}
+            {content.sectionDescription || "Explore our latest work"}
           </motion.p>
         </div>
 
@@ -147,9 +202,12 @@ export default function ProjectsSection() {
                     key={`${project.id}-${activeIndex}-${index}`}
                     project={project}
                     index={index}
-                    isInView={true}
-                    viewCaseStudyText={content.viewCaseStudy}
+                    isInView={isInView}
+                    viewCaseStudyText={content.readMore || "View Case Study"}
                     custom={direction1}
+                    createSlug={createSlug}
+                    websiteId={websiteId}
+                    sectionId={sectionId}
                   />
                 ))}
               </motion.div>
@@ -163,9 +221,10 @@ export default function ProjectsSection() {
               size="icon"
               className="rounded-full bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-background"
               onClick={prevProject}
+              disabled={projects.length <= 1}
             >
               <ChevronLeft className="h-5 w-5" />
-              <span className="sr-only">{content.previousProject}</span>
+              <span className="sr-only">{content.previousProject || "Previous Project"}</span>
             </Button>
 
             <Button
@@ -173,22 +232,24 @@ export default function ProjectsSection() {
               size="icon"
               className="rounded-full bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-background"
               onClick={nextProject}
+              disabled={projects.length <= 1}
             >
               <ChevronRight className="h-5 w-5" />
-              <span className="sr-only">{content.nextProject}</span>
+              <span className="sr-only">{content.nextProject || "Next Project"}</span>
             </Button>
           </div>
 
           {/* Progress bar */}
           <div className="mt-8 flex justify-center items-center gap-2">
-            {content.projects.map((_, index) => (
+            {projects.map((project, index) => (
               <button
                 key={index}
                 onClick={() => {
-                  setDirection1(index > activeIndex ? 1 : -1)
-                  setActiveIndex(index)
+                  setDirection1(index > activeIndex ? 1 : -1);
+                  setActiveIndex(index);
                 }}
                 className="group flex flex-col items-center"
+                aria-label={`Go to project ${project.id || `number ${index + 1}`}`}
               >
                 <div className="relative h-1 w-8 bg-muted overflow-hidden rounded-full">
                   <motion.div
@@ -199,7 +260,9 @@ export default function ProjectsSection() {
                   />
                 </div>
                 <span
-                  className={`text-xs mt-1 ${index === activeIndex ? "text-primary" : "text-muted-foreground"} group-hover:text-primary transition-colors`}
+                  className={`text-xs mt-1 ${
+                    index === activeIndex ? "text-primary" : "text-muted-foreground"
+                  } group-hover:text-primary transition-colors`}
                 >
                   {index + 1}
                 </span>
@@ -214,31 +277,34 @@ export default function ProjectsSection() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={activeIndex}
-                initial={{ 
+                initial={{
                   x: direction1 > 0 ? 300 : -300,
-                  opacity: 0 
+                  opacity: 0,
                 }}
                 animate={{
                   x: 0,
-                  opacity: 1
+                  opacity: 1,
                 }}
-                exit={{ 
+                exit={{
                   x: direction1 > 0 ? -300 : 300,
-                  opacity: 0 
+                  opacity: 0,
                 }}
                 transition={{
                   type: "spring",
                   stiffness: 300,
-                  damping: 30
+                  damping: 30,
                 }}
                 className="w-full"
               >
                 <ProjectCard
-                  project={content.projects[activeIndex]}
+                  project={projects[activeIndex]}
                   index={0}
-                  isInView={true}
-                  viewCaseStudyText={content.viewCaseStudy}
+                  isInView={isInView}
+                  viewCaseStudyText={content.readMore || "View Case Study"}
                   custom={direction1}
+                  createSlug={createSlug}
+                  websiteId={websiteId}
+                  sectionId={sectionId}
                 />
               </motion.div>
             </AnimatePresence>
@@ -251,9 +317,10 @@ export default function ProjectsSection() {
               size="icon"
               className="rounded-full bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-background"
               onClick={prevProject}
+              disabled={projects.length <= 1}
             >
               <ChevronLeft className="h-5 w-5" />
-              <span className="sr-only">{content.previousProject}</span>
+              <span className="sr-only">{content.previousProject || "Previous Project"}</span>
             </Button>
 
             <Button
@@ -261,68 +328,38 @@ export default function ProjectsSection() {
               size="icon"
               className="rounded-full bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-background"
               onClick={nextProject}
+              disabled={projects.length <= 1}
             >
               <ChevronRight className="h-5 w-5" />
-              <span className="sr-only">{content.nextProject}</span>
+              <span className="sr-only">{content.nextProject || "Next Project"}</span>
             </Button>
           </div>
 
           {/* Dots navigation */}
           <div className="flex justify-center gap-2 mt-6">
-            {content.projects.map((_, index) => (
+            {projects.map((project, index) => (
               <button
                 key={index}
                 onClick={() => {
-                  setDirection1(index > activeIndex ? 1 : -1)
-                  setActiveIndex(index)
+                  setDirection1(index > activeIndex ? 1 : -1);
+                  setActiveIndex(index);
                 }}
                 className={`w-3 h-3 rounded-full transition-all ${
                   activeIndex === index ? "bg-primary w-8" : "bg-primary/30 hover:bg-primary/50"
                 }`}
-                aria-label={`${content.goToProject} ${index + 1}`}
+                aria-label={`Go to project ${project.id || `number ${index + 1}`}`}
               />
             ))}
           </div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-16 text-center"
-        ></motion.div>
       </div>
     </section>
-  )
+  );
 }
 
-interface ProjectCardProps {
-  project: {
-    id: string
-    title: string
-    description: string
-    image: string
-    category: string
-    technologies: string[]
-    color: string
-  }
-  index: number
-  isInView: boolean
-  viewCaseStudyText: string
-  custom?: number
-}
-
-function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0 }: ProjectCardProps) {
-  const { direction } = useLanguage()
-  const isRTL = direction === "rtl"
-
-  // Create a slug function for project URL
-  const createSlug = (title: string) => {
-    return title.toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .trim();
-  };
+function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0, createSlug, sectionId, websiteId }) {
+  const { direction } = useLanguage();
+  const isRTL = direction === "rtl";
 
   // Card animation variants
   const cardVariants = {
@@ -362,15 +399,23 @@ function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0 }
     },
   };
 
+  // Fallback for missing project data
+  if (!project) {
+    return null;
+  }
+
   return (
     <motion.div
       variants={cardVariants}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      exit="exit"
       whileHover="hover"
       className="group relative overflow-hidden rounded-2xl bg-background border border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col"
     >
       {/* Animated gradient overlay */}
       <motion.div
-        className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500 z-0`}
+        className={`absolute inset-0 bg-gradient-to-br ${project.color || "from-digitek-orange to-digitek-pink"} opacity-0 group-hover:opacity-5 transition-opacity duration-500 z-0`}
         initial={{ opacity: 0 }}
         whileHover={{ opacity: 0.05 }}
         transition={{ duration: 0.3 }}
@@ -379,7 +424,7 @@ function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0 }
       <div className="relative overflow-hidden aspect-video">
         <Image
           src={project.image || "/placeholder.svg"}
-          alt={project.title}
+          alt={project.title || "Project image"}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
@@ -388,10 +433,14 @@ function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0 }
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
+            transition={{ delay: 0.2 + index * 0.15, duration: 0.5 }}
           >
-            <span className={`px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r ${project.color}`}>
-              {project.category}
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r ${
+                project.color || "from-digitek-orange to-digitek-pink"
+              }`}
+            >
+              {project.category || "Uncategorized"}
             </span>
           </motion.div>
         </div>
@@ -402,62 +451,63 @@ function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0 }
           className="text-xl font-bold mb-3 group-hover:text-primary transition-colors"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
+          transition={{ delay: 0.3 + index * 0.15, duration: 0.5 }}
         >
-          {project.title}
+          {project.title || "Untitled Project"}
         </motion.h3>
 
         <motion.p
           className="text-muted-foreground mb-4"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
+          transition={{ delay: 0.4 + index * 0.15, duration: 0.5 }}
         >
-          {project.description}
+          {project.excerpt || "No description available"}
         </motion.p>
 
-        <motion.div
-          className="flex flex-wrap gap-2 mb-4"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-        >
-          {project.technologies.map((tech, i) => (
-            <Badge key={i} variant="secondary" className="font-normal">
-              {tech}
-            </Badge>
-          ))}
-        </motion.div>
+        {project.technologies?.length > 0 && (
+          <motion.div
+            className="flex flex-wrap gap-2 mb-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 + index * 0.15, duration: 0.5 }}
+          >
+            {project.technologies.map((tech, i) => (
+              <Badge key={i} variant="secondary" className="font-normal">
+                {tech}
+              </Badge>
+            ))}
+          </motion.div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
+          transition={{ delay: 0.6 + index * 0.15, duration: 0.5 }}
         >
-              <ButtonSectionLink 
-              href={`/Pages/ProjectsDetailPage/${project.id}`} 
-              className="group text-xs md:text-sm px-3 py-1.5 md:px-4 md:py-2 bg-neutral-900 text-neutral-50 bg-gradient-to-tr from-digitek-pink to-digitek-purple shadow hover:bg-neutral-900/90 dark:bg-neutral-50 dark:text-white dark:hover:bg-neutral-50/90"
-                >
-            {viewCaseStudyText}              
-
-            <ArrowRight className={`${isRTL ? 'mr-1 md:mr-2 rotate-180' : 'ml-1 md:ml-2'} h-3 w-3 md:h-4 md:w-4 transition-transform duration-300 ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
-            </ButtonSectionLink>
           <Link
-            href={`/Pages/ProjectsDetailPage/${project.id}`}
+            href={`/Pages/ProjectsDetailPage/${project.id}?sectionId=${sectionId}&websiteId=${websiteId}`}
             className="inline-flex items-center text-primary font-medium hover:underline"
           >
-
+            { viewCaseStudyText }
+            <ArrowRight
+              className={`${isRTL ? "mr-1 rotate-180" : "ml-1"} h-4 w-4 transition-transform duration-300 ${
+                isRTL ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"
+              }`}
+            />
           </Link>
         </motion.div>
       </CardContent>
 
       {/* Corner accent */}
       <motion.div
-        className={`absolute -bottom-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-r ${project.color} opacity-10 group-hover:opacity-20 transition-opacity duration-500`}
+        className={`absolute -bottom-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-r ${
+          project.color || "from-digitek-orange to-digitek-pink"  
+        } opacity-10 group-hover:opacity-20 transition-opacity duration-500`}
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ delay: 0.3 + index * 0.1, duration: 0.6, type: "spring" }}
-      ></motion.div>
+        transition={{ delay: 0.3 + index * 0.15, duration: 0.6, type: "spring" }}
+      />
     </motion.div>
-  )
+  );
 }

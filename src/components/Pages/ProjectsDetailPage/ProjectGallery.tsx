@@ -1,24 +1,99 @@
+"use client"
+
 import React from "react"
 import Image from "next/image"
-import { Project } from "./Projects"
+import { useLanguage } from "@/contexts/language-context"
 
 interface ProjectGalleryProps {
-  project: Project
+  project: {
+    _id: string
+    elements: {
+      _id: string
+      name: string
+      type: string
+      defaultContent: string
+      translations: {
+        _id: string
+        content: string
+        language: {
+          languageID: string
+        }
+      }[]
+    }[]
+  }
+  clients: {
+    _id?: string
+    elements: {
+      _id: string
+      name: string
+      type: string
+      defaultContent: string
+      imageUrl?: string
+      translations: {
+        _id: string
+        content: string
+        language: {
+          languageID: string
+        }
+      }[]
+    }[]
+  }
 }
 
-export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project }) => {
+export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, clients }) => {
+  const { language } = useLanguage()
+
+  // Helper function to get translated content (for title)
+  const getTranslatedContent = (element: any, lang: string): string => {
+    if (!element) {
+      console.log("Element is undefined")
+      return ""
+    }
+    if (!element.translations || !element.translations.length) {
+      console.log(`No translations for element ${element.name}, using default: ${element.defaultContent}`)
+      return element.defaultContent || ""
+    }
+
+    const translation = element.translations.find((t: any) => t.language.languageID === lang)
+    const content = translation ? translation.content : element.defaultContent
+    console.log(`Element ${element.name}:`, { lang, translation, content })
+    return content || ""
+  }
+
+  // Extract title for alt text
+  const titleElement = project?.elements?.find((e) => e.name === "Title")
+  const title = getTranslatedContent(titleElement, language) || "Project"
+
+  // Extract all image elements from clients
+  const imageElements = clients?.elements?.filter((e) => e.type === "image") || []
+  const images = imageElements.map((e) => ({
+    url: e.imageUrl || e.defaultContent || "/placeholder.svg",
+    name: e.name,
+  }))
+
+  console.log("Gallery Images:", images)
+  console.log("Project Title for Alt:", title)
+
+  // Don't render if no images
+  if (!images.length) {
+    console.log("No images found for gallery, skipping render")
+    return null
+  }
+
   return (
     <section className="container px-4 md:px-6">
       <div className="max-w-5xl mx-auto mb-12">
         <h3 className="text-2xl font-bold mb-6">Project Gallery</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          {project.gallery.map((image, index) => (
+          {images.map((image, index) => (
             <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
               <Image
-                src={image || "/placeholder.svg"}
-                alt={`${project.title} gallery image ${index + 1}`}
+                src={image.url}
+                alt={`${title} gallery image ${index + 1}`}
                 fill
                 className="object-cover hover:scale-105 transition-transform duration-300"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 300px"
+                priority={index < 2} // Prioritize first two images for faster loading
               />
             </div>
           ))}

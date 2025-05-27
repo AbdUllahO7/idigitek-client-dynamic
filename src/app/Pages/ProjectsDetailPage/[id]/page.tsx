@@ -25,7 +25,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     return <ProjectNotFound />
   }
   if (!projectData || !sectionData) {
-    console.log("Data not loaded yet")
     return <div>Loading...</div>
   }
 
@@ -38,9 +37,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     section.elements.some((element: any) => element.name === "Technologies")
   )
 
-  console.log("Project Section:", projectSection)
-  console.log("Clients Section:", clientsSection)
-  console.log("Section Data:", sectionData)
+
 
   return (
     <div className="min-h-screen bg-background" dir={direction}>

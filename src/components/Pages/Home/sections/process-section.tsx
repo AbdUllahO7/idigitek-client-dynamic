@@ -5,12 +5,39 @@ import Image from "next/image"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useLanguage } from "@/contexts/language-context"
 import { ProcessSteps } from "../ConstData/ConstData"
+import { useSectionLogic } from "@/hooks/useSectionLogic"
+import { useSectionContent } from "@/hooks/useSectionContent"
 
-export default function ProcessSection() {
-  const { t, direction, language } = useLanguage()
+export default function ProcessSection({websiteId , sectionId}) {
+  const { t,  language } = useLanguage()
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
   
+
+    const { content, isLoading: sectionLoading, error: sectionError, refetch, direction, formatDate } = useSectionLogic({
+      sectionId,
+      websiteId,
+      itemsKey: "process",
+    })
+
+
+      const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
+        sectionId,
+        websiteId,
+        fieldMappings: {
+          id: "_id",
+          image: "Background Image",
+          title: "Title",
+          excerpt: "Description",
+          date: "createdAt",
+          color: () => "from-digitek-orange to-digitek-pink"
+        }
+      })
+    
+
+    console.log("ProcessSection contentItems:", contentItems)
+  
+
   // Parallax effect for background elements
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -21,7 +48,6 @@ export default function ProcessSection() {
   const yBgShape2 = useTransform(scrollYProgress, [0, 1], [0, -200])
   const opacityBg = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
 
- 
 
   // Function to get current language text
   const getCurrentText = (step: any, field: 'title' | 'description') => {
@@ -58,28 +84,39 @@ export default function ProcessSection() {
           className="flex flex-col items-center justify-center space-y-4 text-center max-w-3xl mx-auto"
         >
           <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-digitek-pink mb-2">
-            {direction === "rtl" ? "عمليتنا" : "Our Process"}
+            {content.sectionLabel}
             <span className="ml-2 inline-block w-1.5 h-1.5 rounded-full bg-digitek-pink animate-pulse"></span>
           </span>
           <h2 className="text-4xl font-bold text-black dark:text-white md:text-5xl lg:text-6xl bg-clip-text">
-            {direction === "rtl" ? "رحلتك نحو النجاح" : " Your Journey to  Success"}
+            {content.sectionTitle}
           </h2>
           <p className="text-lg text-black dark:text-white md:text-xl">
-            {direction === "rtl" ? "تضمن منهجيتنا المجربة تجربة سلسة من الاستشارة الأولية إلى التنفيذ الناجح وما بعده." : "Our proven methodology ensures a seamless experience from initial consultation to successful implementation and beyond."}
+            {content.sectionDescription}
           </p>
         </motion.div>
 
-        <div className="mt-24 space-y-32 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-16 xl:gap-24">
-          {ProcessSteps.map((step, index) => (
-            <ProcessStep 
-              key={index} 
-              step={step} 
-              index={index} 
-              isInView={isInView} 
-              isLast={index === ProcessSteps.length - 1}
-              getCurrentText={getCurrentText}
-            />
-          ))}
+        <div className="mt-24 space-y-32 lg:space-y-0 lg:grid lg:grid-cols-1 lg:gap-16 xl:gap-24">
+                  <div className="mt-24 space-y-32 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-16 xl:gap-24">
+            {contentItems.map((item, index) => (
+              <ProcessStep 
+                key={item.id} 
+                step={{
+                  number: `${index + 1}`, // Generate step number (e.g., 1, 2, 3)
+                  titleEn: item.title, // Assuming title is in English
+                  titleAr: item.titleAr || item.title, // Fallback to English if no Arabic title
+                  descriptionEn: item.excerpt, // Map excerpt to description
+                  descriptionAr: item.excerptAr || item.excerpt, // Fallback to English if no Arabic description
+                  color: item.color,
+                  image: item.image,
+                  accent: item.accent || (index % 3 === 0 ? "pink" : index % 3 === 1 ? "purple" : "orange") // Fallback accent colors
+                }} 
+                index={index} 
+                isInView={isInView} 
+                isLast={index === contentItems.length - 1}
+                getCurrentText={getCurrentText}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Connection lines for desktop - visible only on lg+ screens */}

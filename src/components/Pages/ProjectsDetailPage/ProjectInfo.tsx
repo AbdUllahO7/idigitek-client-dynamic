@@ -44,17 +44,14 @@ export const ProjectInfo: React.FC<ProjectInfoProps> = ({ project, clients }) =>
   // Helper function to get translated content
   const getTranslatedContent = (element: any, lang: string): string => {
     if (!element) {
-      console.log("Element is undefined")
       return ""
     }
     if (!element.translations || !element.translations.length) {
-      console.log(`No translations for element ${element.name}, using default: ${element.defaultContent}`)
       return element.defaultContent || ""
     }
 
     const translation = element.translations.find((t: any) => t.language.languageID === lang)
     const content = translation ? translation.content : element.defaultContent
-    console.log(`Element ${element.name}:`, { lang, translation, content })
     return content || ""
   }
 
@@ -83,11 +80,9 @@ export const ProjectInfo: React.FC<ProjectInfoProps> = ({ project, clients }) =>
   // Convert technologies string to array (split by comma or other delimiter)
   const technologies = technologiesString ? technologiesString.split(",").map((tech) => tech.trim()) : []
 
-  console.log("ProjectInfo Data:", {  client, industry, year, technologies })
 
   // Don't render if no data
   if (!project || !clients || ( !client && !industry && !year && !technologies.length)) {
-    console.log("No valid data for ProjectInfo, skipping render")
     return null
   }
 

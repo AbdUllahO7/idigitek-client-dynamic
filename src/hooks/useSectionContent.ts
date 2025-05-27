@@ -12,6 +12,13 @@ interface UseSectionContentProps<T extends { order?: number }> {
 }
 
 export function useSectionContent<T extends {
+  excerpt: string
+  excerptAr: any
+  color: string
+  image: string
+  accent: string
+  titleAr: string
+  title: string
   id: any 
   order?: number 
   isMain?: boolean
@@ -107,6 +114,8 @@ export function useSectionContent<T extends {
       const bOrder = "order" in b ? b.order ?? 0 : 0
       return aOrder - bOrder
     })
+
+    
   }, [subSections, language, fieldMappings, maxItemsPerSubsection, filter])
 
   return {

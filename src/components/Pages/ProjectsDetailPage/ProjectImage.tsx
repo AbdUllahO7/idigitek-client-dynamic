@@ -34,13 +34,10 @@ export const ProjectImage: React.FC<ProjectImageProps> = ({ project }) => {
   const titleElement = project?.elements?.find((e) => e.name === "Title")
   const altText = titleElement?.defaultContent || "Project Image"
 
-  console.log("Image Element:", imageElement)
-  console.log("Image URL:", image)
-  console.log("Alt Text:", altText)
+
 
   // Don't render if no valid image
   if (!imageElement || !image) {
-    console.log("No valid image found, skipping render")
     return null
   }
 

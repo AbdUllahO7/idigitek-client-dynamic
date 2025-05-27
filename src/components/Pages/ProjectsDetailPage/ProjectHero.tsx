@@ -53,13 +53,11 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
       return ""
     }
     if (!element.translations || !element.translations.length) {
-      console.log(`No translations for element ${element.name}, using default: ${element.defaultContent}`)
       return element.defaultContent || ""
     }
 
     const translation = element.translations.find((t: any) => t.language.languageID === lang)
     const content = translation ? translation.content : element.defaultContent
-    console.log(`Element ${element.name}:`, { lang, translation, content })
     return content || ""
   }
 

@@ -109,7 +109,7 @@ export default function LandingPage() {
     // Services: (id: string, websiteId?: string) => <ServicesSection websiteId={websiteId} sectionId={id} />,
     whyChooseUs: (id: string, websiteId?: string) => <FeaturesSection  websiteId={websiteId} sectionId={id}/>,
     Projects: (id: string, websiteId?: string) => <ProjectsSection websiteId={websiteId} sectionId={id} />,
-    // Process: (id: string, websiteId?: string) => <ProcessSection websiteId={websiteId} sectionId={id} />,
+    OurProcess: (id: string, websiteId?: string) => <ProcessSection websiteId={websiteId} sectionId={id} />,
     // Team: (id: string, websiteId?: string) => <TeamSection websiteId={websiteId} sectionId={id} />,
     // Testimonials: (id: string, websiteId?: string) => (
     //   <TestimonialsSection websiteId={websiteId} sectionId={id} />

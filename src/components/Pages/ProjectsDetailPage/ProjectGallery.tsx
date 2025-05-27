@@ -46,17 +46,14 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, clients
   // Helper function to get translated content (for title)
   const getTranslatedContent = (element: any, lang: string): string => {
     if (!element) {
-      console.log("Element is undefined")
       return ""
     }
     if (!element.translations || !element.translations.length) {
-      console.log(`No translations for element ${element.name}, using default: ${element.defaultContent}`)
       return element.defaultContent || ""
     }
 
     const translation = element.translations.find((t: any) => t.language.languageID === lang)
     const content = translation ? translation.content : element.defaultContent
-    console.log(`Element ${element.name}:`, { lang, translation, content })
     return content || ""
   }
 
@@ -71,12 +68,8 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, clients
     name: e.name,
   }))
 
-  console.log("Gallery Images:", images)
-  console.log("Project Title for Alt:", title)
-
   // Don't render if no images
   if (!images.length) {
-    console.log("No images found for gallery, skipping render")
     return null
   }
 

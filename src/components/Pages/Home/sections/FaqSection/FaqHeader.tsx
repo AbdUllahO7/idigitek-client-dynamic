@@ -20,7 +20,7 @@ export const FaqHeader = ({ content, isInView, isRTL, searchQuery, setSearchQuer
             className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium rounded-full bg-gradient-to-r from-violet-500/10 to-indigo-500/10 text-primary border border-primary/20 backdrop-blur-sm"
         >
             <MessageCircleQuestion className="w-4 h-4" />
-            <span>{content.badge}</span>
+            <span>{content.sectionLabel}</span>
         </motion.div>
 
         <motion.h2
@@ -31,7 +31,7 @@ export const FaqHeader = ({ content, isInView, isRTL, searchQuery, setSearchQuer
         >
             <span className="relative inline-block">
             <span className="relative bg-clip-text bg-gradient-to-r text-black dark:text-white dark:to-purple-400">
-                {content.heading}
+                {content.sectionTitle}
             </span>
             </span>
         </motion.h2>
@@ -42,7 +42,7 @@ export const FaqHeader = ({ content, isInView, isRTL, searchQuery, setSearchQuer
             transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.3 }}
             className="mt-6 text-xl text-muted-foreground"
         >
-            {content.subheading}
+            {content.sectionDescription}
         </motion.p>
         </motion.div>
     )

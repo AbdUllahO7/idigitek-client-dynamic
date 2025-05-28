@@ -58,7 +58,6 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
     filter: featureFilter,
   })
 
-  console.log("contentItems", contentItems)
 
   // Reset active index on language change
   useEffect(() => {

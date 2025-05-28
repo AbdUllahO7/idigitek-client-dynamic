@@ -15,6 +15,8 @@ export default function PartnersSection({ websiteId, sectionId }) {
   const { ref, isInView } = useScrollAnimation()
   const { t, direction, language } = useLanguage()
   const containerRef = useRef<HTMLDivElement>(null)
+
+  
   const {
     content,
     isLoading: sectionLoading,
@@ -29,7 +31,7 @@ export default function PartnersSection({ websiteId, sectionId }) {
 
   const featureFilter = (item: { image: string }) => item.image && item.image.trim() !== ""
 
-const ContentItemsMappings = {
+  const ContentItemsMappings = {
         id: (subsection: any, index?: number) => `${subsection._id}-${index || 0}`,
         date : "createdAt",
         image: "Image {index}",
@@ -39,9 +41,6 @@ const ContentItemsMappings = {
             ?.defaultContent || "from-digitek-orange to-digitek-pink",
         order: (subsection: any, index?: number) => subsection.order || index || 0,
   }
-
-
-  
 
   const {
     contentItems,
@@ -55,9 +54,7 @@ const ContentItemsMappings = {
     filter: featureFilter,
   })
 
-  console.log("contentItems partners" , contentItems)
   const isRTL = direction === "rtl"
-
 
   return (
     <section id="partners" className="w-full py-20" dir={direction}>

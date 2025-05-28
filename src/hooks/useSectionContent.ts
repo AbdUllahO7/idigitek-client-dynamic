@@ -12,6 +12,7 @@ interface UseSectionContentProps<T extends { order?: number }> {
 }
 
 export function useSectionContent<T extends {
+  question: any
   logo: string
   jobAr: string
   job: string
@@ -22,7 +23,8 @@ export function useSectionContent<T extends {
   accent: string
   titleAr: string
   title: string
-  id: any 
+  id: any,
+  answer:string,
   order?: number 
   isMain?: boolean
 }>({

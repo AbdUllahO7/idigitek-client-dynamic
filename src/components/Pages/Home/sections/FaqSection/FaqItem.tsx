@@ -9,6 +9,7 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
   const [isOpen, setIsOpen] = useState(false)
   const toggleOpen = () => setIsOpen(!isOpen)
 
+
   return (
     <motion.div
       initial={{ y: 50, opacity: 0 }}

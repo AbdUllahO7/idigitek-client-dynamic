@@ -38,10 +38,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     section.elements.some((element: any) => element.name === "Technologies")
   )
 
-
-  console.log("projectSection", projectSection)
-
-
   return (
     <div className="min-h-screen bg-background" dir={direction}>
       <ProjectHero project={projectSection} clients={clientsSection || { elements: [] }} />

@@ -33,7 +33,6 @@ export default function TeamSection({websiteId , sectionId}) {
     }
   })
 
-  console.log("contentItems team " , contentItems)
 
   // Function to get current language text
   const getCurrentText = (member: any, field: 'name' | 'role' | 'bio') => {
@@ -127,7 +126,6 @@ interface TeamMemberCardProps {
     bioEn: string
     bioAr: string
     logo: string
-   
     color: string
   }
   index: number

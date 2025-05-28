@@ -35,7 +35,6 @@ export default function ProcessSection({websiteId , sectionId}) {
       })
     
 
-    console.log("ProcessSection contentItems:", contentItems)
   
 
   // Parallax effect for background elements

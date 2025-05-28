@@ -39,8 +39,8 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
     image: "Hero {index} - Image",
     title: "Hero {index} - Title",
     excerpt: "Hero {index} - Description",
-    exploreButton: "Hero {index} - ExploreButton",
-    requestButton: "Hero {index} - RequestButton",
+    exploreButton: (subsection: any) => "Explore More",  // Default value
+    requestButton: (subsection: any) => "Request Now",   // Default value
     color: (subsection: any, index?: number) =>
       subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - Color`)?.defaultContent ||
       "from-digitek-orange to-digitek-pink",
@@ -48,9 +48,9 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
   }
 
   // Filter valid slides
-  const slideFilter = (item: Slide) => item.image && item.title && item.title.trim() !== ""
+  const slideFilter = (item: { image: string; title: string }) => item.image && item.title && item.title.trim() !== ""
 
-  const { contentItems: slides, isLoading, error } = useSectionContent<Slide>({
+  const { contentItems: slides, isLoading, error } = useSectionContent({
     sectionId,
     websiteId,
     fieldMappings: heroFieldMappings,
@@ -89,41 +89,6 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
     }
   }, [currentSlide, autoplay, slides.length, nextSlide])
 
-  if (isLoading) {
-    return (
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="relative w-full overflow-hidden bg-gradient-to-b from-background to-muted"
-        id="hero"
-        dir={direction}
-      >
-        <div className="container relative z-10 px-4 py-16 md:py-24 lg:py-10 h-[100vh]">
-          <div className="text-center text-muted-foreground">Loading slides...</div>
-        </div>
-        <CurvedDivider />
-      </motion.section>
-    )
-  }
-
-  if (error || !slides || slides.length === 0) {
-    return (
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="relative w-full overflow-hidden bg-gradient-to-b from-background to-muted"
-        id="hero"
-        dir={direction}
-      >
-        <div className="container relative z-10 px-4 py-16 md:py-24 lg:py-10 h-[100vh]">
-          <div className="text-center text-muted-foreground">No slides available</div>
-        </div>
-        <CurvedDivider />
-      </motion.section>
-    )
-  }
 
   return (
     <motion.section

@@ -8,6 +8,7 @@ import { ProjectImage } from "@/components/Pages/ProjectsDetailPage/ProjectImage
 import { useSubSections } from "@/lib/subSections/use-subSections"
 import { ProjectInfo } from "@/components/Pages/ProjectsDetailPage/ProjectInfo"
 import { ProjectGallery } from "@/components/Pages/ProjectsDetailPage/ProjectGallery"
+import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton"
 
 export default function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
@@ -25,7 +26,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     return <ProjectNotFound />
   }
   if (!projectData || !sectionData) {
-    return <div>Loading...</div>
+    return <SectionSkeleton variant="default" className="py-20"/>
   }
 
   // Find the main project section and clients section from the data

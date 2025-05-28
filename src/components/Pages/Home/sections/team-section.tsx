@@ -25,13 +25,15 @@ export default function TeamSection({websiteId , sectionId}) {
     fieldMappings: {
       id: "_id",
       title: "Title",
+      logo:"Logo",
       excerpt: "Description",
       job: "Job",
       date: "createdAt",
       color: () => "from-digitek-orange to-digitek-pink"
     }
   })
-    
+
+  console.log("contentItems team " , contentItems)
 
   // Function to get current language text
   const getCurrentText = (member: any, field: 'name' | 'role' | 'bio') => {
@@ -100,7 +102,7 @@ export default function TeamSection({websiteId , sectionId}) {
         roleAr: member.jobAr || member.job, // Fallback to job if no jobAr
         bioEn: member.excerpt, // Map excerpt to bioEn
         bioAr: member.excerptAr || member.excerpt, // Fallback to excerpt if no excerptAr
-        image: member.image || "https://cdn-icons-png.flaticon.com/256/4847/4847064.png", // Ensure image is present
+        logo: member.logo || "https://cdn-icons-png.flaticon.com/256/4847/4847064.png", // Ensure image is present
        
         color: member.color,
       }} 
@@ -124,7 +126,7 @@ interface TeamMemberCardProps {
     roleAr: string
     bioEn: string
     bioAr: string
-    image: string
+    logo: string
    
     color: string
   }
@@ -167,7 +169,7 @@ function TeamMemberCard({
             >
               <div className="rounded-full overflow-hidden h-full w-full bg-background">
                 <Image
-                  src={member.image || "/placeholder.svg"}
+                  src={member.logo || "/placeholder.svg"}
                   alt={getCurrentText(member, 'name')}
                   width={128}
                   height={128}

@@ -38,18 +38,18 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
 
   // Define field mappings for navigation items with dynamic {index}
   const navFieldMappings = {
-    id: (subsection: any, index?: number) =>
-      subsection.elements?.find(el => el.name === `Nav Item ${index !== undefined ? index + 1 : 1}`)?.defaultContent
-        ?.toLowerCase()
-        .replace(/\s+/g, '') || `${subsection._id}-${index || 0}`,
-    label: "Nav Item {index}",
-    href: (subsection: any, index?: number) => {
-      const link = subsection.elements?.find(el => el.name === `Nav Link ${index !== undefined ? index + 1 : 1}`)?.defaultContent || ""
-      return link.startsWith('#') ? link : `#${subsection.elements?.find(el => el.name === `Nav Item ${index !== undefined ? index + 1 : 1}`)?.defaultContent?.toLowerCase().replace(/\s+/g, '') || ''}`
-    },
-    order: (subsection: any, index?: number) => {
-      const order = subsection.elements?.find(el => el.name === `Nav Order ${index !== undefined ? index + 1 : 1}`)?.defaultContent
-      return order ? parseInt(order) : (index || 0)
+      id: (subsection: any, index?: number) =>
+        subsection.elements?.find(el => el.name === `Nav Item ${index !== undefined ? index + 1 : 1}`)?.defaultContent
+          ?.toLowerCase()
+          .replace(/\s+/g, '') || `${subsection._id}-${index || 0}`,
+      label: "Nav Item {index}",
+      href: (subsection: any, index?: number) => {
+        const link = subsection.elements?.find(el => el.name === `Nav Link ${index !== undefined ? index + 1 : 1}`)?.defaultContent || ""
+        return link.startsWith('#') ? link : `#${subsection.elements?.find(el => el.name === `Nav Item ${index !== undefined ? index + 1 : 1}`)?.defaultContent?.toLowerCase().replace(/\s+/g, '') || ''}`
+      },
+      order: (subsection: any, index?: number) => {
+        const order = subsection.elements?.find(el => el.name === `Nav Order ${index !== undefined ? index + 1 : 1}`)?.defaultContent
+        return order ? parseInt(order) : (index || 0)
     }
   }
 

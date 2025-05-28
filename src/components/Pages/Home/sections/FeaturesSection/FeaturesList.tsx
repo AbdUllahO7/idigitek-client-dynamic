@@ -8,7 +8,7 @@ interface FeaturesListProps {
     features: Array<{
         title: string
         excerpt: string
-        icon: React.ReactNode
+        icon?: React.ReactNode
         color: string
     }>
     isInView: boolean

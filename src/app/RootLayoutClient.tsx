@@ -7,6 +7,7 @@ import NavigationTracker from "@/components/NavigationTracker"
 import { useLanguage } from "@/contexts/language-context"
 import { useWebSite } from "@/lib/webSite/use-WebSite"
 import { useSections } from "@/lib/section/use-Section"
+import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton"
 
 // Define TypeScript interfaces for data
 interface Website {
@@ -67,7 +68,7 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
   const headerSectionId = headerSection?._id;
   // Handle loading and error states
   if (websitesLoading || sectionsIsLoading) {
-    return <div>Loading...</div>;
+    return <SectionSkeleton variant="default" className="py-20" />;
   }
 
   if (websitesError) {

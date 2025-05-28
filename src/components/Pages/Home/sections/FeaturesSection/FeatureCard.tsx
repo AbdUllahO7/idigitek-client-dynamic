@@ -1,40 +1,28 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import React from "react"
-import { useLanguage } from "@/contexts/language-context"
-import { LineChart, Clock, Car, MonitorSmartphone, Settings, CreditCard, Headphones, MessageSquare } from "lucide-react"
-
-// Icon mapping for string-based icons
-const iconMap: { [key: string]: React.ReactNode } = {
-    "LineChart": <LineChart />,
-    "Clock": <Clock />,
-    "Car": <Car className="" />,
-    "MonitorSmartphone": <MonitorSmartphone className="" />,
-    "Settings": <Settings className="" />,
-    "CreditCard": <CreditCard className="" />,
-    "MessageSquare": <MessageSquare className="" />,
-    "Headphones": <Headphones className="" />
-}
+import { motion } from "framer-motion";
+import React from "react";
+import { useLanguage } from "@/contexts/language-context";
+import { iconMap } from "@/utils/IconMap";
 
 interface FeatureCardProps {
   feature: {
-    title: string
-    excerpt: string
-    icon: React.ReactNode | string // Allow string or ReactNode
-    color: string
-  }
-  isInView: boolean
+    title: string;
+    excerpt: string;
+    icon?: React.ReactNode | string; // Allow string or ReactNode
+    color: string;
+  };
+  isInView: boolean;
 }
 
 export default function FeatureCard({ feature, isInView }: FeatureCardProps) {
   // Determine the icon to render
   const renderIcon = () => {
     if (React.isValidElement(feature.icon)) {
-      return feature.icon // If it's already a React element, use it
+      return feature.icon; // If it's already a React element, use it
     }
-    return iconMap[feature.icon as string] || null // Map string to component, fallback to null
-  }
+    return iconMap[feature.icon as string] || null; // Map string to component, fallback to null
+  };
 
   return (
     <motion.div
@@ -55,5 +43,5 @@ export default function FeatureCard({ feature, isInView }: FeatureCardProps) {
         <p className="text-muted-foreground">{feature.excerpt}</p>
       </div>
     </motion.div>
-  )
+  );
 }

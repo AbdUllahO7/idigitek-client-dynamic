@@ -43,6 +43,7 @@ export default function NewsSection({ sectionId, websiteId }) {
   })
 
 
+
   // Reset active index on language change
   useEffect(() => {
     setActiveIndex(0)

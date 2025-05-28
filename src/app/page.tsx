@@ -23,6 +23,7 @@ import FeaturesSection from "@/components/Pages/Home/sections/FeaturesSection/fe
 import { useWebSite } from "@/lib/webSite/use-WebSite";
 import { useSections } from "@/lib/section/use-Section";
 import { useScrollToSection } from "@/hooks/use-scroll-to-section";
+import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton";
 
 // Define TypeScript interfaces for data
 interface Website {
@@ -110,10 +111,10 @@ export default function LandingPage() {
     whyChooseUs: (id: string, websiteId?: string) => <FeaturesSection  websiteId={websiteId} sectionId={id}/>,
     Projects: (id: string, websiteId?: string) => <ProjectsSection websiteId={websiteId} sectionId={id} />,
     OurProcess: (id: string, websiteId?: string) => <ProcessSection websiteId={websiteId} sectionId={id} />,
-    // Team: (id: string, websiteId?: string) => <TeamSection websiteId={websiteId} sectionId={id} />,
-    // Testimonials: (id: string, websiteId?: string) => (
-    //   <TestimonialsSection websiteId={websiteId} sectionId={id} />
-    // ),
+    Team: (id: string, websiteId?: string) => <TeamSection websiteId={websiteId} sectionId={id} />,
+    ClientComments: (id: string, websiteId?: string) => (
+      <TestimonialsSection websiteId={websiteId} sectionId={id} />
+    ),
     // Partners: (id: string, websiteId?: string) => <PartnersSectionComponent websiteId={websiteId} sectionId={id} />,
     // Faq: (id: string, websiteId?: string) => <FaqSection websiteId={websiteId} sectionId={id} />,
     // Blog: (id: string, websiteId?: string) => <BlogSection websiteId={websiteId} sectionId={id} />,
@@ -127,7 +128,7 @@ export default function LandingPage() {
 
   // Handle loading and error states
   if (websitesLoading || sectionsIsLoading) {
-    return <div>Loading...</div>;
+    return <SectionSkeleton variant="default" className="py-20" />;
   }
 
   if (websitesError) {
@@ -138,9 +139,7 @@ export default function LandingPage() {
     return <div>Error: {(sectionsError as Error).message}</div>;
   }
 
-  if (!websites || websites.length === 0) {
-    return <div>No websites found.</div>;
-  }
+
 
   if (!sectionsData.data || sectionsData.data.length === 0) {
     return <div>No sections found for the website.</div>;

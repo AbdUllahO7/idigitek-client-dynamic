@@ -59,7 +59,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
   // Validate params after hook calls
   if (!newsId || !sectionId || !websiteId) {
     console.error("Missing required params:", { newsId, sectionId, websiteId })
-    return <NotFound t={t} />
+    return null
   }
 
   // Find the current news article
@@ -93,7 +93,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
   // Handle not found state
   if (!currentNews) {
     console.warn("No news article found for ID:", newsId)
-    return <NotFound t={t} />
+    return null
   }
 
   return (

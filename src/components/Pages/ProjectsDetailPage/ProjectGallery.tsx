@@ -41,7 +41,11 @@ interface ProjectGalleryProps {
 }
 
 export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, clients }) => {
-  const { language } = useLanguage()
+  const { language, direction } = useLanguage()
+
+  if (!project?.elements || project.elements.length === 0) {
+    return null
+  }
 
   // Helper function to get translated content (for title)
   const getTranslatedContent = (element: any, lang: string): string => {
@@ -57,11 +61,12 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, clients
     return content || ""
   }
 
-  // Extract title for alt text
-  const titleElement = project?.elements?.find((e) => e.name === "Title")
-  const title = getTranslatedContent(titleElement, language) || "Project"
+  const titleElement = project.elements.find((e) => e.name === "Title")
+    const galleryTextElement = project.elements.find((e) => e.name === "Gallery Text")
 
-  // Extract all image elements from clients
+  const title = getTranslatedContent(titleElement, language) || "Project"
+  const galleryText = getTranslatedContent(galleryTextElement, language) || "Project"
+
   const imageElements = clients?.elements?.filter((e) => e.type === "image") || []
   const images = imageElements.map((e) => ({
     url: e.imageUrl || e.defaultContent || "/placeholder.svg",
@@ -76,7 +81,7 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, clients
   return (
     <section className="container px-4 md:px-6">
       <div className="max-w-5xl mx-auto mb-12">
-        <h3 className="text-2xl font-bold mb-6">Project Gallery</h3>
+        <h3 className="text-2xl font-bold mb-6">{galleryText}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {images.map((image, index) => (
             <div key={index} className="relative aspect-square rounded-lg overflow-hidden">

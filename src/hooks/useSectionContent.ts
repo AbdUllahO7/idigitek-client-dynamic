@@ -12,6 +12,7 @@ interface UseSectionContentProps<T extends { order?: number }> {
 }
 
 export function useSectionContent<T extends {
+  logo: string
   jobAr: string
   job: string
   excerpt: string

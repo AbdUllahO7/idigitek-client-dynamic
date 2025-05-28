@@ -24,17 +24,20 @@ interface ProjectImageProps {
 }
 
 export const ProjectImage: React.FC<ProjectImageProps> = ({ project }) => {
+  // Check if project.elements is not found or empty
+  if (!project?.elements || project.elements.length === 0) {
+    return null
+  }
+
   // Extract the Background Image element
-  const imageElement = project?.elements?.find((e) => e.name === "Background Image")
+  const imageElement = project.elements.find((e) => e.name === "Background Image")
   
   // Use imageUrl if available, otherwise fall back to defaultContent or placeholder
   const image = imageElement?.imageUrl || imageElement?.defaultContent || "/placeholder.svg"
   
   // Use project title or a default for alt text (assuming Title is available in elements)
-  const titleElement = project?.elements?.find((e) => e.name === "Title")
+  const titleElement = project.elements.find((e) => e.name === "Title")
   const altText = titleElement?.defaultContent || "Project Image"
-
-
 
   // Don't render if no valid image
   if (!imageElement || !image) {

@@ -45,7 +45,10 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
   const isHeaderInView = useInView(headerRef, { once: true })
   const { language, direction } = useLanguage()
 
-
+  // Check if project.elements is not found or empty
+  if (!project?.elements || project.elements.length === 0) {
+    return null
+  }
 
   // Helper function to get translated content
   const getTranslatedContent = (element: any, lang: string) => {
@@ -62,15 +65,13 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
   }
 
   // Extract fields from project subsection
-  const titleElement = project?.elements?.find((e) => e.name === "Title")
-  const descriptionElement = project?.elements?.find((e) => e.name === "Description")
-  const categoryElement = project?.elements?.find((e) => e.name === "Category")
-  const backLinkTextElement = project?.elements?.find((e) => e.name === "Back Link Text")
+  const titleElement = project.elements.find((e) => e.name === "Title")
+  const descriptionElement = project.elements.find((e) => e.name === "Description")
+  const categoryElement = project.elements.find((e) => e.name === "Category")
+  const backLinkTextElement = project.elements.find((e) => e.name === "Back Link Text")
 
   // Extract fields from clients subsection
   const technologiesElement = clients?.elements?.find((e) => e.name === "Technologies")
-
-
 
   // Get translated content based on current language
   const title = getTranslatedContent(titleElement, language)
@@ -78,9 +79,6 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
   const category = getTranslatedContent(categoryElement, language)
   const backLinkText = getTranslatedContent(backLinkTextElement, language)
   const technologies = getTranslatedContent(technologiesElement, language)
-
-
-
 
   return (
     <section className="relative w-full py-20 overflow-hidden">
@@ -104,19 +102,21 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
           <GoBackButton sectionName="projects" title={backLinkText || "Go Back"} />
 
           <div className="flex items-center gap-3 mb-4">
-              <span className={`px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r from-digitek-orange to-digitek-pink`}>
-                {category}
-              </span>
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r from-digitek-orange to-digitek-pink`}
+            >
+              {category}
+            </span>
           </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6"
-            >
-              {title}
-            </motion.h1>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6"
+          >
+            {title}
+          </motion.h1>
 
           {description && (
             <motion.p

@@ -6,7 +6,7 @@ export function FeaturedImage({ image, title }) {
         <div className="max-w-4xl mx-auto">
             <div className="relative aspect-video rounded-2xl overflow-hidden">
                 <Image
-                    src={image || "/placeholder.svg"}
+                    src={image}
                     alt={title}
                     fill
                     className="object-cover"

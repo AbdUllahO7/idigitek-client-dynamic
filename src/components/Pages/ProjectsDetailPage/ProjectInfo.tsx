@@ -41,6 +41,11 @@ interface ProjectInfoProps {
 export const ProjectInfo: React.FC<ProjectInfoProps> = ({ project, clients }) => {
   const { language } = useLanguage()
 
+  // Check if project.elements is not found or empty
+  if (!project?.elements || project.elements.length === 0) {
+    return null
+  }
+
   // Helper function to get translated content
   const getTranslatedContent = (element: any, lang: string): string => {
     if (!element) {
@@ -75,14 +80,13 @@ export const ProjectInfo: React.FC<ProjectInfoProps> = ({ project, clients }) =>
   const ClientName = getTranslatedContent(clientElementName, language)
   const IndustryName = getTranslatedContent(industryElementName, language)
   const YearName = getTranslatedContent(yearElementName, language)
-  const TechnologiesName= getTranslatedContent(technologiesElementName, language)
+  const TechnologiesName = getTranslatedContent(technologiesElementName, language)
 
   // Convert technologies string to array (split by comma or other delimiter)
   const technologies = technologiesString ? technologiesString.split(",").map((tech) => tech.trim()) : []
 
-
   // Don't render if no data
-  if (!project || !clients || ( !client && !industry && !year && !technologies.length)) {
+  if (!project || !clients || (!client && !industry && !year && !technologies.length)) {
     return null
   }
 

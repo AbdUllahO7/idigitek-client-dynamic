@@ -12,6 +12,8 @@ interface UseSectionContentProps<T extends { order?: number }> {
 }
 
 export function useSectionContent<T extends {
+  jobAr: string
+  job: string
   excerpt: string
   excerptAr: any
   color: string

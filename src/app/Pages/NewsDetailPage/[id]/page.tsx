@@ -11,6 +11,7 @@ import { Sidebar } from "@/components/Pages/NewsDetailPage/Sidebar"
 import { RelatedArticles } from "@/components/Pages/NewsDetailPage/RelatedArticles"
 import { NewsHero } from "@/components/Pages/NewsDetailPage/NewsHero"
 import { useSectionContent } from "@/hooks/useSectionContent"
+import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton"
 
 // Define the shape of a news item
 interface NewsItem {
@@ -62,18 +63,18 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   // Find the current news article
-  const currentNews = contentItems.find((item: NewsItem) => item.id === newsId) as NewsItem | undefined
+  const currentNews = contentItems.find((item) => item.id === newsId) as unknown as NewsItem | undefined
 
   // Find related news (same category, excluding current)
   const relatedNews = currentNews
     ? contentItems
-        .filter((item: NewsItem) => item.category === currentNews.category && item.id !== currentNews.id)
-        .slice(0, 3) as NewsItem[]
+      .filter((item) => item["sectionItem.name"] === currentNews.category && item.id !== currentNews.id)
+      .slice(0, 3) as unknown as NewsItem[]
     : []
 
   // Handle loading state
   if (isLoading) {
-    return <div className="min-h-screen bg-background" dir={direction}>Loading...</div>
+    return <SectionSkeleton variant="default" className="py-20" />
   }
 
   // Handle error state

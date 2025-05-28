@@ -3,17 +3,35 @@
 import type React from "react"
 import { useRef } from "react"
 import Image from "next/image"
-import Link from "next/link"
 import { motion, useInView } from "framer-motion"
 import { useLanguage } from "@/contexts/language-context"
-import { Linkedin, Twitter, Mail } from "lucide-react"
-import { teamMembers } from "../ConstData/ConstData"
+import { useSectionLogic } from "@/hooks/useSectionLogic"
+import { useSectionContent } from "@/hooks/useSectionContent"
 
-export default function TeamSection() {
+export default function TeamSection({websiteId , sectionId}) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: false, amount: 0.2 })
-  const { t, direction, language } = useLanguage()
+  const { t,  language } = useLanguage()
 
+  const { content, isLoading: sectionLoading, error: sectionError, refetch, direction, formatDate } = useSectionLogic({
+    sectionId,
+    websiteId,
+    itemsKey: "team",
+  })
+
+  const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
+    sectionId,
+    websiteId,
+    fieldMappings: {
+      id: "_id",
+      title: "Title",
+      excerpt: "Description",
+      job: "Job",
+      date: "createdAt",
+      color: () => "from-digitek-orange to-digitek-pink"
+    }
+  })
+    
 
   // Function to get current language text
   const getCurrentText = (member: any, field: 'name' | 'role' | 'bio') => {
@@ -49,7 +67,7 @@ export default function TeamSection() {
             transition={{ duration: 0.6 }}
             className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium"
           >
-            {direction === 'rtl' ? "فريقنا" : " Our Team"}
+            {content.sectionLabel}
           </motion.div>
 
           <motion.h2
@@ -58,7 +76,7 @@ export default function TeamSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight max-w-3xl"
           >
-            {direction === 'rtl' ? "تعرف على خبرائنا" : " Meet Our Experts"}
+            {content.sectionTitle}
             </motion.h2>
 
           <motion.p
@@ -67,21 +85,31 @@ export default function TeamSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-2xl text-muted-foreground text-lg"
           >
-            {direction === 'rtl' ? "الأفراد الموهوبون وراء حلولنا الرقمية المبتكرة" : "The talented individuals behind our innovative digital solutions"}
+            {content.sectionDescription}
             </motion.p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {teamMembers.map((member, index) => (
-            <TeamMemberCard 
-              key={index} 
-              member={member} 
-              index={index} 
-              isInView={isInView} 
-              getCurrentText={getCurrentText}
-            />
-          ))}
-        </div>
+  {contentItems.map((member, index) => (
+    <TeamMemberCard 
+      key={index} 
+      member={{
+        nameEn: member.title, // Map title to nameEn
+        nameAr: member.titleAr || member.title, // Fallback to title if no titleAr
+        roleEn: member.job, // Map job to roleEn
+        roleAr: member.jobAr || member.job, // Fallback to job if no jobAr
+        bioEn: member.excerpt, // Map excerpt to bioEn
+        bioAr: member.excerptAr || member.excerpt, // Fallback to excerpt if no excerptAr
+        image: member.image || "https://cdn-icons-png.flaticon.com/256/4847/4847064.png", // Ensure image is present
+       
+        color: member.color,
+      }} 
+      index={index} 
+      isInView={isInView} 
+      getCurrentText={getCurrentText}
+    />
+  ))}
+</div>
 
       </div>
     </section>
@@ -97,11 +125,7 @@ interface TeamMemberCardProps {
     bioEn: string
     bioAr: string
     image: string
-    social: {
-      linkedin: string
-      twitter: string
-      email: string
-    }
+   
     color: string
   }
   index: number
@@ -165,22 +189,7 @@ function TeamMemberCard({
             {getCurrentText(member, 'bio')}
           </p>
 
-          <div className="flex space-x-3 mt-auto">
-            <SocialLink href={member.social.linkedin} color={member.color}>
-              <Linkedin className="h-4 w-4" />
-              <span className="sr-only">LinkedIn</span>
-            </SocialLink>
-
-            <SocialLink href={member.social.twitter} color={member.color}>
-              <Twitter className="h-4 w-4" />
-              <span className="sr-only">Twitter</span>
-            </SocialLink>
-
-            <SocialLink href={`mailto:${member.social.email}`} color={member.color}>
-              <Mail className="h-4 w-4" />
-              <span className="sr-only">Email</span>
-            </SocialLink>
-          </div>
+         
         </div>
       </div>
 
@@ -189,22 +198,5 @@ function TeamMemberCard({
         className={`absolute -bottom-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-r ${member.color} opacity-10 group-hover:opacity-20 transition-opacity duration-500`}
       ></div>
     </motion.div>
-  )
-}
-
-interface SocialLinkProps {
-  href: string
-  color: string
-  children: React.ReactNode
-}
-
-function SocialLink({ href, color, children }: SocialLinkProps) {
-  return (
-    <Link
-      href={href}
-      className={`flex items-center justify-center w-8 h-8 rounded-full border border-border/50 text-muted-foreground hover:text-white hover:bg-gradient-to-r ${color} transition-all duration-300`}
-    >
-      {children}
-    </Link>
   )
 }

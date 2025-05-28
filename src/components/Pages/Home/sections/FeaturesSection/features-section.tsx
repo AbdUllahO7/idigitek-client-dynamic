@@ -10,6 +10,7 @@ import FeaturesList from "./FeaturesList"
 import FeatureImage from "./FeatureImage"
 import { useSectionLogic } from "@/hooks/useSectionLogic"
 import { useSectionContent } from "@/hooks/useSectionContent"
+import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton"
 
 interface Features {
   id: string
@@ -26,29 +27,28 @@ export default function FeaturesSection({ sectionId, websiteId }) {
   const isInView = useInView(ref, { once: false, amount: 0.2 })
   const { language, direction } = useLanguage()
 
-    const { content, isLoading: sectionLoading, error: sectionError, refetch, formatDate } = useSectionLogic({
-        sectionId,
-        websiteId,
-        itemsKey: "Features",
-      })
-  const featureFilter = (item: Features) => item.title && item.title.trim() !== ""
+  const { content, isLoading: sectionLoading, error: sectionError, refetch, formatDate } = useSectionLogic({
+      sectionId,
+      websiteId,
+      itemsKey: "Features",
+    })
+  const featureFilter = (item: { title: string }) => item.title && item.title.trim() !== ""
 
-
-
-    const heroFieldMappings = {
+  
+  const heroFieldMappings = {
       id: (subsection: any, index?: number) => `${subsection._id}-${index || 0}`, 
-      icon: "ChoseUs {index} - Icon",
+      icon: (subsection: any, index?: number) => 
+        subsection.elements?.find(el => el.name === `ChoseUs ${index !== undefined ? index + 1 : 1} - Icon`)?.defaultContent ||
+        null,
       title: "ChoseUs {index} - Title",
       excerpt: "ChoseUs {index} - Description",
       image: "Background Image",
-
       color: (subsection: any, index?: number) =>
         subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - Color`)?.defaultContent ||
         "from-digitek-orange to-digitek-pink",
       order: (subsection: any, index?: number) => subsection.order || index || 0
   }
 
-  
   // For SINGLE items (each subsection has one industry)
   const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
     sectionId,
@@ -57,8 +57,6 @@ export default function FeaturesSection({ sectionId, websiteId }) {
     maxItemsPerSubsection: 13, // Adjust as needed
     filter: featureFilter
   })
-
-
 
   return (
     <section id="features" className="relative w-full py-20 overflow-hidden" dir={direction}>

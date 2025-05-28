@@ -4,6 +4,7 @@ import Image from "next/image"
 import { motion } from "framer-motion"
 import { BarChart, Clock, Shield, Zap } from "lucide-react"
 import FeatureHighlight from "./FeatureHighlight"
+import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton"
 
 interface FeatureImageProps {
     isInView: boolean
@@ -11,6 +12,12 @@ interface FeatureImageProps {
     }
 
 export default function FeatureImage({ isInView, image }: FeatureImageProps) {
+
+    
+  if(!image) {
+      return <SectionSkeleton variant="grid" className="py-20" />
+    }
+
     return (
         <motion.div
         initial={{ opacity: 0, x: 50 }}
@@ -27,7 +34,7 @@ export default function FeatureImage({ isInView, image }: FeatureImageProps) {
         >
             <div className="bg-background rounded-xl overflow-hidden">
             <Image
-                src={image ? image : "/images/product-features.png"}
+                src={image}
                 width={600}
                 height={600}
                 alt="Product Features"

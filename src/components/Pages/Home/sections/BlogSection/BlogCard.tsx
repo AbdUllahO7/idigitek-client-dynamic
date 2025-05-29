@@ -19,7 +19,6 @@ interface BlogCardProps {
 export function BlogCard({ post, index, isInView, isRTL }: BlogCardProps) {
   const { direction } = useLanguage();
 
-  console.log("post" , post)
 
   return (
     <motion.div

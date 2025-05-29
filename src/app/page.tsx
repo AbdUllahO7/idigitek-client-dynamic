@@ -106,7 +106,6 @@ export default function LandingPage() {
     IndustrySolutions: (id: string, websiteId?: string) => (
       <IndustrySolutionsSection websiteId={websiteId} sectionId={id} />
     ),
-    // Contact: (id: string, websiteId?: string) => <ContactSection websiteId={websiteId} sectionId={id} />,
     // Services: (id: string, websiteId?: string) => <ServicesSection websiteId={websiteId} sectionId={id} />,
     whyChooseUs: (id: string, websiteId?: string) => <FeaturesSection  websiteId={websiteId} sectionId={id}/>,
     Projects: (id: string, websiteId?: string) => <ProjectsSection websiteId={websiteId} sectionId={id} />,
@@ -118,6 +117,7 @@ export default function LandingPage() {
     Partners: (id: string, websiteId?: string) => <PartnersSectionComponent websiteId={websiteId} sectionId={id} />,
     FAQ: (id: string, websiteId?: string) => <FaqSection websiteId={websiteId} sectionId={id} />,
     Blog: (id: string, websiteId?: string) => <BlogSection websiteId={websiteId} sectionId={id} />,
+    Contact: (id: string, websiteId?: string) => <ContactSection websiteId={websiteId} sectionId={id} />,
     // Cta: (id: string, websiteId?: string) => <CtaSection websiteId={websiteId} sectionId={id} />,
     // Clients: (id: string, websiteId?: string) => <ClientsSection websiteId={websiteId} sectionId={id} />,
     // CaseStudies: (id: string, websiteId?: string) => <CaseStudiesSection websiteId={websiteId} sectionId={id} />,

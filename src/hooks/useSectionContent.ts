@@ -7,32 +7,36 @@ interface UseSectionContentProps<T extends { order?: number }> {
   sectionId: string
   websiteId: string
   fieldMappings: Record<string, string | ((subsection: any, index?: number) => any)>
-  maxItemsPerSubsection?: number // For numbered fields (e.g., Hero 1, Hero 2)
+  contentType?: string // New parameter to distinguish content types
+  maxItemsPerSubsection?: number
   filter?: (item: T) => boolean
 }
 
 export function useSectionContent<T extends {
-  question: any
-  logo: string
-  jobAr: string
-  job: string
-  excerpt: string
-  excerptAr: any
-  color: string
-  image: string
-  accent: string
-  titleAr: string
-  title: string
-  id: any,
-  answer:string,
-  order?: number 
+  phoneValue: any
+  subjects: any
+  question?: any
+  logo?: string
+  jobAr?: string
+  job?: string
+  excerpt?: string
+  excerptAr?: any
+  color?: string
+  image?: string
+  accent?: string
+  titleAr?: string
+  title?: string
+  id?: any
+  answer?: string
+  order?: number
   isMain?: boolean
 }>({
   sectionId,
   websiteId,
   fieldMappings,
+  contentType,
   maxItemsPerSubsection = 1,
-  filter
+  filter,
 }: UseSectionContentProps<T>) {
   const { language } = useLanguage()
   const { useGetBySectionId } = useSectionItems()
@@ -58,7 +62,9 @@ export function useSectionContent<T extends {
     const items: T[] = []
 
     subSections.data.forEach((subsection, subsectionIndex) => {
-      // Determine how many items to extract from this subsection
+      // Apply contentType filter if provided
+      if (contentType && subsection.contentType !== contentType) return
+
       const iterations = maxItemsPerSubsection > 1 ? maxItemsPerSubsection : 1
 
       for (let i = 0; i < iterations; i++) {
@@ -72,7 +78,6 @@ export function useSectionContent<T extends {
             return
           }
 
-          // Replace {index} in field names (e.g., "Hero {index} - Image" -> "Hero 1 - Image")
           const fieldName = maxItemsPerSubsection > 1 ? mapping.replace("{index}", String(i + 1)) : mapping
 
           if (fieldName === "_id") {
@@ -98,7 +103,6 @@ export function useSectionContent<T extends {
           }
         })
 
-        // Add order field if not explicitly mapped, ensuring type safety
         if (!("order" in item) && subsection.order !== undefined) {
           item.order = subsection.order ?? (subsectionIndex * iterations + i)
         }
@@ -106,26 +110,22 @@ export function useSectionContent<T extends {
           item.isMain = subsection.isMain ?? (subsectionIndex * iterations + i)
         }
 
-        // Only add the item if it has valid fields and passes the filter
         if (hasValidFields && (!filter || filter(item as T))) {
           items.push(item as T)
         }
       }
     })
 
-    // Sort items with type-safe access to order
     return items.sort((a, b) => {
       const aOrder = "order" in a ? a.order ?? 0 : 0
       const bOrder = "order" in b ? b.order ?? 0 : 0
       return aOrder - bOrder
     })
-
-    
-  }, [subSections, language, fieldMappings, maxItemsPerSubsection, filter])
+  }, [subSections, language, fieldMappings, maxItemsPerSubsection, filter, contentType])
 
   return {
     contentItems,
     isLoading: !subSections && !sectionItems,
-    error: subSectionsError || sectionError
+    error: subSectionsError || sectionError,
   }
 }

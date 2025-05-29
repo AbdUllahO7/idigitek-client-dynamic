@@ -26,9 +26,6 @@ export default function ProjectsSection({ sectionId, websiteId }) {
     itemsKey: "projects",
   });
 
-  
-
-
   const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
     sectionId,
     websiteId,
@@ -46,14 +43,13 @@ export default function ProjectsSection({ sectionId, websiteId }) {
   });
 
   // Validate that all required fields are non-empty
-  const requiredFields = ["id", "image", "title", "excerpt", "category", "date"];
+  const requiredFields = ["id", "image", "title", "excerpt"];
   const projects = (contentItems || []).filter((project) =>
     requiredFields.every(
       (field) => project[field] != null && project[field] !== "" && project[field] !== undefined
     )
   );
-
-
+  
 
 
   // Ensure activeIndex is valid

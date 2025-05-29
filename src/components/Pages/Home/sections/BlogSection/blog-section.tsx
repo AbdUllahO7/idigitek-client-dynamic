@@ -46,7 +46,6 @@ export default function BlogSection({ websiteId, sectionId }: { websiteId: strin
 
   const isRTL = direction === "rtl";
 
-  console.log("contentItems" , contentItems)
 
 
 

@@ -47,12 +47,7 @@ export default function BlogDetails({ params }: { params: Promise<{ id: string }
           <PostHeader blog={blogData.data}/>
           <FeaturedImage blog={blogData.data} />
           <PostContent blog={blogData.data} />
-               {/* <RelatedPosts 
-            relatedPosts={relatedPosts} 
-            content={content} 
-            blogPosts={blogPosts} 
-            isRTL={isRTL} 
-          /> */}
+
         </div>
       </div>
     </div>

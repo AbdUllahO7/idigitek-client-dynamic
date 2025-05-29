@@ -1,52 +1,51 @@
 import React from "react"
 import { motion } from "framer-motion"
+import { getTranslatedContent } from "@/utils/getTranslatedContent"
+import { useLanguage } from "@/contexts/language-context"
 
 interface PostContentProps {
-  post: {
-    excerpt: string
+blog: {
+    _id: string
+    elements: {
+      _id: string
+      name: string
+      type: string
+      defaultContent: string
+      imageUrl?: string // Add imageUrl to the type
+      translations: {
+        _id: string
+        content: string
+        language: {
+          languageID: string
+        }
+      }[]
+    }[]
   }
-  isRTL: boolean
 }
 
-export const PostContent: React.FC<PostContentProps> = ({ post, isRTL }) => {
+export const PostContent: React.FC<PostContentProps> = ({ blog }) => {
+    const { direction, language } = useLanguage()
+
+  
+    const descriptionElement = blog.elements.find((e) => e.name === "Description")
+    const contentElement = blog.elements.find((e) => e.name === "Content")
+
+    const description = getTranslatedContent(descriptionElement, language)
+    const content = getTranslatedContent(contentElement, language)
+
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.2 }}
-      className={`prose max-w-none dark:prose-invert mb-14 ${isRTL ? "text-right" : ""}`}
+      className={`prose max-w-none dark:prose-invert mb-14 ${direction === "rtl" ? "text-right" : ""}`}
     >
       <p className="text-lg leading-relaxed text-muted-foreground">
-        {post.excerpt}
+        {description}
       </p>
-      
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ullamcorper mattis lorem non. Ultrices praesent amet ipsum justo massa. Eu dolor aliquet risus gravida nunc at feugiat consequat purus. Non massa enim vitae duis mattis. Vel in ultricies vel fringilla.
-      </p>
-      
-      <h2>Transforming the digital landscape</h2>
-      
-      <p>
-        Mauris commodo quis imperdiet massa tincidunt nunc pulvinar sapien et. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Libero id faucibus nisl tincidunt eget nullam. Mattis enim ut tellus elementum sagittis vitae et leo. Sed viverra tellus in hac habitasse platea dictumst vestibulum. Amet nulla facilisi morbi tempus iaculis. In hac habitasse platea dictumst vestibulum.
-      </p>
-      
-      <blockquote>
-        "Technology is best when it brings people together."
-        <cite>— Matt Mullenweg, Founder of WordPress</cite>
-      </blockquote>
-      
-      <p>
-        Fermentum leo vel orci porta non pulvinar neque laoreet. Id porta nibh venenatis cras sed felis eget. Gravida cum sociis natoque penatibus et magnis dis parturient montes. Amet consectetur adipiscing elit duis tristique sollicitudin nibh sit amet. Amet risus nullam eget felis eget nunc lobortis mattis.
-      </p>
-      
-      <h3>Embracing innovation</h3>
-      
-      <p>
-        Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Libero id faucibus nisl tincidunt eget nullam. Mattis enim ut tellus elementum sagittis vitae et leo. Sed viverra tellus in hac habitasse platea dictumst vestibulum.
-      </p>
-      
-      <p>
-        Amet nulla facilisi morbi tempus iaculis. In hac habitasse platea dictumst vestibulum. Donec adipiscing tristique risus nec feugiat in fermentum posuere urna.
+        <p className="text-lg leading-relaxed text-muted-foreground">
+        {content}
       </p>
     </motion.div>
   )

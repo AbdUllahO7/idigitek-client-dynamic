@@ -486,7 +486,7 @@ function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0, 
           transition={{ delay: 0.6 + index * 0.15, duration: 0.5 }}
         >
           <Link
-            href={`/Pages/ProjectsDetailPage/${project.id}?sectionId=${sectionId}&websiteId=${websiteId}`}
+            href={`/Pages/ProjectsDetailPage/${project.id}`}
             className="inline-flex items-center text-primary font-medium hover:underline"
           >
             { viewCaseStudyText }

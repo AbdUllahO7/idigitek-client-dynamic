@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { use, useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 import { blogPostsData } from "@/components/Pages/Home/ConstData/ConstData"
@@ -12,66 +12,29 @@ import { PostHeader } from "@/components/Pages/BlogDetailPage/PostHeader"
 import { FeaturedImage } from "@/components/Pages/BlogDetailPage/FeaturedImage"
 import { PostContent } from "@/components/Pages/BlogDetailPage/PostContent"
 import { RelatedPosts } from "@/components/Pages/BlogDetailPage/RelatedPosts"
+import { useSubSections } from "@/lib/subSections/use-subSections"
+import { ProjectNotFound } from "@/components/Pages/ProjectsDetailPage/data/ProjectNotFound"
+import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton"
 
 
 
-export default function BlogDetails() {
-  const params = useParams()
-  const { direction, language } = useLanguage()
-  const isRTL = direction === "rtl"
-  
-  const content = useTranslationsBlogDetail()
-  const blogPosts = blogPostsData[language === "ar" ? "ar" : "en"]
-  
-  // Find the blog post based on URL id parameter
-  const [post, setPost] = useState(null)
-  const [relatedPosts, setRelatedPosts] = useState([])
-  const [loading, setLoading] = useState(true)
+export default function BlogDetails({ params }: { params: Promise<{ id: string }> }) {
+    const { direction } = useLanguage()  
+    const resolvedParams = use(params)
+    const projectId = resolvedParams.id
+    const { useGetBySectionItemIds, useGetCompleteById } = useSubSections()
+    const { data: blogData, error: blogError } = useGetCompleteById(projectId)
+    const { data: sectionData, error: sectionError } = useGetBySectionItemIds([blogData?.data?.sectionItem?._id])
 
-  useEffect(() => {
-    if (params?.id) {
-      // Handle both numeric IDs and title-based IDs
-      const id = Array.isArray(params.id) ? params.id[0] : params.id
-      
-      // Try to find the post by numeric ID first
-      let foundPost = null;
-      const postIndex = parseInt(id);
-      
-      if (!isNaN(postIndex) && postIndex > 0 && postIndex <= blogPosts.length) {
-        // If it's a valid numeric ID
-        foundPost = blogPosts[postIndex - 1];
-      } else {
-        // If not a numeric ID, try to find by title (URL might be slugified)
-        const normalizedId = id.toLowerCase().replace(/-/g, ' ');
-        foundPost = blogPosts.find(post => 
-          post.title.toLowerCase() === normalizedId || 
-          post.title.toLowerCase().replace(/-/g, ' ') === normalizedId
-        );
-      }
-      
-      setPost(foundPost || null);
-      
-      // Find related posts (same category)
-      if (foundPost) {
-        const related = blogPosts
-          .filter(p => p.category === foundPost.category && p !== foundPost)
-          .slice(0, 3);
-        setRelatedPosts(related);
-      }
-      
-      setLoading(false);
+    // Handle errors or loading states
+    if (blogError || sectionError) {
+      console.error("Errors:", blogError, sectionError)
+      return <ProjectNotFound />
     }
-  }, [params, blogPosts])
+    if (!blogData || !sectionData) {
+      return <SectionSkeleton variant="default" className="py-20"/>
+    }
 
-  // If post is not found
-  if (!loading && !post) {
-    return <PostNotFound content={content} />
-  }
-
-  // Show loading skeleton
-  if (loading || !post) {
-    return <BlogDetailsSkeleton />
-  }
 
   return (
     <div className="relative w-full py-16 md:py-24 overflow-hidden" dir={direction}>
@@ -81,16 +44,15 @@ export default function BlogDetails() {
 
       <div className="container relative px-4 md:px-6 z-10">
         <div className="max-w-3xl mx-auto">
-          <GoBackButton sectionName="blog" />
-          <PostHeader post={post} content={content} isRTL={isRTL} />
-          <FeaturedImage post={post} />
-          <PostContent post={post} isRTL={isRTL} />
-          <RelatedPosts 
+          <PostHeader blog={blogData.data}/>
+          <FeaturedImage blog={blogData.data} />
+          <PostContent blog={blogData.data} />
+               {/* <RelatedPosts 
             relatedPosts={relatedPosts} 
             content={content} 
             blogPosts={blogPosts} 
             isRTL={isRTL} 
-          />
+          /> */}
         </div>
       </div>
     </div>

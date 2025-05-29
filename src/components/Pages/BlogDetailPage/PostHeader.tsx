@@ -50,6 +50,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({ blog }) => {
 
   // Extract fields from project subsection
   const titleElement = blog.elements.find((e) => e.name === "Title")
+  const descriptionElement = blog.elements.find((e) => e.name === "Description")
   const categoryElement = blog.elements.find((e) => e.name === "Category")
   const backLinkTextElement = blog.elements.find((e) => e.name === "Back Link Text")
   const dateElement = blog.elements.find((e) => e.name === "Date")
@@ -57,12 +58,12 @@ export const PostHeader: React.FC<PostHeaderProps> = ({ blog }) => {
 
   // Get translated content based on current language
   const title = getTranslatedContent(titleElement, language)
+  const description = getTranslatedContent(descriptionElement, language)
   const category = getTranslatedContent(categoryElement, language)
   const backLinkText = getTranslatedContent(backLinkTextElement, language)
   const date = getTranslatedContent(dateElement, language)
 
 
-  console.log("date" , date)
 
   return (
     <motion.div
@@ -71,7 +72,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({ blog }) => {
       transition={{ duration: 0.6 }}
       className="mb-8"
     >
-                <GoBackButton sectionName="blog" title={backLinkText}  />
+      <GoBackButton sectionName="blog" title={backLinkText}  />
     
       <div className={`flex items-center gap-3 mb-2 `}>
         <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r ${direction  === "rtl" ? "text-right" : ""} from-violet-600 to-indigo-600 text-white shadow-sm`}>
@@ -82,11 +83,12 @@ export const PostHeader: React.FC<PostHeaderProps> = ({ blog }) => {
       <h1 className={`text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6 ${direction  === "rtl" ? "text-right" : ""}`}>
         {title}
       </h1>
+      <p>{description}</p>
       
       <div className={`flex flex-wrap items-center gap-5 text-sm text-muted-foreground ${direction  === "rtl" ? "justify-end" : ""}`}>
-        <div className="flex items-center gap-2">
+        <div className={`flex items-center gap-2 ${direction  === "rtl" ? "justify-end" : ""}`}>
           <Calendar className="w-4 h-4" />
-              Published on {formatDate(new Date(date.toString()), "MMM d, yyyy") }
+             {formatDate(new Date(date.toString()), "MMM d, yyyy") }
         </div>
         
       </div>

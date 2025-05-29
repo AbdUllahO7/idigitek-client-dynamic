@@ -27,10 +27,8 @@ export const PostContent: React.FC<PostContentProps> = ({ blog }) => {
     const { direction, language } = useLanguage()
 
   
-    const descriptionElement = blog.elements.find((e) => e.name === "Description")
     const contentElement = blog.elements.find((e) => e.name === "Content")
 
-    const description = getTranslatedContent(descriptionElement, language)
     const content = getTranslatedContent(contentElement, language)
 
 
@@ -41,9 +39,7 @@ export const PostContent: React.FC<PostContentProps> = ({ blog }) => {
       transition={{ duration: 0.8, delay: 0.2 }}
       className={`prose max-w-none dark:prose-invert mb-14 ${direction === "rtl" ? "text-right" : ""}`}
     >
-      <p className="text-lg leading-relaxed text-muted-foreground">
-        {description}
-      </p>
+
         <p className="text-lg leading-relaxed text-muted-foreground">
         {content}
       </p>

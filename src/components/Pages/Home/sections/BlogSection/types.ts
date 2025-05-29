@@ -1,10 +1,12 @@
 export interface Post {
-    id: string
-    title: string
-    excerpt: string
-    date: string
-    image: string
-    author: string
-    category: string
-    readTime: string
+    id: string;
+    image: string;
+    title: string;
+    excerpt: string;
+    content: string;
+    category: string;
+    date: string;
+    color: string;
+    order?: number;
+    isMain?: boolean;
 }

@@ -5,19 +5,11 @@ import React, { useState, useRef, useEffect } from "react"
 import { motion } from "framer-motion"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useLanguage } from "@/contexts/language-context"
-import { Post } from "./types"
 import { BlogCard } from "./BlogCard"
 
 
-interface BlogCarouselProps {
-  posts: Post[]
-  isInView: boolean
-  containerRef: React.RefObject<HTMLDivElement>
-  isRTL: boolean
-}
 
-export function BlogCarousel({ posts, isInView, containerRef, isRTL }: BlogCarouselProps) {
+export function BlogCarousel({ posts, isInView, containerRef, isRTL }) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
 
@@ -25,6 +17,7 @@ export function BlogCarousel({ posts, isInView, containerRef, isRTL }: BlogCarou
   // Initial state with SSR-safe default value
   const [postsPerView, setPostsPerView] = useState(3)
   const maxSlides = Math.max(0, posts.length - postsPerView)
+
   
   // Correct usage of useEffect for client-side operations
   useEffect(() => {

@@ -13,6 +13,7 @@ interface UseSectionContentProps<T extends { order?: number }> {
 }
 
 export function useSectionContent<T extends {
+  description: string
   phoneValue: any
   subjects: any
   question?: any

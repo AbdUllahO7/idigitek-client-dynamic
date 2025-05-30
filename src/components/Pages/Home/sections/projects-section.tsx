@@ -11,7 +11,6 @@ import { CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useSectionLogic } from "@/hooks/useSectionLogic";
 import { useSectionContent } from "@/hooks/useSectionContent";
-import { useSectionItems } from "@/lib/sectionItems/use-sectionItems";
 
 export default function ProjectsSection({ sectionId, websiteId }) {
   const ref = useRef(null);

@@ -66,6 +66,13 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
   // Find the Header section
   const headerSection = sectionsData?.data.find((section: Section) => section.subName === "Header");
   const headerSectionId = headerSection?._id;
+
+
+
+  const footerSection = sectionsData?.data.find((section: Section) => section.subName === "Footer");
+  const footerSectionId = footerSection?._id;
+
+
   // Handle loading and error states
   if (websitesLoading || sectionsIsLoading) {
     return <SectionSkeleton variant="default" className="py-20" />;
@@ -88,7 +95,8 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
       <NavigationTracker />
       {headerSectionId ? <Header logo={websites[0].logo}  sectionId={headerSectionId}/> : <Header logo={websites[0].logo} sectionId={headerSectionId} />}
       {children}
-      <Footer />
+      {footerSectionId ? <Footer websiteId = {websiteId} logo={websites[0].logo}  sectionId={footerSectionId}/> : <Footer  websiteId = {websiteId} logo={websites[0].logo} sectionId={footerSectionId} />}
+
     </div>
   );
 }

@@ -24,7 +24,7 @@ interface NavItem {
 interface HeaderProps {
   sectionId: string
   logo?: string
-  subName?: string // Added to accept subName as a prop
+  subName?: string
 }
 
 export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subName }: HeaderProps) {
@@ -86,7 +86,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const hash = window.location.hash || (subName ? `#${subName}` : '') // Use subName if provided
+      const hash = window.location.hash || (subName ? `#${subName}` : '')
       if (hash) {
         const sectionId = hash.substring(1)
         setTimeout(() => {
@@ -94,14 +94,13 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
         }, 500)
       }
     }
-  }, [pathname, scrollToSection, subName]) // Added subName to dependencies
+  }, [pathname, scrollToSection, subName])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
     const homePath = '/'
     const currentPath = pathname
 
-    // Check if subName matches the sectionId or is provided
     const targetSectionId = subName && sectionId === subName ? subName : sectionId
 
     if (currentPath === homePath) {
@@ -114,7 +113,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
 
   if (isLoading || error) {
     return (
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
+      <header className="sticky top-0 z-50 w-full border-wtheme-border bg-wtheme-background backdrop-blur">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2">
@@ -127,7 +126,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
               />
             </Link>
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-wtheme-text/70">
             {isLoading ? "Loading navigation..." : "No navigation available"}
           </div>
         </div>
@@ -140,15 +139,16 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full border-wtheme-border transition-all duration-300 ${
         isOpen
-          ? "bg-black border-gray-800"
+          ? "bg-primary"  // UPDATED: Use website theme primary color for mobile menu
           : scrolled
-            ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-md"
-            : "bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+            ? "bg-wtheme-background/95 backdrop-blur supports-[backdrop-filter]:bg-wtheme-background/60 shadow-primary"  // UPDATED: Website theme background + primary shadow
+            : "bg-wtheme-background/50 backdrop-blur supports-[backdrop-filter]:bg-wtheme-background/60"  // UPDATED: Website theme background
       }`}
       dir={direction}
     >
+      
       <div className="container flex h-16 items-center justify-between">
         <motion.div
           className="flex items-center gap-2"
@@ -184,8 +184,8 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
             >
               <Link
                 href={item.href}
-                onClick={(e) => handleNavClick(e, subName && subName === item.label ? subName : item.id)} // Use subName if it matches label
-                className="text-sm font-medium hover:text-primary"
+                onClick={(e) => handleNavClick(e, subName && subName === item.label ? subName : item.id)}
+                className="text-sm font-body font-medium text-wtheme-text hover:text-primary transition-colors"  // UPDATED: Website theme fonts and colors
               >
                 {item.label}
               </Link>
@@ -217,7 +217,7 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick }: MobileNavPro
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className={isOpen ? "text-white hover:text-white hover:bg-gray-800" : ""}
+        className={isOpen ? "text-white hover:text-accent hover:bg-white/10" : "text-wtheme-text hover:text-primary"}  // UPDATED: Website theme colors
       >
         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
       </Button>
@@ -225,7 +225,7 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick }: MobileNavPro
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 top-16 z-50 bg-black h-full p-6"
+            className="fixed inset-0 top-16 z-50 bg-primary h-full p-6"  // UPDATED: Use website theme primary color
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -242,8 +242,8 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick }: MobileNavPro
                 >
                   <Link
                     href={item.href}
-                    className="text-lg font-medium text-white hover:text-primary"
-                    onClick={(e) => handleNavClick(e, item.id)} // Use item.id for mobile nav
+                    className="text-lg font-body font-medium text-white hover:text-accent transition-colors"  // UPDATED: Website theme fonts and accent color on hover
+                    onClick={(e) => handleNavClick(e, item.id)}
                   >
                     {item.label}
                   </Link>

@@ -110,6 +110,9 @@ export function useSectionLogic({
             case "project Details":
               content.readMore = translation.content
               break
+            case "Service Details":
+              content.readMore = translation.content
+              break
           case "section":
               content.section = translation.section
               break

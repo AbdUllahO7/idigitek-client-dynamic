@@ -1,18 +1,49 @@
-// components/FeaturesSection.jsx
+"use client"
+
+import React from 'react'
 import Image from "next/image"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLanguage } from "@/contexts/language-context"
+import { Check } from "lucide-react"
 
-const FeaturesSection = ({ features }) => {
+interface FeatureContent {
+  heading: string;
+  description: string;
+  features: string[];
+  image: string;
+  imageAlt: string;
+  imagePosition: string;
+}
 
-  const {direction } = useLanguage();
+interface Feature {
+  id: string;
+  title: string;
+  content: FeatureContent;
+}
+
+interface FeaturesSectionProps {
+  features: Feature[];
+}
+
+const FeaturesSection: React.FC<FeaturesSectionProps> = ({ features = [] }) => {
+  const { language, direction } = useLanguage();
+  
+  const noFeaturesText = language === 'ar' ? 'لا توجد ميزات متاحة' : 'No features available';
+
+  if (features.length === 0) {
+    return (
+      <div className="mb-16 py-16 text-center">
+        <p className="text-gray-600 dark:text-gray-400">{noFeaturesText}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="mb-16">
-      <h2 className="text-3xl font-bold mb-8 text-center">{ direction === "rtl" ? 'الميزات الأساسية' :'Core Features'}</h2>
+    <div className="mb-16" dir={direction}>
       <Tabs defaultValue={features[0].id} className="w-full">
-        <TabsList className="grid grid-cols-1 md:grid-cols-4 w-full h-auto">
+        <TabsList className="grid w-full h-auto" style={{ gridTemplateColumns: `repeat(${features.length}, 1fr)` }}>
           {features.map((feature) => (
-            <TabsTrigger key={feature.id} value={feature.id} className="py-3">
+            <TabsTrigger key={feature.id} value={feature.id} className="py-3 text-sm">
               {feature.title}
             </TabsTrigger>
           ))}
@@ -20,7 +51,7 @@ const FeaturesSection = ({ features }) => {
         
         {features.map((feature) => (
           <TabsContent key={feature.id} value={feature.id} className="mt-6 p-6 border rounded-lg">
-            <FeatureContent content={feature.content} />
+            <FeatureContent content={feature.content} direction={direction} />
           </TabsContent>
         ))}
       </Tabs>
@@ -28,37 +59,45 @@ const FeaturesSection = ({ features }) => {
   )
 }
 
-const FeatureContent = ({ content }) => {
-  const { heading, description, features, image, imageAlt, imagePosition } = content
+interface FeatureContentProps {
+  content: FeatureContent;
+  direction: string;
+}
+
+const FeatureContent: React.FC<FeatureContentProps> = ({ content, direction }) => {
+  const { heading, description, features, image, imageAlt, imagePosition } = content;
   
   const ContentSection = () => (
     <div>
       <h3 className="text-2xl font-semibold mb-4">{heading}</h3>
-      <p className="text-gray-700 dark:text-gray-300 mb-4">
+      <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
         {description}
       </p>
-      <ul className="space-y-2">
-        {features.map((feature, index) => (
-          <li key={index} className="flex items-start">
-            <div className="mr-2 mt-1 text-primary">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <span>{feature}</span>
-          </li>
-        ))}
-      </ul>
+      {features && features.length > 0 && (
+        <ul className="space-y-3">
+          {features.map((feature, index) => (
+            <li key={index} className="flex items-start">
+              <div className={`${direction === 'rtl' ? 'ml-3' : 'mr-3'} mt-1 text-primary`}>
+                <Check className="h-5 w-5" />
+              </div>
+              <span className="text-gray-700 dark:text-gray-300">{feature}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
   
   const ImageSection = () => (
-    <div className="relative h-64 md:h-80 w-full rounded-lg overflow-hidden">
+    <div className="relative h-64 md:h-80 w-full rounded-lg overflow-hidden shadow-lg">
       <Image
-        src={image}
-        alt={imageAlt}
+        src={image || "/placeholder.svg"}
+        alt={imageAlt || "Feature image"}
         fill
-        className="object-cover"
+        className="object-cover transition-transform duration-300 hover:scale-105"
+        onError={(e) => {
+          e.currentTarget.src = "/placeholder.svg"
+        }}
       />
     </div>
   )

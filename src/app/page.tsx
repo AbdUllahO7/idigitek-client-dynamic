@@ -106,7 +106,7 @@ export default function LandingPage() {
     IndustrySolutions: (id: string, websiteId?: string) => (
       <IndustrySolutionsSection websiteId={websiteId} sectionId={id} />
     ),
-    // Services: (id: string, websiteId?: string) => <ServicesSection websiteId={websiteId} sectionId={id} />,
+    Services: (id: string, websiteId?: string) => <ServicesSection  websiteId={websiteId} sectionId={id} />,
     whyChooseUs: (id: string, websiteId?: string) => <FeaturesSection  websiteId={websiteId} sectionId={id}/>,
     Projects: (id: string, websiteId?: string) => <ProjectsSection websiteId={websiteId} sectionId={id} />,
     OurProcess: (id: string, websiteId?: string) => <ProcessSection websiteId={websiteId} sectionId={id} />,

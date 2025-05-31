@@ -139,7 +139,6 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
     return columns
   }, [Special])
   
-  console.log(dynamicColumns)
 
   return (
     <motion.footer

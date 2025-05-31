@@ -1,17 +1,41 @@
-// components/FAQSection.jsx
-import { useLanguage } from '@/contexts/language-context'
+"use client"
+
 import React from 'react'
+import { useLanguage } from '@/contexts/language-context'
+import { HelpCircle } from 'lucide-react'
 
-const FAQSection = ({ faqs }) => {
+interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+}
 
-  const { direction } = useLanguage()
+interface FAQSectionProps {
+  faqs: FAQ[];
+}
+
+const FAQSection: React.FC<FAQSectionProps> = ({ faqs = [] }) => {
+  const { language, direction } = useLanguage();
+  
+  const noFaqsText = language === 'ar' ? 'لا توجد أسئلة شائعة متاحة' : 'No FAQs available';
+
+  if (faqs.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center py-16">
+          <HelpCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">{noFaqsText}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h2 className="text-3xl font-bold mb-8 text-center">{direction === 'rtl' ? 'الأسئلة الشائعة' : 'Frequently Asked Questions'}</h2>
+    <div className="container mx-auto px-4 py-12" dir={direction}>
       <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {faqs.map((faq, index) => (
+        {faqs.map((faq) => (
           <FAQItem 
-            key={index} 
+            key={faq.id} 
             question={faq.question} 
             answer={faq.answer} 
           />
@@ -21,7 +45,12 @@ const FAQSection = ({ faqs }) => {
   )
 }
 
-const FAQItem = ({ question, answer }) => {
+interface FAQItemProps {
+  question: string;
+  answer: string;
+}
+
+const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
       <h3 className="text-xl font-semibold mb-3">{question}</h3>

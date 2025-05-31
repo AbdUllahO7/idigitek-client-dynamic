@@ -9,11 +9,8 @@ import { useInView } from "framer-motion"
 import { motion } from "framer-motion"
 import { ButtonSectionLink } from "@/components/SectionLinks"
 import { useLanguage } from "@/contexts/language-context"
-import { staticServicesData, translationsService } from "../ConstData/ConstData"
-
-
-// Translations for the section
-
+import { useSectionLogic } from "@/hooks/useSectionLogic"
+import { useSectionContent } from "@/hooks/useSectionContent"
 
 // Component to render specific icons based on name
 const DynamicIcon = ({ name, className }) => {
@@ -29,37 +26,41 @@ const DynamicIcon = ({ name, className }) => {
   }
 };
 
-export default function ServicesSection() {
-  const { language, direction } = useLanguage();
-  const t = translationsService[language] || translationsService.en;
-  
+export default function ServicesSection({ sectionId, websiteId }) {
+  const { language } = useLanguage();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.1 });
-  
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
-  // Fetch services data - this will be replaced with an actual API call
-  useEffect(() => {
-    const fetchServices = async () => {
-      setLoading(true);
-      setError(false);
-      
-      try {
-        setTimeout(() => {
-          setServices(staticServicesData[language] || staticServicesData.en);
-          setLoading(false);
-        }, 800); // Simulate network delay
-      } catch (err) {
-        console.error("Error fetching services:", err);
-        setError(true);
-        setLoading(false);
-      }
-    };
+  const { content, isLoading: sectionLoading, error: sectionError, refetch, direction } = useSectionLogic({
+    sectionId,
+    websiteId,
+    itemsKey: "news",
+  })
 
-    fetchServices();
-  }, [language]);
+
+  const serviceFilter = (item: { title: string }) => item.title && item.title.trim() !== ""
+
+  const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
+    sectionId,
+    websiteId,
+    filter : serviceFilter,
+    fieldMappings: {
+      id: "_id",
+      image: "Background Image",
+      title: "Title",
+      description: "Description", // Changed from excerpt to description to match usage
+      BackButton: "Back Link Text",
+      readMore: "service Details",
+      date: "createdAt",
+      color: () => "from-digitek-orange to-digitek-pink"
+    }
+  })
+
+
+
+
+  const isLoading = sectionLoading || itemsLoading
+  const error = sectionError || itemsError
 
   return (
     <section id="services" className="w-full pb-10 pt-10 bg-gradient-to-b from-background to-muted overflow-hidden">
@@ -71,7 +72,7 @@ export default function ServicesSection() {
             transition={{ duration: 0.5 }}
             className="inline-block mb-2 text-sm font-medium tracking-wider text-primary uppercase"
           >
-            {t.sectionLabel}
+            {content.sectionLabel}
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -79,7 +80,7 @@ export default function ServicesSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4"
           >
-            {t.sectionTitle}
+            {content.sectionTitle}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -87,34 +88,38 @@ export default function ServicesSection() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="max-w-2xl mx-auto text-muted-foreground text-lg"
           >
-            {t.sectionDescription}
+            {content.sectionDescription}
           </motion.p>
         </div>
 
-        {loading ? (
+        {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-            <p className="text-muted-foreground">{t.loading}</p>
+            <p className="text-muted-foreground">{content.loading || "Loading..."}</p>
           </div>
         ) : error ? (
-          <div className="text-center py-20">
-            <h3 className="text-2xl font-semibold mb-4 text-red-500">{t.error}</h3>
-            <Button 
-              onClick={() => window.location.reload()}
-              className="mt-4"
-            >
-              Try Again
+          <div className="flex flex-col items-center justify-center py-16">
+            <p className="text-muted-foreground">{content.error}</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4">
+              {content.retry}
+            </Button>
+          </div>
+        ) : contentItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16">
+            <p className="text-muted-foreground">{content.error}</p>
+            <Button onClick={() => window.location.reload()} variant="outline" className="mt-4">
+              {content.retry}
             </Button>
           </div>
         ) : (
           <div className="grid gap-12">
-            {services.map((service, index) => (
+            {contentItems.map((service, index) => (
               <ServiceCard 
                 key={service.id} 
                 service={service} 
                 index={index} 
                 direction={direction}
-                serviceDetails={t.serviceDetails}
+                serviceDetails={content.readMore}
               />
             ))}
           </div>
@@ -217,7 +222,7 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
 
           <p className="text-muted-foreground text-lg mb-6">{service.description}</p>
           <ButtonSectionLink 
-            href={`/Pages/ServiceDetailsPage/${service.slug}`} 
+            href={`/Pages/ServiceDetailsPage/${service.id}`}
             className="group bg-neutral-900 text-neutral-50 bg-gradient-to-tr from-digitek-pink to-digitek-purple shadow hover:bg-neutral-900/90 dark:bg-neutral-50 dark:text-white dark:hover:bg-neutral-50/90"
           >
             {serviceDetails}
@@ -225,8 +230,6 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
           </ButtonSectionLink>
         </motion.div>
       </div>
-
-    
     </motion.div>
   )
 }

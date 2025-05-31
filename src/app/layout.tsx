@@ -1,11 +1,13 @@
+// app/layout.tsx (Your existing file - UPDATED)
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider" // Your existing next-themes provider
 import { LanguageProvider } from "@/contexts/language-context"
 import QueryProvider from "@/providers/QueryProvider"
 import RootLayoutClient from "./RootLayoutClient"
+import { WebsiteThemeProvider } from "@/contexts/WebsiteThemeContext"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,10 +25,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        {/* Keep your existing ThemeProvider for dark/light mode */}
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <QueryProvider>
             <LanguageProvider>
-              <RootLayoutClient>{children}</RootLayoutClient>
+              {/* NEW: Add WebsiteThemeProvider for dynamic themes */}
+              <WebsiteThemeProvider>
+                <RootLayoutClient>{children}</RootLayoutClient>
+              </WebsiteThemeProvider>
             </LanguageProvider>
           </QueryProvider>
         </ThemeProvider>

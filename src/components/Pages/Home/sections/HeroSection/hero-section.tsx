@@ -43,7 +43,7 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
     requestButton: (subsection: any) => "Request Now",   // Default value
     color: (subsection: any, index?: number) =>
       subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - Color`)?.defaultContent ||
-      "from-digitek-orange to-digitek-pink",
+      "from-primary to-accent",  // UPDATED: Use website theme colors instead of digitek colors
     order: (subsection: any, index?: number) => subsection.order || index || 0
   }
 
@@ -89,13 +89,12 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
     }
   }, [currentSlide, autoplay, slides.length, nextSlide])
 
-
   return (
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="relative w-full overflow-hidden bg-gradient-to-b from-background to-muted"
+      className="relative w-full overflow-hidden bg-theme-gradient"  // UPDATED: Use website theme gradient
       id="Hero"
       dir={direction}
       onMouseEnter={handleMouseEnter}

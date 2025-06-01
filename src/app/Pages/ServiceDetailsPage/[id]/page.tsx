@@ -9,7 +9,6 @@ import FAQSection from "@/components/Pages/ServiceDetails/FAQSection"
 
 import { useLanguage } from "@/contexts/language-context"
 import { Loader2 } from "lucide-react"
-import { benefitsData, faqData, featuresData, heroData, processStepsData } from '@/components/Pages/ServiceDetails/serviceData'
 import { useSubSections } from '@/lib/subSections/use-subSections'
 import { ProjectNotFound } from '@/components/Pages/ProjectsDetailPage/data/ProjectNotFound'
 import { SectionSkeleton } from '@/components/Skeleton/SectionSkeleton'
@@ -253,6 +252,8 @@ const extractProcessStepsData = (processStepsSection: any, language: string) => 
     return steps.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 };
 
+
+
 // Helper function to extract FAQ data from section
 const extractFaqData = (faqSection: any, language: string) => {
     if (!faqSection || !faqSection.elements) {
@@ -365,6 +366,7 @@ export default function SmartDriveThroughPage({ params }: { params: Promise<{ id
     if (!serviceData || !sectionData) {
         return <SectionSkeleton variant="default" className="py-20"/>
     }
+console.log("pageProcessStepsData" , pageProcessStepsData)
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900" dir={direction}>

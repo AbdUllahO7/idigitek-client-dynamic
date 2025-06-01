@@ -192,7 +192,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
             </motion.div>
           ))}
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             <LanguageToggle />
           </div>
         </nav>
@@ -250,7 +250,7 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick }: MobileNavPro
                 </motion.div>
               ))}
               <div className="flex items-center gap-2 mt-4">
-                <ThemeToggle />
+                {/* <ThemeToggle /> */}
                 <LanguageToggle />
               </div>
             </nav>

@@ -8,8 +8,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Send, Check } from "lucide-react"
 
-
-
 export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitting, isSubmitted }) {
 
   // Split the subjects string into an array
@@ -17,11 +15,13 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
 
   return (
     <>
-      <h3 className={`text-2xl font-bold mb-4 ${isRTL ? "text-right" : "text-left"}`}>{content?.title}</h3>
+      <h3 className={`text-2xl font-heading font-bold mb-4 text-wtheme-text ${isRTL ? "text-right" : "text-left"}`}>
+        {content?.title}
+      </h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label htmlFor="name" className={`text-sm font-medium ${isRTL ? "block text-right" : ""}`}>
+            <label htmlFor="name" className={`text-sm font-body font-medium text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
               {content?.fullName}
             </label>
             <Input
@@ -33,7 +33,7 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="email" className={`text-sm font-medium ${isRTL ? "block text-right" : ""}`}>
+            <label htmlFor="email" className={`text-sm font-body font-medium text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
               {content?.email}
             </label>
             <Input
@@ -47,7 +47,7 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
           </div>
         </div>
         <div className="space-y-2">
-          <label htmlFor="subject" className={`text-sm font-medium ${isRTL ? "block text-right" : ""}`}>
+          <label htmlFor="subject" className={`text-sm font-body font-medium text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
             Subject
           </label>
           <Select required>
@@ -64,7 +64,7 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
           </Select>
         </div>
         <div className="space-y-2">
-          <label htmlFor="message" className={`text-sm font-medium ${isRTL ? "block text-right" : ""}`}>
+          <label htmlFor="message" className={`text-sm font-body font-medium text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
             {content?.message}
           </label>
           <Textarea
@@ -77,7 +77,7 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
         </div>
         <Button
           type="submit"
-          className={`w-full btn-gradient text-white ${isRTL ? "flex flex-row-reverse justify-center" : ""}`}
+          className={`w-full bg-primary text-white font-accent ${isRTL ? "flex flex-row-reverse justify-center" : ""}`}
           disabled={isSubmitting || isSubmitted}
         >
           {isSubmitting ? (

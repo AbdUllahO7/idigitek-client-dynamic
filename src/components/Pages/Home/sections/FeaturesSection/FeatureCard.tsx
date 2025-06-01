@@ -29,18 +29,18 @@ export default function FeatureCard({ feature, isInView }: FeatureCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.6 }}
-      className="group flex items-start gap-4 rounded-xl p-1 transition-all duration-300 hover:bg-gradient-to-r hover:from-digitek-pink/5 hover:to-digitek-orange/5"
+      className="group flex items-start gap-4 rounded-xl p-1 transition-all duration-300 hover:bg-primary/5 "
     >
       <div
-        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${feature.color} text-white shadow-md group-hover:scale-110 transition-transform duration-300`}
+        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-wtheme-text text-white shadow-md group-hover:scale-110 transition-transform duration-300`}
       >
         {renderIcon()}
       </div>
       <div className="space-y-1">
-        <h3 className="text-xl font-semibold group-hover:text-primary transition-colors duration-300">
+        <h3 className="text-xl font-heading font-semibold text-wtheme-text group-hover:text-primary transition-colors duration-300">
           {feature.title}
         </h3>
-        <p className="text-muted-foreground">{feature.excerpt}</p>
+        <p className="font-body text-wtheme-text/70">{feature.excerpt}</p>
       </div>
     </motion.div>
   );

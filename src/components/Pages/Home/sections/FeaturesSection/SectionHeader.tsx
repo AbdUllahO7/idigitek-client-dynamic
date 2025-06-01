@@ -7,13 +7,15 @@ interface SectionHeaderProps {
   sectionTitle: string
   mainTitle: string
   mainDescription: string
+  centered?: boolean
 }
 
 export default function SectionHeader({ 
   isInView, 
   sectionTitle, 
   mainTitle, 
-  mainDescription 
+  mainDescription,
+  centered = true
 }: SectionHeaderProps) {
   return (
     <>
@@ -21,7 +23,7 @@ export default function SectionHeader({
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6 }}
-        className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium w-fit"
+        className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-accent font-medium ${centered ? 'mx-auto' : 'w-fit'}`}
       >
         {sectionTitle}
       </motion.div>
@@ -30,7 +32,7 @@ export default function SectionHeader({
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="mt-4 text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight"
+        className={`mt-4 text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight text-wtheme-text ${centered ? 'max-w-3xl mx-auto' : 'max-w-[600px]'}`}
       >
         {mainTitle}
       </motion.h2>
@@ -39,7 +41,7 @@ export default function SectionHeader({
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="mt-4 text-lg text-muted-foreground max-w-[600px]"
+        className={`mt-4 text-lg font-body text-wtheme-text/70 ${centered ? 'max-w-2xl mx-auto' : 'max-w-[600px]'}`}
       >
         {mainDescription}
       </motion.p>

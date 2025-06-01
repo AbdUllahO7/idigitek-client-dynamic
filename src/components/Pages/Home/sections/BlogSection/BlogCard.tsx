@@ -19,7 +19,6 @@ interface BlogCardProps {
 export function BlogCard({ post, index, isInView, isRTL }: BlogCardProps) {
   const { direction } = useLanguage();
 
-
   return (
     <motion.div
       initial="hidden"
@@ -33,16 +32,16 @@ export function BlogCard({ post, index, isInView, isRTL }: BlogCardProps) {
         },
       }}
       whileHover={{ y: -8, transition: { duration: 0.2 } }}
-      className="group flex flex-col h-full rounded-2xl border border-border/40 bg-background/80 backdrop-blur-sm shadow-lg shadow-indigo-500/5 overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-indigo-500/10"
+      className="group flex flex-col h-full rounded-2xl border border-wtheme-border/40 bg-wtheme-background/80 backdrop-blur-sm shadow-lg shadow-primary/5 overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10"
     >
       <div className="relative w-full h-40 sm:h-48 md:h-56">
         <div className={`absolute top-3 md:top-4 ${isRTL ? "right-3 md:right-4" : "left-3 md:left-4"} z-10`}>
-          <span className={`inline-block px-2 py-0.5 md:px-3 md:py-1 text-xs font-medium rounded-full bg-gradient-to-r ${post.color} text-white backdrop-blur-sm shadow-sm`}>
+          <span className="inline-block px-2 py-0.5 md:px-3 md:py-1 text-xs font-accent font-medium rounded-full bg-primary text-white backdrop-blur-sm shadow-sm">
             {post.category || "No Category"}
           </span>
         </div>
-        <div className="transition-transform duration-500 ">
-        <div className="transition-transform duration-500 ">
+        <div className="transition-transform duration-500">
+          <div className="transition-transform duration-500">
             <Image
               src={post.image}
               alt={post.title}
@@ -54,26 +53,26 @@ export function BlogCard({ post, index, isInView, isRTL }: BlogCardProps) {
               placeholder="blur"
               blurDataURL="/placeholder-image.jpg"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-t from-wtheme-background/90 via-wtheme-background/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-wtheme-background/90 via-wtheme-background/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
       </div>
       <div className="flex flex-col flex-1 p-4 md:p-5 lg:p-7">
         <div className="space-y-3 md:space-y-4">
-          <h3 className={`font-bold text-base md:text-lg lg:text-xl leading-tight group-hover:text-primary transition-colors duration-300 ${isRTL ? "text-right" : "text-left"}`}>
-            {post.title }
+          <h3 className={`font-heading font-bold text-base md:text-lg lg:text-xl leading-tight text-wtheme-text group-hover:text-primary transition-colors duration-300 ${isRTL ? "text-right" : "text-left"}`}>
+            {post.title}
           </h3>
-          <p className={`text-xs md:text-sm text-muted-foreground line-clamp-2 ${isRTL ? "text-right" : "text-left"}`}>
-            {post.excerpt }
+          <p className={`text-xs md:text-sm font-body text-wtheme-text/70 line-clamp-2 ${isRTL ? "text-right" : "text-left"}`}>
+            {post.excerpt}
           </p>
           <div className={`flex items-center justify-between pt-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-            <span className="text-xs text-muted-foreground">
-              {formatDate(new Date(post.date), "MMM d, yyyy") }
+            <span className="text-xs font-body text-wtheme-text/60">
+              {formatDate(new Date(post.date), "MMM d, yyyy")}
             </span>
             <ButtonSectionLink
-                href={`/Pages/BlogDetailPage/${post.id}`}
-              className="group text-xs md:text-sm px-3 py-1.5 md:px-4 md:py-2 bg-neutral-900 text-neutral-50 bg-gradient-to-tr from-digitek-pink to-digitek-purple shadow hover:bg-neutral-900/90 dark:bg-neutral-50 dark:text-white dark:hover:bg-neutral-50/90"
+              href={`/Pages/BlogDetailPage/${post.id}`}
+              className="group text-xs md:text-sm font-accent px-3 py-1.5 md:px-4 md:py-2 bg-primary text-white shadow hover:opacity-90 transition-opacity duration-300"
             >
               {direction === "ltr" ? "Read more" : "اقرأ المزيد"}
               <ArrowRight

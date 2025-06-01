@@ -28,8 +28,6 @@ export default function NewsSection({ sectionId, websiteId }) {
 
   console.log(content)
 
-
-
   const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
     sectionId,
     websiteId,
@@ -40,11 +38,9 @@ export default function NewsSection({ sectionId, websiteId }) {
       excerpt: "Description",
       readMore: "news Details",
       date: "createdAt",
-      color: () => "from-digitek-orange to-digitek-pink"
+      color: () => ""
     }
   })
-
-
 
   // Reset active index on language change
   useEffect(() => {
@@ -84,21 +80,21 @@ export default function NewsSection({ sectionId, websiteId }) {
   const error = sectionError || itemsError
 
   return (
-    <section id="news" className="relative w-full py-20 overflow-hidden" dir={direction}>
-      <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-background"></div>
-      <div className="absolute top-0 left-0 w-full h-40 bg-grid-pattern opacity-5 transform rotate-3"></div>
-      <div className="absolute bottom-0 right-0 w-full h-40 bg-grid-pattern opacity-5 transform -rotate-3"></div>
+    <section id="news" className="relative w-full py-20 overflow-hidden " dir={direction}>
+      <div className="absolute inset-0  from-primary/5 to-wtheme-background"></div>
+      <div className="absolute top-0 left-0 w-full h-40  opacity-5 transform rotate-3"></div>
+      <div className="absolute bottom-0 right-0 w-full h-40  opacity-5 transform -rotate-3"></div>
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
         transition={{ duration: 1.5 }}
-        className="absolute top-1/3 left-0 w-96 h-96 rounded-full bg-digitek-orange blur-3xl"
+        className="absolute top-1/3 left-0 w-96 h-96 rounded-full bg-accent blur-3xl"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
         transition={{ duration: 1.5, delay: 0.3 }}
-        className="absolute bottom-1/3 right-0 w-96 h-96 rounded-full bg-digitek-pink blur-3xl"
+        className="absolute bottom-1/3 right-0 w-96 h-96 rounded-full bg-secondary blur-3xl"
       />
 
       <div className="container relative z-10 px-4 md:px-6">
@@ -107,7 +103,7 @@ export default function NewsSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium"
+            className="inline-flex items-center justify-center px-4 py-1.5 rounded-full text-primary text-sm font-accent font-medium"
           >
             {content.sectionLabel}
           </motion.div>
@@ -116,7 +112,7 @@ export default function NewsSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight max-w-3xl"
+            className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight max-w-3xl text-wtheme-text"
           >
             {content.sectionTitle}
           </motion.h2>
@@ -125,7 +121,7 @@ export default function NewsSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl text-muted-foreground text-lg"
+            className="max-w-2xl text-wtheme-text/70 font-body text-lg"
           >
             {content.sectionDescription}
           </motion.p>
@@ -133,18 +129,18 @@ export default function NewsSection({ sectionId, websiteId }) {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-muted-foreground">{content.loading || "Loading..."}</p>
+            <p className="text-wtheme-text/70 font-body">{content.loading || "Loading..."}</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-muted-foreground">{content.error}</p>
+            <p className="text-wtheme-text/70 font-body">{content.error}</p>
             <Button onClick={() => refetch()} variant="outline" className="mt-4">
               {content.retry}
             </Button>
           </div>
         ) : contentItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-muted-foreground">{content.error}</p>
+            <p className="text-wtheme-text/70 font-body">{content.error}</p>
             <Button onClick={() => window.location.reload()} variant="outline" className="mt-4">
               {content.retry}
             </Button>
@@ -188,7 +184,7 @@ export default function NewsSection({ sectionId, websiteId }) {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="rounded-full bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-background"
+                  className="rounded-full  backdrop-blur-sm border-2 shadow-lg hover:bg-wtheme-background"
                   onClick={direction === "rtl" ? nextNews : prevNews}
                 >
                   <ChevronLeft className="h-5 w-5" />
@@ -198,7 +194,7 @@ export default function NewsSection({ sectionId, websiteId }) {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="rounded-full bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-background"
+                  className="rounded-full bg-wtheme-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-wtheme-background"
                   onClick={direction === "rtl" ? prevNews : nextNews}
                 >
                   <ChevronRight className="h-5 w-5" />
@@ -236,7 +232,7 @@ export default function NewsSection({ sectionId, websiteId }) {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="rounded-full bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-background"
+                  className="rounded-full bg-wtheme-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-wtheme-background"
                   onClick={direction === "rtl" ? nextNews : prevNews}
                 >
                   {direction === "rtl" ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -246,7 +242,7 @@ export default function NewsSection({ sectionId, websiteId }) {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="rounded-full bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-background"
+                  className="rounded-full bg-wtheme-background/80 backdrop-blur-sm border-2 shadow-lg hover:bg-wtheme-background"
                   onClick={direction === "rtl" ? prevNews : nextNews}
                 >
                   <ChevronRight className="h-5 w-5" />
@@ -289,10 +285,10 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
         y: -10,
         transition: { type: "spring", stiffness: 400, damping: 10 },
       }}
-      className="group relative overflow-hidden rounded-2xl bg-background border border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col"
+      className="group relative overflow-hidden rounded-2xl  border border-wtheme-border/50 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col"
     >
       <motion.div
-        className={`h-1.5 w-full bg-gradient-to-r ${news.color}`}
+        className="h-1.5 w-full bg-primary"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
@@ -313,7 +309,7 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
         >
-          <span className={`px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r ${news.color}`}>
+          <span className="px-3 py-1 rounded-full text-xs font-accent font-medium text-white bg-primary">
             {news.category}
           </span>
         </motion.div>
@@ -321,7 +317,7 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
 
       <CardContent className="flex-grow p-6">
         <motion.div
-          className="flex items-center text-sm text-muted-foreground mb-3"
+          className="flex items-center text-sm text-wtheme-text/70 font-body mb-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
@@ -331,7 +327,7 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
         </motion.div>
 
         <motion.h3
-          className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors"
+          className="text-xl font-heading font-bold mb-3 line-clamp-2 text-wtheme-text group-hover:text-primary transition-colors"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
@@ -340,7 +336,7 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
         </motion.h3>
 
         <motion.p
-          className="text-muted-foreground line-clamp-3"
+          className="text-wtheme-text/70 font-body line-clamp-3"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
@@ -357,7 +353,7 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
         >
           <Link
             href={`/Pages/NewsDetailPage/${news.id}?sectionId=${sectionId}&websiteId=${websiteId}`}
-            className="inline-flex items-center text-primary font-medium hover:underline"
+            className="inline-flex items-center text-primary font-accent font-medium hover:underline"
           >
             {readMoreText}
             <ArrowRight
@@ -368,7 +364,7 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
       </CardFooter>
 
       <motion.div
-        className={`absolute -bottom-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-r ${news.color} opacity-10 group-hover:opacity-20 transition-opacity duration-500`}
+        className="absolute -bottom-8 -right-8 w-16 h-16 rounded-full bg-theme-gradient opacity-10 group-hover:opacity-20 transition-opacity duration-500"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.8, delay: 0.3 + index * 0.1 }}

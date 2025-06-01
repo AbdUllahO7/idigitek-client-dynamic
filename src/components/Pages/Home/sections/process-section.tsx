@@ -30,7 +30,7 @@ export default function ProcessSection({websiteId , sectionId}) {
           title: "Title",
           excerpt: "Description",
           date: "createdAt",
-          color: () => "from-digitek-orange to-digitek-pink"
+          color: () => "theme-gradient"
         }
       })
     
@@ -55,7 +55,7 @@ export default function ProcessSection({websiteId , sectionId}) {
 
   return (
     <section 
-      className="relative w-full py-20 overflow-hidden" 
+      className="relative w-full py-20 overflow-hidden bg-wtheme-background" 
       ref={sectionRef}
       dir={direction}
     >
@@ -68,11 +68,11 @@ export default function ProcessSection({websiteId , sectionId}) {
       {/* Background decorative shapes */}
       <motion.div 
         style={{ y: yBgShape1, opacity: opacityBg }}
-        className="absolute right-0 top-20 w-96 h-96 rounded-full bg-digitek-purple/10 blur-3xl"
+        className="absolute right-0 top-20 w-96 h-96 rounded-full bg-secondary/10 blur-3xl"
       />
       <motion.div 
         style={{ y: yBgShape2, opacity: opacityBg }}
-        className="absolute -left-20 bottom-40 w-80 h-80 rounded-full bg-digitek-pink/10 blur-3xl"
+        className="absolute -left-20 bottom-40 w-80 h-80 rounded-full bg-accent/10 blur-3xl"
       />
 
       <div className="container relative z-10 px-4 md:px-6">
@@ -82,14 +82,14 @@ export default function ProcessSection({websiteId , sectionId}) {
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center justify-center space-y-4 text-center max-w-3xl mx-auto"
         >
-          <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-digitek-pink mb-2">
+          <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-accent font-medium text-primary mb-2">
             {content.sectionLabel}
-            <span className="ml-2 inline-block w-1.5 h-1.5 rounded-full bg-digitek-pink animate-pulse"></span>
+            <span className="ml-2 inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
           </span>
-          <h2 className="text-4xl font-bold text-black dark:text-white md:text-5xl lg:text-6xl bg-clip-text">
+          <h2 className="text-4xl font-heading font-bold text-wtheme-text md:text-5xl lg:text-6xl bg-clip-text">
             {content.sectionTitle}
           </h2>
-          <p className="text-lg text-black dark:text-white md:text-xl">
+          <p className="text-lg font-body text-wtheme-text/80 md:text-xl">
             {content.sectionDescription}
           </p>
         </motion.div>
@@ -107,7 +107,7 @@ export default function ProcessSection({websiteId , sectionId}) {
                   descriptionAr: item.excerptAr || item.excerpt, // Fallback to English if no Arabic description
                   color: item.color,
                   image: item.image,
-                  accent: item.accent || (index % 3 === 0 ? "pink" : index % 3 === 1 ? "purple" : "orange") // Fallback accent colors
+                  accent: "primary" // Use primary consistently
                 }} 
                 index={index} 
                 isInView={isInView} 
@@ -128,19 +128,19 @@ export default function ProcessSection({websiteId , sectionId}) {
               transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
               d="M0,20 L50,0 L50,33 L100,20 M0,80 L50,60 L50,100 L100,80"
               fill="none"
-              stroke="url(#gradient)"
+              stroke="url(#themeGradient)"
               strokeWidth="0.5"
               strokeDasharray="1,3"
               className="opacity-40"
             />
             
-            {/* Gradient definition */}
+            {/* Gradient definition using theme colors */}
             <defs>
-              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#E91E63" />
-                <stop offset="33%" stopColor="#6A1B9A" />
-                <stop offset="66%" stopColor="#E91E63" />
-                <stop offset="100%" stopColor="#FF6D00" />
+              <linearGradient id="themeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="var(--website-theme-primary)" />
+                <stop offset="33%" stopColor="var(--website-theme-secondary)" />
+                <stop offset="66%" stopColor="var(--website-theme-accent)" />
+                <stop offset="100%" stopColor="var(--website-theme-primary)" />
               </linearGradient>
             </defs>
           </svg>
@@ -204,20 +204,9 @@ function ProcessStep({
     }
   }
 
-  // Set the accent color
-  let accentColor = "bg-digitek-pink"
-  let ringColor = "ring-digitek-pink/20"
-  let textColor = "text-digitek-pink"
-  
-  if (step.accent === "purple") {
-    accentColor = "bg-digitek-purple"
-    ringColor = "ring-digitek-purple/20"
-    textColor = "text-digitek-purple"
-  } else if (step.accent === "orange") {
-    accentColor = "bg-digitek-orange"
-    ringColor = "ring-digitek-orange/20"
-    textColor = "text-digitek-orange"
-  }
+  // Use primary colors consistently
+  const accentColor = "bg-primary"
+  const shadowColor = "shadow-primary"
 
   return (
     <motion.div
@@ -238,7 +227,7 @@ function ProcessStep({
       {/* Number indicator */}
       <motion.div
         variants={mobileVariants}
-        className={`z-20 flex items-center justify-center w-16 h-16 rounded-full ${accentColor} text-white text-xl font-bold ring-8 ${ringColor} lg:absolute lg:-top-8 lg:left-1/2 lg:-translate-x-1/2 shadow-lg mb-6 mx-auto lg:mb-0`}
+        className={`z-20 flex items-center justify-center w-16 h-16 rounded-full ${accentColor} text-white text-xl font-heading font-bold   lg:absolute lg:-top-8 lg:left-1/2 lg:-translate-x-1/2 mb-6 mx-auto lg:mb-0`}
       >
         {step.number}
       </motion.div>
@@ -251,7 +240,7 @@ function ProcessStep({
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
           transition: { duration: 0.3 }
         }}
-        className="relative z-10 backdrop-blur-sm rounded-2xl border overflow-hidden shadow-xl"
+        className="relative z-10 backdrop-blur-sm rounded-2xl border border-wtheme-border/50 bg-wtheme-background overflow-hidden shadow-xl"
       >
         {/* Image */}
         <div className="relative h-48 overflow-hidden">
@@ -265,24 +254,24 @@ function ProcessStep({
           />
           
           {/* Decorative elements */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-800 to-transparent opacity-60"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-wtheme-background/80 to-transparent opacity-60"></div>
           <div className={`absolute bottom-0 left-0 w-full h-1 ${accentColor}`}></div>
         </div>
         
         {/* Content */}
         <div className="p-6">
-          <h3 className={`text-2xl font-bold mb-3 ${textColor}`}>
+          <h3 className="text-2xl font-heading font-bold mb-3 text-wtheme-text">
             {getCurrentText(step, 'title')}
           </h3>
-          <p className="text-muted-foreground">
+          <p className="font-body text-wtheme-text/70">
             {getCurrentText(step, 'description')}
           </p>
           
           {/* Feature dots - purely decorative */}
           <div className="flex space-x-1 mt-6">
-            <div className={`h-1.5 w-1.5 rounded-full ${accentColor}`}></div>
-            <div className={`h-1.5 w-1.5 rounded-full bg-slate-600`}></div>
-            <div className={`h-1.5 w-1.5 rounded-full bg-slate-600`}></div>
+            <div className={`h-1.5 w-1.5 rounded-full `}></div>
+            <div className={`h-1.5 w-1.5 rounded-full bg-wtheme-text/30`}></div>
+            <div className={`h-1.5 w-1.5 rounded-full bg-wtheme-text/30`}></div>
           </div>
         </div>
       </motion.div>
@@ -298,4 +287,4 @@ function ProcessStep({
       )}
     </motion.div>
   )
-} 
+}

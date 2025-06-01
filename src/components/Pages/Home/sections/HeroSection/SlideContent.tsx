@@ -42,10 +42,10 @@ export default function SlideContent({
       initial={{ opacity: 0, x: direction === 'rtl' ? 50 : -50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.7, delay: 0.2 }}
-      className="flex flex-col justify-center space-y-6 z-10 relative"
+      className="flex flex-col bg-transparent justify-center space-y-6 z-10 relative "
     >
       {/* Decorative line with gradient */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 bg-transparent">
         <motion.div 
           initial={{ width: 0 }}
           animate={{ width: '3rem' }}
@@ -91,8 +91,7 @@ export default function SlideContent({
         {children}
       </motion.div>
 
-      {/* Optional background gradient overlay */}
-      <div className={`absolute inset-0 -z-10 opacity-5 bg-gradient-to-br ${selectedGradient} rounded-lg`} />
+    
     </motion.div>
   )
 }

@@ -40,9 +40,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
     title: "ClientComments {index} - Title",
     excerpt: "ClientComments {index} - Description",
     image: "Background Image",
-    color: (subsection: any, index?: number) =>
-      subsection.elements?.find((el) => el.name === `Hero ${index !== undefined ? index + 1 : 1} - Color`)
-        ?.defaultContent || "from-digitek-orange to-digitek-pink",
+    color: () => "",
     order: (subsection: any, index?: number) => subsection.order || index || 0,
   }
 
@@ -57,7 +55,6 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
     maxItemsPerSubsection: 13,
     filter: featureFilter,
   })
-
 
   // Reset active index on language change
   useEffect(() => {
@@ -96,15 +93,15 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
 
   return (
     <section
-      className="relative w-full py-20 overflow-hidden  "
+      className="relative w-full py-20 overflow-hidden bg-wtheme-background"
       id="testimonials"
       dir={direction}
     >
       {/* Background elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-purple-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-400/5 to-purple-400/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-1/4 w-72 h-72 bg-secondary/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-accent/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container relative z-10 px-4 md:px-6">
@@ -113,7 +110,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-800"
+            className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-accent font-medium border border-primary/20"
           >
             <Quote className="w-4 h-4 mr-2" />
             {content.sectionLabel || "Testimonials"}
@@ -123,7 +120,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight max-w-3xl bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent"
+            className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight max-w-3xl text-wtheme-text"
           >
             {content.sectionTitle || "What Our Clients Say"}
           </motion.h2>
@@ -132,7 +129,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl text-slate-600 dark:text-slate-400 text-lg leading-relaxed"
+            className="max-w-2xl text-wtheme-text/70 font-body text-lg leading-relaxed"
           >
             {content.sectionDescription ||
               "Discover what our satisfied clients have to say about their experience working with us."}
@@ -141,19 +138,19 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="text-slate-600 dark:text-slate-400 mt-4">{content.loading || "Loading testimonials..."}</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="text-wtheme-text/70 font-body mt-4">{content.loading || "Loading testimonials..."}</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-slate-600 dark:text-slate-400">{content.error || "Failed to load testimonials"}</p>
+            <p className="text-wtheme-text/70 font-body">{content.error || "Failed to load testimonials"}</p>
             <Button onClick={() => refetch()} variant="outline" className="mt-4">
               {content.retry || "Try Again"}
             </Button>
           </div>
         ) : contentItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-slate-600 dark:text-slate-400">{content.error || "No testimonials available"}</p>
+            <p className="text-wtheme-text/70 font-body">{content.error || "No testimonials available"}</p>
             <Button onClick={() => window.location.reload()} variant="outline" className="mt-4">
               {content.retry || "Refresh"}
             </Button>
@@ -196,7 +193,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="pointer-events-auto rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-2 shadow-lg hover:bg-white dark:hover:bg-slate-800 hover:scale-110 transition-all duration-200"
+                    className="pointer-events-auto rounded-full bg-wtheme-background/90 backdrop-blur-sm border-2 shadow-lg hover:bg-wtheme-background hover:scale-110 transition-all duration-200"
                     onClick={direction === "rtl" ? nextTestimonial : prevTestimonial}
                   >
                     <ChevronLeft className="h-5 w-5" />
@@ -206,7 +203,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="pointer-events-auto rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-2 shadow-lg hover:bg-white dark:hover:bg-slate-800 hover:scale-110 transition-all duration-200"
+                    className="pointer-events-auto rounded-full bg-wtheme-background/90 backdrop-blur-sm border-2 shadow-lg hover:bg-wtheme-background hover:scale-110 transition-all duration-200"
                     onClick={direction === "rtl" ? prevTestimonial : nextTestimonial}
                   >
                     <ChevronRight className="h-5 w-5" />
@@ -245,7 +242,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="pointer-events-auto rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-2 shadow-lg hover:bg-white dark:hover:bg-slate-800"
+                      className="pointer-events-auto rounded-full bg-wtheme-background/90 backdrop-blur-sm border-2 shadow-lg hover:bg-wtheme-background"
                       onClick={direction === "rtl" ? nextTestimonial : prevTestimonial}
                     >
                       {direction === "rtl" ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -255,7 +252,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="pointer-events-auto rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-2 shadow-lg hover:bg-white dark:hover:bg-slate-800"
+                      className="pointer-events-auto rounded-full bg-wtheme-background/90 backdrop-blur-sm border-2 shadow-lg hover:bg-wtheme-background"
                       onClick={direction === "rtl" ? prevTestimonial : nextTestimonial}
                     >
                       <ChevronRight className="h-5 w-5" />
@@ -271,8 +268,8 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
                         onClick={() => setActiveIndex(index)}
                         className={`h-2 rounded-full transition-all duration-300 ${
                           activeIndex === index
-                            ? "bg-blue-600 w-8"
-                            : "bg-slate-300 dark:bg-slate-600 w-2 hover:bg-slate-400 dark:hover:bg-slate-500"
+                            ? "bg-primary w-8"
+                            : "bg-wtheme-text/30 w-2 hover:bg-wtheme-text/50"
                         }`}
                       />
                     ))}
@@ -280,8 +277,6 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
                 </>
               )}
             </div>
-
-          
           </>
         )}
       </div>
@@ -329,18 +324,16 @@ function TestimonialCard({ testimonial, index, isInView, direction, formatDate }
         scale: 1.02,
         transition: { type: "spring", stiffness: 400, damping: 10 },
       }}
-      className="group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col"
+      className="group relative overflow-hidden rounded-2xl bg-wtheme-background border border-wtheme-border/50 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col"
     >
       {/* Gradient overlay */}
-      <div
-        className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${testimonial.color || "from-blue-500 to-purple-600"}`}
-      ></div>
+      <div className="absolute top-0 left-0 right-0 h-1 bg-primary"></div>
 
       <div className="p-8 flex-grow flex flex-col">
         {/* Header with icon and stars */}
         <div className="flex items-center justify-between mb-6">
           <motion.div
-            className={`w-12 h-12 rounded-full bg-gradient-to-r ${testimonial.color || "from-blue-500 to-purple-600"} flex items-center justify-center text-white shadow-lg`}
+            className="w-12 h-12 rounded-full flex items-center justify-center text-primary shadow-lg"
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
@@ -365,39 +358,37 @@ function TestimonialCard({ testimonial, index, isInView, direction, formatDate }
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
         >
-          <Quote className={`h-8 w-8 text-slate-300 dark:text-slate-600 mb-4 ${isRTL ? "ml-auto" : ""}`} />
-          <p className={`text-slate-700 dark:text-slate-300 leading-relaxed ${isRTL ? "text-right" : ""} text-lg`}>
+          <Quote className={`h-8 w-8 text-wtheme-text/30 mb-4 ${isRTL ? "ml-auto" : ""}`} />
+          <p className={`text-wtheme-text font-body leading-relaxed ${isRTL ? "text-right" : ""} text-lg`}>
             {testimonial.excerpt || "This is an amazing service that exceeded all my expectations. Highly recommended!"}
           </p>
         </motion.div>
 
         {/* Client info */}
         <motion.div
-          className="pt-6 border-t border-slate-200 dark:border-slate-700 flex items-center"
+          className="pt-6 border-t border-wtheme-border/30 flex items-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
         >
           <div className={`relative ${isRTL ? "ml-4" : "mr-4"}`}>
-            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 flex items-center justify-center">
-              <User className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+            <div className="w-12 h-12 rounded-full bg-wtheme-text/20 flex items-center justify-center">
+              <User className="w-6 h-6 text-wtheme-text/60" />
             </div>
-            <div
-              className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-r ${testimonial.color || "from-blue-500 to-purple-600"} border-2 border-white dark:border-slate-800`}
-            ></div>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-theme-gradient border-2 border-wtheme-background"></div>
           </div>
 
           <div className={`flex-grow ${isRTL ? "text-right" : ""}`}>
-            <h4 className="font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+            <h4 className="font-heading font-semibold text-wtheme-text group-hover:text-primary transition-colors duration-300">
               {testimonial.title || "Client Name"}
             </h4>
-            <div className="flex items-center text-xs text-muted-foreground mb-2">
-            <Calendar className="h-3 w-3 mr-1" />
-                {new Date(testimonial.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                })}
+            <div className="flex items-center text-xs text-wtheme-text/60 font-body mb-2">
+              <Calendar className="h-3 w-3 mr-1" />
+              {new Date(testimonial.date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
             </div>
           </div>
         </motion.div>
@@ -405,7 +396,7 @@ function TestimonialCard({ testimonial, index, isInView, direction, formatDate }
 
       {/* Hover effect */}
       <motion.div
-        className={`absolute -bottom-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-r ${testimonial.color || "from-blue-500 to-purple-600"} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+        className="absolute -bottom-8 -right-8 w-24 h-24 rounded-full bg-theme-gradient opacity-0 group-hover:opacity-10 transition-opacity duration-500"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.8, delay: 0.3 + index * 0.1 }}

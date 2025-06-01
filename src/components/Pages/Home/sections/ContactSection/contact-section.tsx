@@ -49,7 +49,7 @@ export default function ContactSection({ websiteId, sectionId }: { websiteId: st
       phoneValue: "PhoneTextValue",
       officeText: "Office",
       officeValue: "OfficeValue",
-      color: () => "from-digitek-orange to-digitek-pink",
+      color: () => "theme-gradient",
     },
   })
 
@@ -57,11 +57,10 @@ export default function ContactSection({ websiteId, sectionId }: { websiteId: st
   const SendMessageSection = contentItems.filter(item => !!item.subjects) // Items with 'subjects' are for the form
   const InfoItemsSection = contentItems.filter(item => !!item.phoneValue) // Items with 'phoneValue' are for contact info
 
-
   const isRTL = direction === "rtl"
 
   return (
-    <section id="contact" className="w-full py-12 bg-muted" dir={direction}>
+    <section id="contact" className="w-full py-12 bg-wtheme-background" dir={direction}>
       <div className="container px-4 md:px-6">
         <ContactHeader ref={ref} isInView={isInView} content={content} />
 
@@ -87,7 +86,7 @@ export default function ContactSection({ websiteId, sectionId }: { websiteId: st
             }}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            className="rounded-xl border bg-background p-6 shadow-sm"
+            className="rounded-xl border border-wtheme-border/50 bg-wtheme-background p-6 shadow-sm"
           >
             <ContactForm
               content={SendMessageSection[0]}

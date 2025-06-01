@@ -36,9 +36,7 @@ export default function PartnersSection({ websiteId, sectionId }) {
         date : "createdAt",
         image: "Image {index}",
         excerpt: "ClientComments {index} - Description",
-        color: (subsection: any, index?: number) =>
-          subsection.elements?.find((el) => el.name === `Hero ${index !== undefined ? index + 1 : 1} - Color`)
-            ?.defaultContent || "from-digitek-orange to-digitek-pink",
+        color: () => "theme-gradient",
         order: (subsection: any, index?: number) => subsection.order || index || 0,
   }
 
@@ -57,7 +55,7 @@ export default function PartnersSection({ websiteId, sectionId }) {
   const isRTL = direction === "rtl"
 
   return (
-    <section id="partners" className="w-full py-20" dir={direction}>
+    <section id="partners" className="w-full py-20 bg-wtheme-background" dir={direction}>
       <div className="container px-4 md:px-6" ref={containerRef}>
         <motion.div
           ref={ref}
@@ -73,14 +71,14 @@ export default function PartnersSection({ websiteId, sectionId }) {
           }}
           className="flex flex-col items-center justify-center space-y-4 text-center"
         >
-          <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+          <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-accent font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
             {content.sectionLabel}
           </div>
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+            <h2 className="text-3xl font-heading font-bold tracking-tighter text-wtheme-text sm:text-5xl">
               {content.sectionTitle}
             </h2>
-            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+            <p className="max-w-[900px] text-wtheme-text/70 font-body md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
               {content.sectionDescription}
             </p>
           </div>
@@ -211,7 +209,7 @@ function PartnersCarousel({ partners, isInView, isRTL, containerRef }: PartnersC
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-primary/20 bg-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
+                className="rounded-full border-primary/20 bg-wtheme-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
                 onClick={handlePrev}
                 disabled={isRTL ? currentSlide >= maxSlides : currentSlide <= 0}
               >
@@ -230,7 +228,7 @@ function PartnersCarousel({ partners, isInView, isRTL, containerRef }: PartnersC
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-primary/20 bg-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
+                className="rounded-full border-primary/20 bg-wtheme-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
                 onClick={handleNext}
                 disabled={isRTL ? currentSlide <= 0 : currentSlide >= maxSlides}
               >
@@ -262,9 +260,9 @@ function PartnerLogo({ partner, index }: PartnerLogoProps) {
       whileHover={{
         y: -5,
         boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.2)",
-        borderColor: "var(--primary)",
+        borderColor: "var(--website-theme-primary)",
       }}
-      className="flex items-center justify-center rounded-lg border bg-background p-4 shadow-sm h-full"
+      className="flex items-center justify-center rounded-lg border border-wtheme-border/50 bg-wtheme-background p-4 shadow-sm h-full"
     >
       <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 300, damping: 10 }}>
         <Image

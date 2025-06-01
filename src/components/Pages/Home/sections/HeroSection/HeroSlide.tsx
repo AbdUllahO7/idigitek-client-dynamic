@@ -46,13 +46,15 @@ export default function HeroSlide({
         description={slide.excerpt}
         color={slide.color}
         direction={direction}
+        
       >
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           {/* Primary Button - UPDATED to use website theme */}
           <Button
             asChild
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary transition-all duration-200"
+            variant="outline" 
+            className="border-2 border-primary text-wtheme-text hover:bg-wtheme-hover  hover:text-primary-foreground shadow-sm transition-all duration-200"
           >
             <Link href="#demo" onClick={(e) => handleNavClick(e, "demo")}>
               {language === "en" ? slide.requestButton || "Request Demo" : slide.requestButton || "طلب عرض توضيحي"}
@@ -66,12 +68,13 @@ export default function HeroSlide({
             asChild 
             variant="outline" 
             size="lg" 
-            className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground shadow-sm transition-all duration-200"
+            className="border-2 border-primary text-wtheme-text hover:bg-wtheme-hover hover:text-primary-foreground shadow-sm transition-all duration-200"
           >
             <Link href="#services" onClick={(e) => handleNavClick(e, "services")}>
               {language === "en" ? slide.exploreButton || "Explore Solutions" : slide.exploreButton || "استكشاف الحلول"}
             </Link>
           </Button>
+          
         </div>
       </SlideContent>
 

@@ -81,30 +81,28 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
   const technologies = getTranslatedContent(technologiesElement, language)
 
   return (
-    <section className="relative w-full py-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-background"></div>
+    <section className="relative w-full py-20 overflow-hidden bg-wtheme-background">
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-wtheme-background"></div>
 
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
         transition={{ duration: 1.5 }}
-        className="absolute top-1/3 right-0 w-96 h-96 rounded-full bg-digitek-pink blur-3xl"
+        className="absolute top-1/3 right-0 w-96 h-96 rounded-full bg-secondary blur-3xl"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
         transition={{ duration: 1.5, delay: 0.3 }}
-        className="absolute bottom-1/3 left-0 w-96 h-96 rounded-full bg-digitek-orange blur-3xl"
+        className="absolute bottom-1/3 left-0 w-96 h-96 rounded-full bg-accent blur-3xl"
       />
 
       <div className="container relative z-10 px-4 md:px-6">
         <div ref={headerRef} className="max-w-4xl mx-auto">
-          <GoBackButton sectionName="projects" title={backLinkText || "Go Back"} />
+          <GoBackButton sectionName="projects" title={backLinkText} />
 
           <div className="flex items-center gap-3 mb-4">
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r from-digitek-orange to-digitek-pink`}
-            >
+            <span className="px-3 py-1 rounded-full text-xs font-accent font-medium text-wtheme-text bg-wtheme-success">
               {category}
             </span>
           </div>
@@ -113,7 +111,7 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
             initial={{ opacity: 0, y: 20 }}
             animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6"
+            className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight mb-6 text-wtheme-text"
           >
             {title}
           </motion.h1>
@@ -123,7 +121,7 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-xl text-muted-foreground mb-6 whitespace-pre-line"
+              className="text-xl text-wtheme-text/70 font-body mb-6 whitespace-pre-line"
             >
               {description}
             </motion.p>
@@ -136,7 +134,7 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="flex flex-wrap gap-2 mb-6"
             >
-              <span className="px-3 py-1 rounded-full text-xs font-medium text-white bg-gray-800">{technologies}</span>
+              <span className="px-3 py-1 rounded-full text-xs font-body font-medium text-wtheme-text ">{technologies}</span>
             </motion.div>
           )}
         </div>

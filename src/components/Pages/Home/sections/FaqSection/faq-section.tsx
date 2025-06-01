@@ -36,9 +36,7 @@ export default function FaqSection({ websiteId, sectionId }) {
       id: (subsection: any, index?: number) => `${subsection._id}-${index || 0}`,
       question: "FAQ {index} - Question",
       answer: "FAQ {index} - Answer",
-            color: (subsection: any, index?: number) =>
-        subsection.elements?.find((el) => el.name === `Hero ${index !== undefined ? index + 1 : 1} - Color`)
-          ?.defaultContent || "from-digitek-orange to-digitek-pink",
+      color: () => "theme-gradient",
       order: (subsection: any, index?: number) => subsection.order || index || 0,
     }
 
@@ -54,7 +52,6 @@ export default function FaqSection({ websiteId, sectionId }) {
     filter: featureFilter,
   })
 
-
   // Filter contentItems based on searchQuery
   const filteredFaqs = contentItems.filter(
     (faq) =>
@@ -62,11 +59,9 @@ export default function FaqSection({ websiteId, sectionId }) {
       faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-
-
   return (
     <section 
-      className="relative w-full py-32 overflow-hidden bg-gradient-to-b from-background/80 via-background to-background/90" 
+      className="relative w-full py-32 overflow-hidden bg-gradient-to-b from-wtheme-background/80 via-wtheme-background to-wtheme-background/90" 
       id="faq"
       dir={direction}
     >

@@ -1,6 +1,7 @@
 "use client"
 import { WebSiteTheme } from '@/api/types/WebSite/useWebSiteTheme'
 import { useWebSiteThemes } from '@/lib/webSite/use-Theme'
+import { useWebSite } from '@/lib/webSite/use-WebSite'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
 interface WebsiteThemeContextType {
@@ -18,20 +19,58 @@ interface WebsiteThemeProviderProps {
   children: React.ReactNode
 }
 
+// Helper function to safely access localStorage
+function getStoredWebsiteId(): string | null {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('websiteId')
+  }
+  return null
+}
+
+function setStoredWebsiteId(id: string): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('websiteId', id)
+  }
+}
+
 export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
+  const { useGetWebsitesByUserId } = useWebSite();
+  const { data: websites, isLoading: websitesLoading, error: websitesError } = useGetWebsitesByUserId();
+  
+  // Initialize currentWebsiteId with null to avoid hydration issues
+  const [currentWebsiteId, setCurrentWebsiteId] = useState<string | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
+  
+  // Initialize websiteId from localStorage or websites data after component mounts
+  useEffect(() => {
+    const storedWebsiteId = getStoredWebsiteId()
+    const websiteId = websites && websites.length > 0 ? websites[0].id : undefined
+    
+    if (storedWebsiteId) {
+      setCurrentWebsiteId(storedWebsiteId)
+    } else if (websiteId) {
+      setCurrentWebsiteId(websiteId)
+      setStoredWebsiteId(websiteId)
+    }
+    
+    setIsInitialized(true)
+  }, [websites])
 
+  // Update localStorage when websiteId changes
+  useEffect(() => {
+    if (currentWebsiteId) {
+      setStoredWebsiteId(currentWebsiteId)
+    }
+  }, [currentWebsiteId])
 
-    const initialWebsiteId = localStorage.getItem('websiteId')
-
-  const [currentWebsiteId, setCurrentWebsiteId] = useState<string | null>(initialWebsiteId || null)
   const { useGetActiveTheme } = useWebSiteThemes()
   
   // DEBUG: Log current website ID
   console.log('🔍 Current Website ID:', currentWebsiteId)
   
-  // Only fetch theme if we have a websiteId
+  // Only fetch theme if we have a websiteId and component is initialized
   const { data: themeData, isLoading, error, refetch } = useGetActiveTheme(currentWebsiteId || '', {
-    enabled: !!currentWebsiteId, // Only enable query when we have a websiteId
+    enabled: !!currentWebsiteId && isInitialized, // Only enable query when we have a websiteId and are initialized
     retry: 1,
     onError: (err) => {
       console.error('❌ Theme fetch error:', err)
@@ -46,7 +85,8 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
     themeData,
     isLoading,
     error,
-    hasWebsiteId: !!currentWebsiteId
+    hasWebsiteId: !!currentWebsiteId,
+    isInitialized
   })
   
   const [activeTheme, setActiveTheme] = useState<WebSiteTheme | null>(null)
@@ -61,13 +101,16 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
     } else if (!currentWebsiteId) {
       console.log('🚫 Clearing theme - no website selected')
       setActiveTheme(null)
-    } else if (currentWebsiteId && !isLoading && !themeData) {
+    } else if (currentWebsiteId && !isLoading && !themeData && isInitialized) {
       console.log('⚠️ No theme data for website:', currentWebsiteId)
     }
-  }, [themeData, currentWebsiteId, isLoading])
+  }, [themeData, currentWebsiteId, isLoading, isInitialized])
 
   // Apply theme to CSS custom properties
   useEffect(() => {
+    // Only apply theme after component is initialized to avoid SSR issues
+    if (!isInitialized) return
+    
     if (activeTheme) {
       console.log('🎨 Applying theme to CSS:', activeTheme.themeName)
       applyThemeToCSS(activeTheme)
@@ -75,7 +118,7 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
       console.log('🔄 Resetting to default theme')
       resetToDefaultTheme()
     }
-  }, [activeTheme])
+  }, [activeTheme, isInitialized])
 
   const refreshTheme = () => {
     console.log('🔄 Refreshing theme for website:', currentWebsiteId)
@@ -91,7 +134,7 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
 
   const contextValue: WebsiteThemeContextType = {
     activeTheme,
-    isLoading,
+    isLoading: isLoading || !isInitialized,
     error: error?.message || null,
     refreshTheme,
     setWebsiteId,
@@ -116,6 +159,9 @@ export function useWebsiteTheme() {
 
 // Function to apply theme to CSS custom properties
 function applyThemeToCSS(theme: WebSiteTheme) {
+  // Ensure we're in the browser environment
+  if (typeof window === 'undefined') return
+  
   const root = document.documentElement
 
   console.log('🎨 Applying theme colors:', theme.colors)
@@ -171,6 +217,9 @@ function applyThemeToCSS(theme: WebSiteTheme) {
 
 // Function to reset to default theme
 function resetToDefaultTheme() {
+  // Ensure we're in the browser environment
+  if (typeof window === 'undefined') return
+  
   console.log('🔄 Resetting to default theme')
   const root = document.documentElement
   

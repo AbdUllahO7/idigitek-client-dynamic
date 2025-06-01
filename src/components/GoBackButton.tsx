@@ -58,10 +58,10 @@ export function GoBackButton({
   return (
     <Button 
       onClick={handleGoBack} 
-      className={`bg-main text-white mb-5 ${className}`}
+      className={`bg-primary text-white mb-5 ${className}`}
     >
       {direction === 'rtl' ? <ArrowRight className="mr-2 h-4 w-4" /> : <ArrowLeft className="mr-2 h-4 w-4" />}
-      {direction === 'ltr' ? 'Go Back' : 'العودة'}
+      {title ? title : "Back"}
     </Button>
   );
 }

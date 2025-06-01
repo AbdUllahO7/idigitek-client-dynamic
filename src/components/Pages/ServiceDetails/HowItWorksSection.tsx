@@ -4,17 +4,9 @@ import React from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
 import { Car, ShoppingCart, CheckCircle, Truck, Clock, Mic } from "lucide-react"
+import { iconMap } from '@/utils/IconMap'
 
-// Icon mapping for dynamic icons
-const iconMap = {
-  "Car": Car,
-  "ShoppingCart": ShoppingCart,
-  "CheckCircle": CheckCircle,
-  "Truck": Truck,
-  "Clock": Clock,
-  "Mic": Mic,
-  // Add more icon mappings as needed
-};
+
 
 interface ProcessStep {
   id: string;
@@ -63,9 +55,17 @@ interface ProcessStepCardProps {
 }
 
 const ProcessStepCard: React.FC<ProcessStepCardProps> = ({ step, stepNumber, direction }) => {
-  // Get the icon component from the map, fallback to Car if not found
-  const IconComponent = iconMap[step.icon] || Car;
+
   
+    console.log(step.icon)
+     const renderIcon = () => {
+        if (React.isValidElement(step.icon)) {
+          return step.icon; // If it's already a React element, use it
+        }
+        return iconMap[step.icon as string] || null; // Map string to component, fallback to null
+      };
+    
+
   // Clean the title to remove the number prefix if it exists (since we add our own)
   const cleanTitle = step.title.replace(/^\d+\.\s*/, '');
   
@@ -74,7 +74,7 @@ const ProcessStepCard: React.FC<ProcessStepCardProps> = ({ step, stepNumber, dir
       <CardContent className="pt-6 flex flex-col h-full">
         <div className="flex items-center justify-center mb-4">
           <div className="rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center relative">
-            <IconComponent className="h-8 w-8 text-primary" />
+              {renderIcon()}
             <div className="absolute -top-2 -right-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
               {stepNumber}
             </div>

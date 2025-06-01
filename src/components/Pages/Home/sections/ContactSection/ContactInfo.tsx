@@ -7,8 +7,8 @@ export function ContactInfo({ content, isRTL }) {
   return (
     <>
       <div className={isRTL ? "text-right" : "text-left"}>
-        <h3 className="text-2xl font-bold mb-4">{content?.title}</h3>
-        <p className="text-muted-foreground mb-6">{content?.description}</p>
+        <h3 className="text-2xl font-heading font-bold mb-4 text-wtheme-text">{content?.title}</h3>
+        <p className="text-wtheme-text/70 font-body mb-6">{content?.description}</p>
       </div>
 
       <div className="space-y-4">

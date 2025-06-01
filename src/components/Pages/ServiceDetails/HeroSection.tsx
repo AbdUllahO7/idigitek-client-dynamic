@@ -49,9 +49,10 @@ const HeroSection = ({ heroData }: HeroSectionProps) => {
                     {/* Go back button */}
                     <GoBackButton 
                         sectionName={sectionId}
-                        className="mb-4" 
+                        className="mb-4"
+                        title={backLinkText} 
                     />
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+                    <h1 className="text-4xl md:text-5xl  lg:text-6xl font-bold text-white mb-4">
                         {displayTitle}
                     </h1>
                     <p className="text-xl text-white/90 max-w-2xl">

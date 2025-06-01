@@ -23,7 +23,6 @@ export default function IndustrySolutionsSection({ sectionId, websiteId }) {
   const isInView = useInView(ref, { once: false, amount: 0.2 })
   const { language, direction } = useLanguage()
 
-
   const { content, isLoading: sectionLoading, error: sectionError, refetch, formatDate } = useSectionLogic({
       sectionId,
       websiteId,
@@ -39,14 +38,13 @@ export default function IndustrySolutionsSection({ sectionId, websiteId }) {
       image: "Background Image",    // or "Industry - Image" 
       title: "Title",               // or "Industry - Title"
       excerpt: "Description",       // or "Industry - Description"
-      color: () => "from-digitek-orange to-digitek-pink",
+      color: () => "theme-gradient",
       order: (subsection: any) => subsection.order || 0
     },
   })
 
-
   return (
-    <section id="industry" className="relative w-full py-12 overflow-hidden" dir={direction}>
+    <section id="industry" className="relative w-full py-12 overflow-hidden bg-wtheme-background" dir={direction}>
       {/* Background elements */}
       <SectionBackground />
 

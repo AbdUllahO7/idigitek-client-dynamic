@@ -96,28 +96,28 @@ export const ProjectInfo: React.FC<ProjectInfoProps> = ({ project, clients }) =>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {client && (
             <div>
-              <h3 className="text-lg font-semibold mb-2">{ClientName}</h3>
-              <p className="text-muted-foreground">{client}</p>
+              <h3 className="text-lg font-heading font-semibold mb-2 text-wtheme-text">{ClientName}</h3>
+              <p className="text-wtheme-text/70 font-body">{client}</p>
             </div>
           )}
           {industry && (
             <div>
-              <h3 className="text-lg font-semibold mb-2">{IndustryName}</h3>
-              <p className="text-muted-foreground">{industry}</p>
+              <h3 className="text-lg font-heading font-semibold mb-2 text-wtheme-text">{IndustryName}</h3>
+              <p className="text-wtheme-text/70 font-body">{industry}</p>
             </div>
           )}
           {year && (
             <div>
-              <h3 className="text-lg font-semibold mb-2">{YearName}</h3>
-              <p className="text-muted-foreground">{year}</p>
+              <h3 className="text-lg font-heading font-semibold mb-2 text-wtheme-text">{YearName}</h3>
+              <p className="text-wtheme-text/70 font-body">{year}</p>
             </div>
           )}
           {technologies.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-2">{TechnologiesName}</h3>
+              <h3 className="text-lg font-heading font-semibold mb-2 text-wtheme-text">{TechnologiesName}</h3>
               <div className="flex flex-wrap gap-1">
                 {technologies.map((tech, i) => (
-                  <span key={i} className="text-muted-foreground text-sm">
+                  <span key={i} className="text-wtheme-text/70 font-body text-sm">
                     {tech}
                     {i < technologies.length - 1 ? ", " : ""}
                   </span>

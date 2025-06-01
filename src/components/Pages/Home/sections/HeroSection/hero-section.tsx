@@ -9,6 +9,7 @@ import HeroNavigation from "./HeroNavigation"
 import DotsNavigation from "./DotsNavigation"
 import CurvedDivider from "./CurvedDivider"
 import { useSectionContent } from "@/hooks/useSectionContent"
+import { ThemeDebugger } from "@/contexts/ThemeContext"
 
 interface Slide {
   id: string
@@ -94,7 +95,7 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="relative w-full overflow-hidden bg-theme-gradient"  // UPDATED: Use website theme gradient
+      className="relative w-full overflow-hidden "  // UPDATED: Use website theme gradient
       id="Hero"
       dir={direction}
       onMouseEnter={handleMouseEnter}

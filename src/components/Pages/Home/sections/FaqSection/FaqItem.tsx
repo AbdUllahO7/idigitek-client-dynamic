@@ -9,7 +9,6 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
   const [isOpen, setIsOpen] = useState(false)
   const toggleOpen = () => setIsOpen(!isOpen)
 
-
   return (
     <motion.div
       initial={{ y: 50, opacity: 0 }}
@@ -22,9 +21,9 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
       }}
       className="group relative"
     >
-      {/* Enhanced glass card effect with subtle gradient */}
+      {/* Enhanced glass card effect with theme gradient */}
       <div
-        className={`absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500/5 via-indigo-500/5 to-fuchsia-500/5 opacity-0 ${
+        className={`absolute inset-0 rounded-2xl bg-primary/5 opacity-0 ${
           isOpen ? "opacity-100" : "group-hover:opacity-80"
         } transition-opacity duration-300`}
       />
@@ -32,16 +31,16 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
       <motion.div
         className={`relative rounded-2xl ${
           isOpen 
-            ? "border-violet-500/40 bg-gradient-to-br from-violet-500/5 to-transparent" 
-            : "border-violet-500/10 bg-gradient-to-br from-white/5 to-transparent dark:from-white/2 dark:to-transparent"
-        } backdrop-blur-sm shadow-sm overflow-hidden transition-all duration-300 border`}
+            ? "border-primary/40 bg-gradient-to-br from-primary/5 to-transparent" 
+            : "border-primary/10 bg-gradient-to-br from-wtheme-background/50 to-transparent"
+        } backdrop-blur-sm shadow-sm overflow-hidden transition-all duration-300 border bg-wtheme-background`}
         animate={{
-          borderColor: isOpen ? "rgba(139, 92, 246, 0.4)" : "rgba(139, 92, 246, 0.1)",
-          boxShadow: isOpen ? "0 8px 30px rgba(139, 92, 246, 0.1)" : "0 1px 3px rgba(0, 0, 0, 0.05)",
+          borderColor: isOpen ? "var(--website-theme-primary)" : "rgba(var(--website-theme-primary), 0.1)",
+          boxShadow: isOpen ? "0 8px 30px rgba(var(--website-theme-primary), 0.1)" : "0 1px 3px rgba(0, 0, 0, 0.05)",
         }}
         whileHover={{
-          borderColor: "rgba(139, 92, 246, 0.3)",
-          boxShadow: "0 8px 30px rgba(139, 92, 246, 0.1)",
+          borderColor: "rgba(var(--website-theme-primary), 0.3)",
+          boxShadow: "0 8px 30px rgba(var(--website-theme-primary), 0.1)",
           y: -2,
         }}
       >
@@ -54,29 +53,29 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
             <div className={`
               flex items-center justify-center min-w-10 h-10 rounded-full 
               ${isOpen 
-                ? "bg-violet-500 text-white" 
-                : "bg-violet-500/10 text-violet-600 dark:text-violet-400"
+                ? "bg-primary text-white" 
+                : "bg-primary/10 text-primary"
               } transition-colors duration-300
             `}>
-              <span className="text-sm font-medium">{index + 1}</span>
+              <span className="text-sm font-accent font-medium">{index + 1}</span>
             </div>
             <h3
-              className={`text-lg font-medium ${
-                isOpen ? "text-violet-600 dark:text-violet-400" : "text-foreground"
+              className={`text-lg font-heading font-medium ${
+                isOpen ? "text-primary" : "text-wtheme-text"
               } transition-colors duration-300 ${isRTL ? "text-right" : "text-left"}`}
             >
               {faq.question}
             </h3>
           </div>
           <div className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
-            <span className="text-xs px-2 py-1 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 font-medium">
-              {faq.category}
+            <span className="text-xs font-accent px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
+              {faq.category || "General"}
             </span>
             <motion.div
               animate={{ rotate: isOpen ? (isRTL ? -180 : 180) : 0 }}
               transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
               className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                isOpen ? "bg-violet-500/10 text-violet-600 dark:text-violet-400" : "bg-muted text-muted-foreground"
+                isOpen ? "bg-primary/10 text-primary" : "bg-wtheme-text/10 text-wtheme-text/60"
               } transition-colors duration-300`}
             >
               <ChevronDown className="w-4 h-4" />
@@ -93,8 +92,8 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <div className={`p-6 pt-0 border-t border-violet-500/10 ${isRTL ? "pr-20 text-right" : "pl-20 text-left"} text-muted-foreground`}>
-                <p className="leading-relaxed">{faq.answer}</p>
+              <div className={`p-6 pt-0 border-t border-primary/10 ${isRTL ? "pr-20 text-right" : "pl-20 text-left"} text-wtheme-text/70`}>
+                <p className="leading-relaxed font-body">{faq.answer}</p>
               </div>
             </motion.div>
           )}

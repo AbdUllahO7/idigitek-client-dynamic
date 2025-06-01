@@ -20,7 +20,7 @@ export default function IndustryCard({ industry, index, isInView }: IndustryCard
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-      className="group relative overflow-hidden rounded-2xl bg-background border border-border/50 shadow-sm hover:shadow-xl transition-all duration-500"
+      className="group relative overflow-hidden rounded-2xl bg-wtheme-background border border-wtheme-border/50 shadow-sm hover:shadow-xl transition-all duration-500"
     >
       {/* Gradient background that appears on hover */}
       <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity duration-500 z-0"></div>
@@ -35,16 +35,16 @@ export default function IndustryCard({ industry, index, isInView }: IndustryCard
             name={industry.title} 
           />
 
-          <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
+          <h3 className="text-xl font-heading font-bold mb-3 text-wtheme-text group-hover:text-primary transition-colors duration-300">
             {industry.title}
           </h3>
 
-          <p className="text-muted-foreground text-sm mb-6">{industry.excerpt}</p>
+          <p className="text-wtheme-text/70 font-body text-sm mb-6">{industry.excerpt}</p>
         </div>
       </div>
 
       {/* Corner accent */}
-      <div className="absolute -bottom-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-r opacity-10 group-hover:opacity-30 transition-opacity duration-500"></div>
+      <div className={`absolute -bottom-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-r ${industry.color} opacity-10 group-hover:opacity-30 transition-opacity duration-500`}></div>
     </motion.div>
   )
 }

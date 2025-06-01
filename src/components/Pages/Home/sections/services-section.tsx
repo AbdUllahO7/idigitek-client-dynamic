@@ -37,7 +37,6 @@ export default function ServicesSection({ sectionId, websiteId }) {
     itemsKey: "news",
   })
 
-
   const serviceFilter = (item: { title: string }) => item.title && item.title.trim() !== ""
 
   const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
@@ -48,29 +47,33 @@ export default function ServicesSection({ sectionId, websiteId }) {
       id: "_id",
       image: "Background Image",
       title: "Title",
-      description: "Description", // Changed from excerpt to description to match usage
+      description: "Description",
       BackButton: "Back Link Text",
       readMore: "service Details",
       date: "createdAt",
-      color: () => "from-digitek-orange to-digitek-pink"
+      color: () => "theme-gradient"
     }
   })
-
-
-
 
   const isLoading = sectionLoading || itemsLoading
   const error = sectionError || itemsError
 
   return (
-    <section id="services" className="w-full pb-10 pt-10 bg-gradient-to-b from-background to-muted overflow-hidden">
-      <div className="container px-4 md:px-6">
+    <section 
+      id="services" 
+      className="w-full pb-10 pt-10 bg-wtheme-background text-wtheme-text overflow-hidden relative"
+      style={{ backgroundColor: 'var(--website-theme-background)' }}
+    >
+      {/* Background gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-accent/10"></div>
+      
+      <div className="container px-4 md:px-6 relative">
         <div ref={ref} className="mb-16 text-center">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
-            className="inline-block mb-2 text-sm font-medium tracking-wider text-primary uppercase"
+            className="inline-block mb-2 text-sm font-accent font-medium tracking-wider text-primary uppercase"
           >
             {content.sectionLabel}
           </motion.span>
@@ -78,7 +81,7 @@ export default function ServicesSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4"
+            className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight mb-4 text-wtheme-text"
           >
             {content.sectionTitle}
           </motion.h2>
@@ -86,7 +89,7 @@ export default function ServicesSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-2xl mx-auto text-muted-foreground text-lg"
+            className="max-w-2xl mx-auto text-wtheme-text/70 text-lg font-body"
           >
             {content.sectionDescription}
           </motion.p>
@@ -95,19 +98,27 @@ export default function ServicesSection({ sectionId, websiteId }) {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-            <p className="text-muted-foreground">{content.loading || "Loading..."}</p>
+            <p className="text-wtheme-text/70 font-body">{content.loading || "Loading..."}</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-muted-foreground">{content.error}</p>
-            <Button onClick={() => refetch()} variant="outline" className="mt-4">
+            <p className="text-wtheme-text/70 font-body">{content.error}</p>
+            <Button 
+              onClick={() => refetch()} 
+              variant="outline" 
+              className="mt-4 border-wtheme-border hover:bg-primary/10 text-primary font-accent"
+            >
               {content.retry}
             </Button>
           </div>
         ) : contentItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-muted-foreground">{content.error}</p>
-            <Button onClick={() => window.location.reload()} variant="outline" className="mt-4">
+            <p className="text-wtheme-text/70 font-body">{content.error}</p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              variant="outline" 
+              className="mt-4 border-wtheme-border hover:bg-primary/10 text-primary font-accent"
+            >
               {content.retry}
             </Button>
           </div>
@@ -152,10 +163,8 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
   // Adjust flex direction based on both index and language direction
   const getFlexDirection = () => {
     if (isRTL) {
-      // For RTL: Even indexes should be row-reverse, odd indexes should be row
       return isEven ? "lg:flex-row-reverse" : "lg:flex-row";
     } else {
-      // For LTR: Even indexes should be row, odd indexes should be row-reverse
       return isEven ? "lg:flex-row" : "lg:flex-row-reverse";
     }
   };
@@ -163,7 +172,6 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
   // Adjust animation direction based on both index and language direction
   const getAnimationDirection = (isLeft) => {
     if (isRTL) {
-      // Invert animation directions for RTL
       if (isEven) {
         return isLeft ? 50 : -50;
       } else {
@@ -187,23 +195,29 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { duration: 0.6 } },
       }}
-      className="relative"
+      className="relative group"
     >
-      <div className={`flex flex-col ${getFlexDirection()} gap-8 items-center`}>
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-theme-gradient opacity-5 rounded-2xl blur-xl group-hover:opacity-10 transition-opacity duration-500"></div>
+      
+      <div className={`flex flex-col ${getFlexDirection()} gap-8 items-center relative`}>
         <motion.div
           initial={{ opacity: 0, x: getAnimationDirection(true) }}
           animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: getAnimationDirection(true) }}
           transition={{ duration: 0.7, delay: 0.2 }}
           className="w-full lg:w-1/2"
         >
-          <div className="relative overflow-hidden rounded-2xl shadow-2xl aspect-video">
+          <div className="relative overflow-hidden rounded-2xl shadow-theme-lg aspect-video border border-wtheme-border/20">
             <Image
               src={service.image || "/placeholder.svg"}
               alt={service.title}
               fill
               className="object-cover transition-transform duration-500 hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-70"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-accent/20 opacity-70"></div>
+            
+            {/* Overlay gradient using theme colors */}
+            <div className="absolute inset-0 bg-theme-gradient-radial opacity-20 mix-blend-overlay"></div>
           </div>
         </motion.div>
 
@@ -214,19 +228,27 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
           className="w-full lg:w-1/2"
         >
           <div className="flex items-center gap-4 mb-4">
-            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary">
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary/20 shadow-primary/20 shadow-lg backdrop-blur-sm">
               <DynamicIcon name={service.icon} className="h-8 w-8" />
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold">{service.title}</h3>
+            <h3 className="text-2xl md:text-3xl font-heading font-bold text-wtheme-text">
+              {service.title}
+            </h3>
           </div>
 
-          <p className="text-muted-foreground text-lg mb-6">{service.description}</p>
-          <ButtonSectionLink 
+          <p className="text-wtheme-text/80 text-lg mb-6 font-body leading-relaxed">
+            {service.description}
+          </p>
+          
+          <ButtonSectionLink
+          variant="outline" 
             href={`/Pages/ServiceDetailsPage/${service.id}`}
-            className="group bg-neutral-900 text-neutral-50 bg-gradient-to-tr from-digitek-pink to-digitek-purple shadow hover:bg-neutral-900/90 dark:bg-neutral-50 dark:text-white dark:hover:bg-neutral-50/90"
+            className="group  text-wtheme-text hover:text-primary-foreground hover:bg-wtheme-hover shadow-theme hover:shadow-theme-lg transition-all duration-300 border-0 font-accent font-medium px-6 py-3 rounded-lg hover:scale-105"
           >
             {serviceDetails}
-            <ArrowRight className={`${isRTL ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4 transition-transform duration-300 ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
+            <ArrowRight 
+              className={`${isRTL ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4 transition-transform duration-300 ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} 
+            />
           </ButtonSectionLink>
         </motion.div>
       </div>

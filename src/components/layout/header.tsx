@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageToggle } from "@/components/language-toggle"
 import { useLanguage } from "@/contexts/language-context"
 import { useScrollToSection } from "@/hooks/use-scroll-to-section"
 import { useRouter, usePathname } from "next/navigation"
 import { useSectionContent } from "@/hooks/useSectionContent"
+import { ThemeToggle } from "../theme-toggle"
 
 interface NavItem {
   id: string
@@ -192,7 +192,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
             </motion.div>
           ))}
           <div className="flex items-center gap-2">
-            {/* <ThemeToggle /> */}
+            <ThemeToggle />
             <LanguageToggle />
           </div>
         </nav>
@@ -250,7 +250,7 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick }: MobileNavPro
                 </motion.div>
               ))}
               <div className="flex items-center gap-2 mt-4">
-                {/* <ThemeToggle /> */}
+                <ThemeToggle />
                 <LanguageToggle />
               </div>
             </nav>

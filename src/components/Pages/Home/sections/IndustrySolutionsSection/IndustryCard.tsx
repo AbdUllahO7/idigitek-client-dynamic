@@ -20,7 +20,7 @@ export default function IndustryCard({ industry, index, isInView }: IndustryCard
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-      className="group relative overflow-hidden rounded-2xl bg-wtheme-background border border-wtheme-border/50 shadow-sm hover:shadow-xl transition-all duration-500"
+      className="group relative overflow-hidden rounded-2xl  border border-wtheme-border/50 shadow-sm hover:shadow-xl transition-all duration-500"
     >
       {/* Gradient background that appears on hover */}
       <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity duration-500 z-0"></div>
@@ -57,7 +57,7 @@ interface IndustryIconProps {
 function IndustryIcon({ icon, name }: IndustryIconProps) {
   return (
     <div
-      className={`relative w-16 h-16 mb-6 rounded-2xl bg-white p-3 group-hover:scale-110 transition-transform duration-500`}
+      className={`relative w-16 h-16 mb-6 rounded-2xl p-3 group-hover:scale-110 transition-transform duration-500`}
     >
       <Image
         src={icon || "/placeholder.svg"}

@@ -44,7 +44,7 @@ export default function IndustrySolutionsSection({ sectionId, websiteId }) {
   })
 
   return (
-    <section id="industry" className="relative w-full py-12 overflow-hidden bg-wtheme-background" dir={direction}>
+    <section id="industry" className="relative w-full py-12 overflow-hidden " dir={direction}>
       {/* Background elements */}
       <SectionBackground />
 

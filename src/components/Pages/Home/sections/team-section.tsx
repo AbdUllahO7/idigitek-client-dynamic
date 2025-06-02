@@ -39,7 +39,7 @@ export default function TeamSection({websiteId , sectionId}) {
   }
 
   return (
-    <section id="team" className="relative w-full py-20 overflow-hidden bg-wtheme-background" dir={direction}>
+    <section id="ourteam" className="relative w-full py-20 overflow-hidden bg-wtheme-background" dir={direction}>
       {/* Background elements */}
       <div className="absolute inset-0  from-primary/5 to-wtheme-background"></div>
 

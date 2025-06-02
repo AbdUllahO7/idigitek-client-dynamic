@@ -69,7 +69,7 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
           </div>
           <div className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
             <span className="text-xs font-accent px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
-              {faq.category || "General"}
+              {faq.category }
             </span>
             <motion.div
               animate={{ rotate: isOpen ? (isRTL ? -180 : 180) : 0 }}

@@ -48,7 +48,7 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
         </div>
         <div className="space-y-2">
           <label htmlFor="subject" className={`text-sm font-body font-medium text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
-            Subject
+            {content?.subjectTitle}
           </label>
           <Select required>
             <SelectTrigger className={isRTL ? "text-right" : ""} dir={direction}>

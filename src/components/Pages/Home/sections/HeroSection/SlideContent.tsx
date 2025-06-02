@@ -59,11 +59,7 @@ export default function SlideContent({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.3 }}
-        className="font-heading font-heading text-heading tracking-tight 
-                   text-4xl sm:text-5xl xl:text-6xl/none
-                   bg-clip-text text-transparent bg-gradient-to-r
-                   from-wtheme-text via-primary to-accent
-                   hover:animate-theme-pulse transition-all duration-300"
+        className="font-heading text-wtheme-text  text-heading text-4xl sm:text-5xl  bg-clip-text"
       >
         {title}
       </motion.h1>
@@ -74,9 +70,9 @@ export default function SlideContent({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.5 }}
         className="font-body font-body text-body
-                   text-lg leading-relaxed text-wtheme-text/80 
-                   max-w-[600px] 
-                   hover:text-wtheme-text transition-colors duration-300"
+                    text-lg leading-relaxed text-wtheme-text/80 
+                    max-w-[600px] 
+                    hover:text-wtheme-text transition-colors duration-300"
       >
         {description}
       </motion.p>

@@ -32,7 +32,7 @@ export default function FeatureCard({ feature, isInView }: FeatureCardProps) {
       className="group flex items-start gap-4 rounded-xl p-1 transition-all duration-300 hover:bg-primary/5 "
     >
       <div
-        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-wtheme-text text-white shadow-md group-hover:scale-110 transition-transform duration-300`}
+        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-primary  shadow-md group-hover:scale-110 transition-transform duration-300`}
       >
         {renderIcon()}
       </div>

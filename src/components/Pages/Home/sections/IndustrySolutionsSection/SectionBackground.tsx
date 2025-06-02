@@ -5,10 +5,7 @@ import { motion } from "framer-motion"
 export default function SectionBackground() {
   return (
     <>
-      <div className="absolute inset-0 bg-gradient-to-b from-background to-muted/30"></div>
-
-      <div className="absolute top-0 left-0 w-full h-40 bg-grid-pattern opacity-5"></div>
-      <div className="absolute bottom-0 left-0 w-full h-40 bg-grid-pattern opacity-5"></div>
+   
 
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}

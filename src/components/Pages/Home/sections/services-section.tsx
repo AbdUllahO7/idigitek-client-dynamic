@@ -27,7 +27,6 @@ const DynamicIcon = ({ name, className }) => {
 };
 
 export default function ServicesSection({ sectionId, websiteId }) {
-  const { language } = useLanguage();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.1 });
 
@@ -61,8 +60,8 @@ export default function ServicesSection({ sectionId, websiteId }) {
   return (
     <section 
       id="services" 
-      className="w-full pb-10 pt-10 bg-wtheme-background text-wtheme-text overflow-hidden relative"
-      style={{ backgroundColor: 'var(--website-theme-background)' }}
+      className="w-full pb-10 pt-10 text-wtheme-text overflow-hidden relative "
+      
     >
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-accent/10"></div>
@@ -73,7 +72,7 @@ export default function ServicesSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
-            className="inline-block mb-2 text-sm font-accent font-medium tracking-wider text-primary uppercase"
+            className="inline-block mb-2   text-sm font-accent font-medium tracking-wider text-primary uppercase"
           >
             {content.sectionLabel}
           </motion.span>

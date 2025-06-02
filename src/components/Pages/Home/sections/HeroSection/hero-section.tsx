@@ -40,8 +40,8 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
     image: "Hero {index} - Image",
     title: "Hero {index} - Title",
     excerpt: "Hero {index} - Description",
-    exploreButton: (subsection: any) => "Explore More",  // Default value
-    requestButton: (subsection: any) => "Request Now",   // Default value
+    exploreButton:"Hero {index} - ExploreButton",  
+    requestButton: "Hero {index} - RequestButton",   
     color: (subsection: any, index?: number) =>
       subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - Color`)?.defaultContent ||
       "from-primary to-accent",  // UPDATED: Use website theme colors instead of digitek colors
@@ -58,6 +58,8 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
     maxItemsPerSubsection: 10, 
     filter: slideFilter
   })
+
+  console.log("slides", slides)
 
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()

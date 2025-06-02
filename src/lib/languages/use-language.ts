@@ -1,14 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../api-client';
+import { Language } from '@/api/types/languages/languages.type';
 
 // Define the shape of a language object (based on typical language data)
-interface Language {
-  id: string;
-  name: string;
-  code: string;
-  isActive?: boolean;
-  websiteId?: string;
-}
+
 
 // Base language hook
 export function useLanguages() {

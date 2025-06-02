@@ -130,11 +130,9 @@ export default function ProjectsSection({ sectionId, websiteId }) {
   }
 
   return (
-    <section className="relative w-full py-20 overflow-hidden bg-wtheme-background" id="projects" dir={direction}>
+    <section className="relative w-full py-20 overflow-hidden " id="projects" dir={direction}>
       {/* Background elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-wtheme-background to-primary/5"></div>
-      <div className="absolute top-0 right-0 w-full h-40 bg-grid-pattern opacity-5 transform rotate-3"></div>
-      <div className="absolute bottom-0 left-0 w-full h-40 bg-grid-pattern opacity-5 transform -rotate-3"></div>
+      
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
@@ -384,11 +382,11 @@ function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0, 
       animate={isInView ? "visible" : "hidden"}
       exit="exit"
       whileHover="hover"
-      className="group relative overflow-hidden rounded-2xl bg-wtheme-background border border-wtheme-border/50 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col"
+      className="group relative overflow-hidden rounded-2xl  border border-wtheme-border/50 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col"
     >
       {/* Animated gradient overlay */}
       <motion.div
-        className={`absolute inset-0 bg-theme-gradient opacity-0 group-hover:opacity-5 transition-opacity duration-500 z-0`}
+        className={`absolute inset-0`}
         initial={{ opacity: 0 }}
         whileHover={{ opacity: 0.05 }}
         transition={{ duration: 0.3 }}

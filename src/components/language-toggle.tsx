@@ -12,7 +12,7 @@ export function LanguageToggle() {
   const { data: languages, isLoading: isLoadingLanguages } = useGetWebsiteLanguages(websiteId)
   
 
-
+  console.log("languages", languages)
 
   return (
     <DropdownMenu>
@@ -39,6 +39,6 @@ export function LanguageToggle() {
           ))
         )}
       </DropdownMenuContent>
-    </DropdownMenu>
+    </DropdownMenu> 
   )
 }

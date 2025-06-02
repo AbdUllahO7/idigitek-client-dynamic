@@ -4,18 +4,14 @@ import { JSX, useEffect } from "react";
 import ServicesSection from "@/components/Pages/Home/sections/services-section";
 import ProcessSection from "@/components/Pages/Home/sections/process-section";
 import TestimonialsSection from "@/components/Pages/Home/sections/testimonials-section";
-import TechnologyStackSection from "@/components/Pages/Home/sections/technology-stack-section";
 import PartnersSectionComponent from "@/components/Pages/Home/sections/partners-section";
 import TeamSection from "@/components/Pages/Home/sections/team-section";
 import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/language-context";
 import NewsSection from "@/components/Pages/Home/sections/news-section";
 import ProjectsSection from "@/components/Pages/Home/sections/projects-section";
-import ClientsSection from "@/components/Pages/Home/sections/ClientsSection/clients-section";
 import BlogSection from "@/components/Pages/Home/sections/BlogSection/blog-section";
 import ContactSection from "@/components/Pages/Home/sections/ContactSection/contact-section";
-import CtaSection from "@/components/Pages/Home/sections/CtaSection/cta-section";
-import CaseStudiesSection from "@/components/Pages/Home/sections/CaseStudiesSection/case-studies-section";
 import FaqSection from "@/components/Pages/Home/sections/FaqSection/faq-section";
 import HeroSection from "@/components/Pages/Home/sections/HeroSection/hero-section";
 import IndustrySolutionsSection from "@/components/Pages/Home/sections/IndustrySolutionsSection/industry-solutions-section";
@@ -118,12 +114,7 @@ export default function LandingPage() {
     FAQ: (id: string, websiteId?: string) => <FaqSection websiteId={websiteId} sectionId={id} />,
     Blog: (id: string, websiteId?: string) => <BlogSection websiteId={websiteId} sectionId={id} />,
     Contact: (id: string, websiteId?: string) => <ContactSection websiteId={websiteId} sectionId={id} />,
-    // Cta: (id: string, websiteId?: string) => <CtaSection websiteId={websiteId} sectionId={id} />,
-    // Clients: (id: string, websiteId?: string) => <ClientsSection websiteId={websiteId} sectionId={id} />,
-    // CaseStudies: (id: string, websiteId?: string) => <CaseStudiesSection websiteId={websiteId} sectionId={id} />,
-    // TechnologyStack: (id: string, websiteId?: string) => (
-    //   <TechnologyStackSection websiteId={websiteId} sectionId={id} />
-    // ),
+   
   };
 
   // Handle loading and error states

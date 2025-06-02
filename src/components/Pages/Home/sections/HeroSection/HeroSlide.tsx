@@ -57,7 +57,7 @@ export default function HeroSlide({
             className="border-2 border-primary text-wtheme-text hover:bg-wtheme-hover  hover:text-primary-foreground shadow-sm transition-all duration-200"
           >
             <Link href="#demo" onClick={(e) => handleNavClick(e, "demo")}>
-              {language === "en" ? slide.requestButton || "Request Demo" : slide.requestButton || "طلب عرض توضيحي"}
+              {slide.exploreButton}
               {direction === "ltr" && <ArrowRight className="ml-2 h-4 w-4" />}
               {direction === "rtl" && <ArrowRight className="mr-2 h-4 w-4 transform scale-x-[-1]" />}
             </Link>
@@ -71,7 +71,8 @@ export default function HeroSlide({
             className="border-2 border-primary text-wtheme-text hover:bg-wtheme-hover hover:text-primary-foreground shadow-sm transition-all duration-200"
           >
             <Link href="#services" onClick={(e) => handleNavClick(e, "services")}>
-              {language === "en" ? slide.exploreButton || "Explore Solutions" : slide.exploreButton || "استكشاف الحلول"}
+                            {slide.exploreButton}
+
             </Link>
           </Button>
           

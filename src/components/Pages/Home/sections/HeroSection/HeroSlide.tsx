@@ -45,7 +45,7 @@ export default function HeroSlide({
   const getButtonVariant = (buttonType: string) => {
     switch (buttonType) {
       case 'special':
-        return 'default' // Primary style for special buttons
+        return 'default' 
       case 'outline':
         return 'outline'
       case 'ghost':
@@ -58,18 +58,7 @@ export default function HeroSlide({
   }
   
   // Helper function to get button class based on type
-  const getButtonClass = (buttonType: string) => {
-    const baseClass = "shadow-sm transition-all duration-200"
-    
-    switch (buttonType) {
-      case 'special':
-        return `${baseClass} bg-primary text-primary-foreground hover:bg-primary/90`
-      case 'outline':
-        return `${baseClass} border-2 border-primary hover:bg-wtheme-hover hover:text-primary-foreground`
-      default:
-        return `${baseClass} border-2 border-primary hover:bg-wtheme-hover hover:text-primary-foreground`
-    }
-  }
+
 
   return (
     <motion.div
@@ -93,8 +82,8 @@ export default function HeroSlide({
             <Button
               asChild
               size="lg"
-              variant={getButtonVariant(slide.exploreButtonType)}
-              className={getButtonClass(slide.exploreButtonType)}
+              variant="outline"
+              className={`${isExternalUrl(slide.exploreButtonUrl) ? 'border-2 border-primary' : 'border-2 border-primary'}`}
             >
               {isExternalUrl(slide.exploreButtonUrl) ? (
                 <a 
@@ -126,9 +115,9 @@ export default function HeroSlide({
           {slide.requestButton && (
             <Button 
               asChild 
-              variant={getButtonVariant(slide.requestButtonType)}
+              variant="outline"
               size="lg" 
-              className={getButtonClass(slide.requestButtonType)}
+              className={""}
             >
               {isExternalUrl(slide.requestButtonUrl) ? (
                 <a 

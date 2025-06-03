@@ -18,6 +18,10 @@ interface Slide {
   excerpt: string
   exploreButton: string
   requestButton: string
+  exploreButtonType: string
+  requestButtonType: string
+  exploreButtonUrl: string
+  requestButtonUrl: string
   color: string
   order: number
 }
@@ -42,14 +46,47 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
     excerpt: "Hero {index} - Description",
     exploreButton:"Hero {index} - ExploreButton",  
     requestButton: "Hero {index} - RequestButton",
-    exploreButtonType : "Hero {index} - ExploreButtonType",
-    requestButtonType : "Hero {index} - RequestButtonType",
-    exploreButtonUrl : "Hero {index} - ExploreButtonUrl",
-    requestButtonUrl : "Hero {index} - RequestButtonUrl",
+    
+    // URL fields should always use primary language content
+    exploreButtonType: (subsection: any, index?: number) => {
+      const element = subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - ExploreButtonType`);
+      if (!element) return "default";
+      
+      // Always use the first translation (primary language) for URL fields
+      const primaryTranslation = element.translations?.[0];
+      return primaryTranslation?.content || "default";
+    },
+    
+    requestButtonType: (subsection: any, index?: number) => {
+      const element = subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - RequestButtonType`);
+      if (!element) return "default";
+      
+      // Always use the first translation (primary language) for URL fields
+      const primaryTranslation = element.translations?.[0];
+      return primaryTranslation?.content || "default";
+    },
+    
+    exploreButtonUrl: (subsection: any, index?: number) => {
+      const element = subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - ExploreButtonUrl`);
+      if (!element) return "";
+      
+      // Always use the first translation (primary language) for URL fields
+      const primaryTranslation = element.translations?.[0];
+      return primaryTranslation?.content || "";
+    },
+    
+    requestButtonUrl: (subsection: any, index?: number) => {
+      const element = subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - RequestButtonUrl`);
+      if (!element) return "";
+      
+      // Always use the first translation (primary language) for URL fields
+      const primaryTranslation = element.translations?.[0];
+      return primaryTranslation?.content || "";
+    },
     
     color: (subsection: any, index?: number) =>
       subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - Color`)?.defaultContent ||
-      "from-primary to-accent",  // UPDATED: Use website theme colors instead of digitek colors
+      "from-primary to-accent",
     order: (subsection: any, index?: number) => subsection.order || index || 0
   }
 
@@ -102,7 +139,7 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="relative w-full bg-wtheme-background overflow-hidden "  // UPDATED: Use website theme gradient
+      className="relative w-full bg-wtheme-background overflow-hidden "
       id="hero"
       dir={direction}
       onMouseEnter={handleMouseEnter}
@@ -139,8 +176,6 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
           />
         </div>
       </div>
-
-      <CurvedDivider />
     </motion.section>
   )
 }

@@ -1,15 +1,15 @@
 "use client"
 
 import { Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useLanguage } from "@/contexts/language-context"
+import { useWebsiteTheme } from "@/contexts/WebsiteThemeContext"
 
 export function ThemeToggle() {
-  const { setTheme } = useTheme()
-  const { t , language } = useLanguage()
+  const { colorMode, setColorMode } = useWebsiteTheme()
+  const { t, language } = useLanguage()
 
   return (
     <DropdownMenu>
@@ -21,11 +21,13 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>{language === 'en' ? 'Light' : 'فاتح'}</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>{language === 'en' ? 'Dark' : 'داكن'}</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>{language === 'en' ? 'System' : 'النظام'}</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setColorMode("light")}>
+          {language === 'en' ? 'Light' : 'فاتح'}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setColorMode("dark")}>
+          {language === 'en' ? 'Dark' : 'داكن'}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
-

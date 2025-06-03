@@ -41,7 +41,12 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
     title: "Hero {index} - Title",
     excerpt: "Hero {index} - Description",
     exploreButton:"Hero {index} - ExploreButton",  
-    requestButton: "Hero {index} - RequestButton",   
+    requestButton: "Hero {index} - RequestButton",
+    exploreButtonType : "Hero {index} - ExploreButtonType",
+    requestButtonType : "Hero {index} - RequestButtonType",
+    exploreButtonUrl : "Hero {index} - ExploreButtonUrl",
+    requestButtonUrl : "Hero {index} - RequestButtonUrl",
+    
     color: (subsection: any, index?: number) =>
       subsection.elements?.find(el => el.name === `Hero ${index !== undefined ? index + 1 : 1} - Color`)?.defaultContent ||
       "from-primary to-accent",  // UPDATED: Use website theme colors instead of digitek colors
@@ -97,8 +102,8 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="relative w-full overflow-hidden "  // UPDATED: Use website theme gradient
-      id="Hero"
+      className="relative w-full bg-wtheme-background overflow-hidden "  // UPDATED: Use website theme gradient
+      id="hero"
       dir={direction}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

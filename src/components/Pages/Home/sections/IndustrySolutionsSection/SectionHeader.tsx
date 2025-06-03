@@ -32,7 +32,7 @@ export default function SectionHeader({
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className={`text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight text-wtheme-text ${centered ? 'max-w-3xl mx-auto' : 'max-w-[600px]'}`}
+        className={`text-3xl md:text-4xl lg:text-5xl font-heading tracking-tight text-wtheme-text ${centered ? 'max-w-3xl mx-auto' : 'max-w-[600px]'}`}
       >
         {mainTitle}
       </motion.h2>
@@ -41,7 +41,7 @@ export default function SectionHeader({
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className={`text-lg font-body text-wtheme-text/70 ${centered ? 'max-w-2xl mx-auto' : 'max-w-[600px]'}`}
+        className={`text-lg font-body text-wtheme-text ${centered ? 'max-w-2xl mx-auto' : 'max-w-[600px]'}`}
       >
         {mainDescription}
       </motion.p>

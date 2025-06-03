@@ -61,7 +61,7 @@ export default function FaqSection({ websiteId, sectionId }) {
 
   return (
     <section 
-      className="relative w-full py-32 overflow-hidden bg-gradient-to-b from-wtheme-background/80 via-wtheme-background to-wtheme-background/90" 
+      className="relative w-full py-32 overflow-hidden bg-wtheme-background " 
       id="faq"
       dir={direction}
     >

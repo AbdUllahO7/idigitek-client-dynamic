@@ -17,8 +17,8 @@ export function ContactInfoItem({ icon, title, content, isRTL }: ContactInfoItem
         {icon}
       </div>
       <div className={isRTL ? "text-right" : "text-left"}>
-        <h4 className="font-heading font-semibold text-wtheme-text">{title}</h4>
-        <p className="text-wtheme-text/70 font-body">{content}</p>
+        <h4 className="font-heading  text-wtheme-text">{title}</h4>
+        <p className="text-wtheme-text font-body">{content}</p>
       </div>
     </motion.div>
   )

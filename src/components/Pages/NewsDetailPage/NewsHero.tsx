@@ -57,7 +57,7 @@ export function NewsHero({ news, t }) {
             <span className="px-3 py-1 rounded-full text-xs font-accent font-medium text-white bg-primary">
               {news.category}
             </span>
-            <div className="flex items-center text-sm text-wtheme-text/70 font-body">
+            <div className="flex items-center text-sm text-wtheme-text font-body">
               <Calendar className="h-4 w-4 mr-2" />
               {formatDate(news.data, language)}
             </div>

@@ -37,13 +37,11 @@ export default function BlogDetails({ params }: { params: Promise<{ id: string }
 
 
   return (
-    <div className="relative w-full py-16 md:py-24 overflow-hidden" dir={direction}>
-      {/* Background patterns */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background/90 z-0" />
-      <div className="absolute inset-0 bg-[radial-gradient(rgba(120,119,198,0.1)_1px,transparent_1px)] bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,black,transparent)] opacity-70" />
+    <div className="relative w-full py-16 bg-wtheme-background md:py-24 overflow-hidden" dir={direction}>
+     
 
       <div className="container relative px-4 md:px-6 z-10">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto bg-wtheme-background ">
           <PostHeader blog={blogData.data}/>
           <FeaturedImage blog={blogData.data} />
           <PostContent blog={blogData.data} />

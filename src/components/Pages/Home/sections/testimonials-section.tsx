@@ -113,7 +113,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
             className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-accent font-medium border border-primary/20"
           >
             <Quote className="w-4 h-4 mr-2" />
-            {content.sectionLabel || "Testimonials"}
+            {content.sectionLabel }
           </motion.div>
 
           <motion.h2
@@ -129,7 +129,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl text-wtheme-text/70 font-body text-lg leading-relaxed"
+            className="max-w-2xl text-wtheme-text font-body  leading-relaxed"
           >
             {content.sectionDescription ||
               "Discover what our satisfied clients have to say about their experience working with us."}
@@ -139,7 +139,7 @@ export default function TestimonialsSection({ websiteId, sectionId }) {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            <p className="text-wtheme-text/70 font-body mt-4">{content.loading || "Loading testimonials..."}</p>
+            <p className="text-wtheme-text font-body mt-4">{content.loading || "Loading testimonials..."}</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-16">
@@ -333,7 +333,7 @@ function TestimonialCard({ testimonial, index, isInView, direction, formatDate }
         {/* Header with icon and stars */}
         <div className="flex items-center justify-between mb-6">
           <motion.div
-            className="w-12 h-12 rounded-full flex items-center justify-center text-primary shadow-lg"
+            className="w-12 h-12 rounded-full flex items-center justify-center text-wtheme-text shadow-lg"
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
@@ -358,9 +358,9 @@ function TestimonialCard({ testimonial, index, isInView, direction, formatDate }
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
         >
-          <Quote className={`h-8 w-8 text-wtheme-text/30 mb-4 ${isRTL ? "ml-auto" : ""}`} />
+          <Quote className={`h-8 w-8 text-wtheme-text mb-4 ${isRTL ? "ml-auto" : ""}`} />
           <p className={`text-wtheme-text font-body leading-relaxed ${isRTL ? "text-right" : ""} text-lg`}>
-            {testimonial.excerpt || "This is an amazing service that exceeded all my expectations. Highly recommended!"}
+            {testimonial.excerpt}
           </p>
         </motion.div>
 

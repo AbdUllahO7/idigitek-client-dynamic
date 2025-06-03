@@ -40,7 +40,7 @@ export const FaqHeader = ({ content, isInView, isRTL, searchQuery, setSearchQuer
             initial={{ y: 40, opacity: 0 }}
             animate={isInView ? { y: 0, opacity: 1 } : { y: 40, opacity: 0 }}
             transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.3 }}
-            className="mt-6 text-xl font-body text-wtheme-text/70"
+            className="mt-6  font-body text-wtheme-text"
         >
             {content.sectionDescription}
         </motion.p>

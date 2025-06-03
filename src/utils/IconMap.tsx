@@ -64,7 +64,6 @@ export const iconMap: { [key: string]: React.ReactNode } = {
   MessageSquare: <MessageSquare />,
   Headphones: <Headphones />,
   User: <User />,
-  Calendar: <Calendar />,
   Mail: <Mail />,
   Phone: <Phone />,
   MapPin: <MapPin />,

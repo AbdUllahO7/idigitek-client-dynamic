@@ -83,7 +83,7 @@ export default function TeamSection({websiteId , sectionId}) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl text-wtheme-text/70 font-body text-lg"
+            className="max-w-2xl text-wtheme-text font-body text-lg"
           >
             {content.sectionDescription}
             </motion.p>
@@ -172,15 +172,15 @@ function TeamMemberCard({
             </motion.div>
           </div>
 
-          <h3 className="text-xl font-heading font-bold mb-1 text-wtheme-text group-hover:text-primary transition-colors duration-300">
+          <h3 className="text-xl font-heading font-heading mb-1 text-wtheme-text group-hover:text-primary transition-colors duration-300">
             {getCurrentText(member, 'name')}
           </h3>
 
-          <p className="text-sm font-accent font-medium text-primary mb-3">
+          <p className=" font-accent font-medium text-primary mb-3">
             {getCurrentText(member, 'role')}
           </p>
 
-          <p className="text-sm font-body text-wtheme-text/70 mb-5">
+          <p className=" font-body text-wtheme-text mb-5">
             {getCurrentText(member, 'bio')}
           </p>
         </div>

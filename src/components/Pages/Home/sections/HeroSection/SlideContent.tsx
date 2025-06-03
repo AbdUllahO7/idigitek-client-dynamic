@@ -70,7 +70,7 @@ export default function SlideContent({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.5 }}
         className="font-body font-body text-body
-                    text-lg leading-relaxed text-wtheme-text/80 
+                    text-lg leading-relaxed text-wtheme-text
                     max-w-[600px] 
                     hover:text-wtheme-text transition-colors duration-300"
       >

@@ -143,8 +143,8 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
         isOpen
           ? "bg-primary"  // UPDATED: Use website theme primary color for mobile menu
           : scrolled
-            ? "bg-wtheme-background/95 backdrop-blur supports-[backdrop-filter]:bg-wtheme-background/60 shadow-primary"  // UPDATED: Website theme background + primary shadow
-            : "bg-wtheme-background/50 backdrop-blur supports-[backdrop-filter]:bg-wtheme-background/60"  // UPDATED: Website theme background
+            ? "bg-wtheme-background/95 backdrop-blur supports-[backdrop-filter]:bg-wtheme-background shadow-primary"  // UPDATED: Website theme background + primary shadow
+            : "bg-wtheme-background/50 backdrop-blur supports-[backdrop-filter]:bg-wtheme-background"  // UPDATED: Website theme background
       }`}
       dir={direction}
     >
@@ -185,7 +185,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
               <Link
                 href={item.href}
                 onClick={(e) => handleNavClick(e, subName && subName === item.label ? subName : item.id)}
-                className="text-sm font-body font-medium text-wtheme-text hover:text-primary transition-colors"  // UPDATED: Website theme fonts and colors
+                className=" font-heading text-wtheme-text  transition-colors"  // UPDATED: Website theme fonts and colors
               >
                 {item.label}
               </Link>

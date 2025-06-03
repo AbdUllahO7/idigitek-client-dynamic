@@ -87,7 +87,7 @@ export default function ContactSection({ websiteId, sectionId }: { websiteId: st
             }}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            className="rounded-xl border border-wtheme-border/50 bg-wtheme-background p-6 shadow-sm"
+            className="rounded-xl border border-wtheme-border bg-wtheme-background p-6 shadow-sm"
           >
             <ContactForm
               content={SendMessageSection[0]}

@@ -75,20 +75,20 @@ export const PostHeader: React.FC<PostHeaderProps> = ({ blog }) => {
       <GoBackButton sectionName="blog" title={backLinkText}  />
     
       <div className={`flex items-center gap-3 mb-2 `}>
-        <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r ${direction  === "rtl" ? "text-right" : ""} from-violet-600 to-indigo-600 text-white shadow-sm`}>
+        <span className={`inline-block px-3 py-1  rounded-full bg-gradient-to-r ${direction  === "rtl" ? "text-right" : ""} from-violet-600 to-indigo-600 text-white shadow-sm`}>
           {category}
         </span>
       </div>
       
-      <h1 className={`text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6 ${direction  === "rtl" ? "text-right" : ""}`}>
+      <h1 className={`font-heading text-wtheme-text mb-6 ${direction  === "rtl" ? "text-right" : ""}`}>
         {title}
       </h1>
-      <p>{description}</p>
+      <p className={`font-body text-wtheme-text ${direction  === "rtl" ? "text-right" : ""}`}>{description}</p>
       
-      <div className={`flex flex-wrap items-center gap-5 text-sm text-muted-foreground ${direction  === "rtl" ? "justify-end" : ""}`}>
+      <div className={`flex flex-wrap items-center gap-5 text-sm text-wtheme-text  ${direction  === "rtl" ? "justify-end" : ""}`}>
         <div className={`flex items-center gap-2 ${direction  === "rtl" ? "justify-end" : ""}`}>
           <Calendar className="w-4 h-4" />
-             {formatDate(new Date(date.toString()), "MMM d, yyyy") }
+              {formatDate(new Date(date.toString()), "MMM d, yyyy") }
         </div>
         
       </div>

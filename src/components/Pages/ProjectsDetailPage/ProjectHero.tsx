@@ -102,7 +102,7 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
           <GoBackButton sectionName="projects" title={backLinkText} />
 
           <div className="flex items-center gap-3 mb-4">
-            <span className="px-3 py-1 rounded-full text-xs font-accent font-medium text-wtheme-text bg-wtheme-success">
+            <span className="px-3 py-1 rounded-full text-xs font-accent font-body text-white bg-primary">
               {category}
             </span>
           </div>
@@ -121,7 +121,7 @@ export const ProjectHero = ({ project, clients }: ProjectHeroProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-xl text-wtheme-text/70 font-body mb-6 whitespace-pre-line"
+              className="text-xl text-wtheme-text font-body mb-6 whitespace-pre-line"
             >
               {description}
             </motion.p>

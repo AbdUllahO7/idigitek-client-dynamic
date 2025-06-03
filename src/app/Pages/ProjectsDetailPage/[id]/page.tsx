@@ -39,7 +39,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   )
 
   return (
-    <div className="min-h-screen bg-background" dir={direction}>
+    <div className="min-h-screen bg-wtheme-background" dir={direction}>
       <ProjectHero project={projectSection} clients={clientsSection || { elements: [] }} />
       <ProjectImage project={projectSection} />
       <ProjectInfo project={projectSection} clients={clientsSection || { elements: [] }} />

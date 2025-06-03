@@ -332,14 +332,7 @@ export default function SmartDriveThroughPage({ params }: { params: Promise<{ id
         section.name === "FAQ Section"
     )
 
-    console.log("All Sections Found:", {
-        overview: !!overviewSection,
-        hero: !!heroSection,
-        benefits: !!benefitsSection,
-        features: !!featuresSection,
-        processSteps: !!processStepsSection,
-        faq: !!faqSection
-    })
+
 
     // Extract data from sections
     const pageOverviewData = overviewSection ? extractOverviewData(overviewSection, language) : null;
@@ -349,14 +342,7 @@ export default function SmartDriveThroughPage({ params }: { params: Promise<{ id
     const pageProcessStepsData = processStepsSection ? extractProcessStepsData(processStepsSection, language) : [];
     const pageFaqData = faqSection ? extractFaqData(faqSection, language) : [];
 
-    console.log("Extracted Data:", {
-        overview: pageOverviewData,
-        hero: pageHeroData,
-        benefits: pageBenefitsData,
-        features: pageFeaturesData,
-        processSteps: pageProcessStepsData,
-        faq: pageFaqData
-    })
+   
 
     // Handle errors or loading states
     if (serviceError || sectionError) {
@@ -366,10 +352,9 @@ export default function SmartDriveThroughPage({ params }: { params: Promise<{ id
     if (!serviceData || !sectionData) {
         return <SectionSkeleton variant="default" className="py-20"/>
     }
-console.log("pageProcessStepsData" , pageProcessStepsData)
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900" dir={direction}>
+        <div className="min-h-screen  bg-wtheme-background" dir={direction}>
             {pageHeroData && <HeroSection heroData={pageHeroData} />}
 
             {/* Main Content */}

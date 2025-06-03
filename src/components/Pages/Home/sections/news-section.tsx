@@ -80,10 +80,8 @@ export default function NewsSection({ sectionId, websiteId }) {
   const error = sectionError || itemsError
 
   return (
-    <section id="news" className="relative w-full py-20 overflow-hidden " dir={direction}>
-      <div className="absolute inset-0  from-primary/5 to-wtheme-background"></div>
-      <div className="absolute top-0 left-0 w-full h-40  opacity-5 transform rotate-3"></div>
-      <div className="absolute bottom-0 right-0 w-full h-40  opacity-5 transform -rotate-3"></div>
+    <section id="news" className="relative w-full py-20 overflow-hidden bg-wtheme-background" dir={direction}>
+    
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
@@ -121,7 +119,7 @@ export default function NewsSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl text-wtheme-text/70 font-body text-lg"
+            className="max-w-2xl text-wtheme-text font-body text-lg"
           >
             {content.sectionDescription}
           </motion.p>
@@ -327,7 +325,7 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
         </motion.div>
 
         <motion.h3
-          className="text-xl font-heading font-bold mb-3 line-clamp-2 text-wtheme-text group-hover:text-primary transition-colors"
+          className="text-xl font-heading  mb-3 line-clamp-2 text-wtheme-text group-hover:text-primary transition-colors"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
@@ -336,7 +334,7 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
         </motion.h3>
 
         <motion.p
-          className="text-wtheme-text/70 font-body line-clamp-3"
+          className="text-wtheme-text font-body line-clamp-3"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, ChevronLeft, ChevronRight } from "lucide-react"
+import { CheckCircle, ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import { motion } from "framer-motion"
 import { useScrollAnimation } from "@/hooks/use-scroll-animation"
 import { useLanguage } from "@/contexts/language-context"
@@ -71,14 +71,20 @@ export default function PartnersSection({ websiteId, sectionId }) {
           }}
           className="flex flex-col items-center justify-center space-y-4 text-center"
         >
-          <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-accent font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
-            {content.sectionLabel}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-accent font-medium border border-primary/20"
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            {content.sectionLabel }
+          </motion.div>
           <div className="space-y-2">
             <h2 className="text-3xl font-heading font-bold tracking-tighter text-wtheme-text sm:text-5xl">
               {content.sectionTitle}
             </h2>
-            <p className="max-w-[900px] text-wtheme-text/70 font-body md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+            <p className="max-w-[900px] text-wtheme-text font-body ">
               {content.sectionDescription}
             </p>
           </div>

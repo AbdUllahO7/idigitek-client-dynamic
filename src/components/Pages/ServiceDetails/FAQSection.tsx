@@ -23,7 +23,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({ faqs = [] }) => {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="text-center py-16">
-          <HelpCircle className="h-16 w-16 text-wtheme-text/40 mx-auto mb-4" />
+          <HelpCircle className="h-16 w-16 text-wtheme-text mx-auto mb-4" />
           <p className="text-wtheme-text/60 font-body">{noFaqsText}</p>
         </div>
       </div>
@@ -53,8 +53,8 @@ interface FAQItemProps {
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
   return (
     <div className="bg-wtheme-background p-6 rounded-lg shadow-sm">
-      <h3 className="text-xl font-heading font-semibold mb-3 text-wtheme-text">{question}</h3>
-      <p className="text-wtheme-text/80 font-body">
+      <h3 className="text-xl font-heading  mb-3 text-primary">{question}</h3>
+      <p className="text-wtheme-text font-body">
         {answer}
       </p>
     </div>

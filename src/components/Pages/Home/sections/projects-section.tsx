@@ -130,14 +130,14 @@ export default function ProjectsSection({ sectionId, websiteId }) {
   }
 
   return (
-    <section className="relative w-full py-20 overflow-hidden " id="projects" dir={direction}>
+    <section className="relative w-full py-20 overflow-hidden bg-wtheme-background" id="projects" dir={direction}>
       {/* Background elements */}
       
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
         transition={{ duration: 1.5 }}
-        className="absolute top-1/3 left-0 w-96 h-96 rounded-full bg-secondary blur-3xl"
+        className="absolute top-1/3 left-0 w-96 h-96 rounded-full  blur-3xl"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -152,7 +152,7 @@ export default function ProjectsSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-accent font-medium"
+            className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary  font-accent font-body"
           >
             {content.sectionLabel || "Projects"}
           </motion.div>
@@ -161,7 +161,7 @@ export default function ProjectsSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight max-w-3xl text-wtheme-text"
+            className="text-3xl md:text-4xl lg:text-5xl font-heading  tracking-tight max-w-3xl text-wtheme-text"
           >
             {content.sectionTitle || "Our Projects"}
           </motion.h2>
@@ -170,7 +170,7 @@ export default function ProjectsSection({ sectionId, websiteId }) {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl text-wtheme-text/70 font-body text-lg"
+            className="max-w-2xl text-wtheme-text font-body text-lg"
           >
             {content.sectionDescription || "Explore our latest work"}
           </motion.p>
@@ -382,7 +382,7 @@ function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0, 
       animate={isInView ? "visible" : "hidden"}
       exit="exit"
       whileHover="hover"
-      className="group relative overflow-hidden rounded-2xl  border border-wtheme-border/50 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col"
+      className="group relative  overflow-hidden rounded-2xl  border border-wtheme-border/50 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col"
     >
       {/* Animated gradient overlay */}
       <motion.div
@@ -406,7 +406,7 @@ function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0, 
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 + index * 0.15, duration: 0.5 }}
           >
-            <span className="px-3 py-1 rounded-full text-xs font-accent font-medium text-wtheme-text bg-wtheme-background">
+            <span className="px-3 py-1 rounded-full text-xs font-accent font-medium text-wtheme-text bg-primary">
               {project.category || "Uncategorized"}
             </span>
           </motion.div>
@@ -424,7 +424,7 @@ function ProjectCard({ project, index, isInView, viewCaseStudyText, custom = 0, 
         </motion.h3>
 
         <motion.p
-          className="text-wtheme-text/70 font-body mb-4"
+          className="text-wtheme-text font-body mb-4"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 + index * 0.15, duration: 0.5 }}

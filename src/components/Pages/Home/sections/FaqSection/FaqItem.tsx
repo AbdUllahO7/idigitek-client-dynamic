@@ -31,9 +31,9 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
       <motion.div
         className={`relative rounded-2xl ${
           isOpen 
-            ? "border-primary/40 bg-gradient-to-br from-primary/5 to-transparent" 
-            : "border-primary/10 bg-gradient-to-br from-wtheme-background/50 to-transparent"
-        } backdrop-blur-sm shadow-sm overflow-hidden transition-all duration-300 border bg-wtheme-background`}
+            ? "border-primary  border-2" 
+            : "border-primary "
+        } backdrop-blur-sm shadow-sm overflow-hidden transition-all border-primary duration-300 border bg-wtheme-background`}
         animate={{
           borderColor: isOpen ? "var(--website-theme-primary)" : "rgba(var(--website-theme-primary), 0.1)",
           boxShadow: isOpen ? "0 8px 30px rgba(var(--website-theme-primary), 0.1)" : "0 1px 3px rgba(0, 0, 0, 0.05)",
@@ -57,7 +57,7 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
                 : "bg-primary/10 text-primary"
               } transition-colors duration-300
             `}>
-              <span className="text-sm font-accent font-medium">{index + 1}</span>
+              <span className="font-body ">{index + 1}</span>
             </div>
             <h3
               className={`text-lg font-heading font-medium ${
@@ -92,7 +92,7 @@ export const FaqItem = ({ faq, index, isInView, isRTL }) => {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <div className={`p-6 pt-0 border-t border-primary/10 ${isRTL ? "pr-20 text-right" : "pl-20 text-left"} text-wtheme-text/70`}>
+              <div className={`p-6 pt-0 border-t border-primary ${isRTL ? "pr-20 text-right" : "pl-20 text-left"} text-wtheme-text`}>
                 <p className="leading-relaxed font-body">{faq.answer}</p>
               </div>
             </motion.div>

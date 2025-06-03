@@ -5,9 +5,7 @@ import { motion } from "framer-motion"
 export default function BackgroundElements() {
   return (
     <>
-      <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-background"></div>
-      <div className="absolute top-0 right-0 w-full h-40 bg-grid-pattern opacity-5 transform -rotate-3"></div>
-      <div className="absolute bottom-0 left-0 w-full h-40 bg-grid-pattern opacity-5 transform rotate-3"></div>
+      
 
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}

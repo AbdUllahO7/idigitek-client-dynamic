@@ -59,7 +59,7 @@ export default function FeaturesSection({ sectionId, websiteId }) {
   })
 
   return (
-    <section id="features" className="relative w-full py-20 overflow-hidden" dir={direction}>
+    <section id="features" className="relative w-full py-20 overflow-hidden bg-wtheme-background" dir={direction}>
       {/* Background elements */}
       <BackgroundElements />
 

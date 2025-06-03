@@ -73,15 +73,15 @@ export default function BlogSection({ websiteId, sectionId }: { websiteId: strin
           }}
           className="flex flex-col items-center justify-center space-y-6 md:space-y-8 text-center mb-12 md:mb-20"
         >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 100, delay: 0.1 }}
-            className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 md:px-5 md:py-2 text-xs md:text-sm font-accent font-medium text-primary backdrop-blur-sm shadow-sm"
-          >
-            <BookOpen className="h-3 w-3 md:h-4 md:w-4" />
-            <span>{content.sectionLabel}</span>
-          </motion.div>
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 100, delay: 0.1 }}
+          className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 md:px-5 md:py-2 text-xs md:text-sm font-accent font-medium text-primary backdrop-blur-sm shadow-sm"
+        >
+          <BookOpen className="h-3 w-3 md:h-4 md:w-4" />
+          <span>{content.sectionLabel}</span>
+        </motion.div>
 
           <div className="space-y-3 md:space-y-5 max-w-4xl">
             <motion.h2
@@ -97,7 +97,7 @@ export default function BlogSection({ websiteId, sectionId }: { websiteId: strin
               initial={{ y: 40, opacity: 0 }}
               animate={isInView ? { y: 0, opacity: 1 } : { y: 40, opacity: 0 }}
               transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.3 }}
-              className="text-base md:text-xl lg:text-2xl font-body text-wtheme-text/70 max-w-3xl mx-auto"
+              className="text-base md:text-xl lg:text-2xl font-body text-wtheme-text max-w-3xl mx-auto"
             >
               {content.sectionDescription}
             </motion.p>

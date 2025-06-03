@@ -97,7 +97,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   return (
-    <div className="min-h-screen bg-background" dir={direction}>
+    <div className="min-h-screen bg-wtheme-background " dir={direction}>
       {/* Hero section with title and category */}
       <NewsHero news={currentNews} t={t} />
 
@@ -105,7 +105,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
       <FeaturedImage image={currentNews.image} title={currentNews.title} />
 
       {/* Article content and sidebar */}
-      <section className="container px-4 md:px-6 mb-16">
+      <section className="container px-4 md:px-6 pb-16">
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_250px] gap-8">
           {/* Main content */}
           <ArticleContent content={currentNews.excerpt} />

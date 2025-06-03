@@ -6,7 +6,7 @@ export function Sidebar({ currentNews, allNews }) {
   const { direction } = useLanguage()
   
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 bg-wtheme-background">
     
       <Card>
         <CardContent className="p-6">

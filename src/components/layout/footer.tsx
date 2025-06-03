@@ -161,10 +161,10 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
             <div className="flex items-center gap-2">
               <Image src={logo} alt="Idigitek Solutions Logo" width={100} height={100} className="rounded" />
             </div>
-            <p className="text-sm font-body text-wtheme-text/70">{contentItems[0]?.description || "No description available"}</p>
+            <p className="text-sm font-body text-wtheme-text">{contentItems[0]?.description || "No description available"}</p>
             <div className="flex space-x-4">
               {SpecialLoading || itemsLoading ? (
-                <span className="text-sm font-body text-wtheme-text/70">Loading...</span>
+                <span className="text-sm font-body text-wtheme-text">Loading...</span>
               ) : SpecialError || itemsError ? (
                 <span className="text-sm font-body text-destructive">Error loading social links</span>
               ) : dynamicFallbackSocialMedia.length > 0 ? (
@@ -174,7 +174,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
                     whileHover={{ scale: 1.2, color: "var(--website-theme-primary)" }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    <Link href={social.socialLink} className="text-wtheme-text/70 hover:text-wtheme-text">
+                    <Link href={social.socialLink} className="text-wtheme-text hover:text-wtheme-text">
                         {social.image ? 
                             <Image 
                               src={social.image} 
@@ -189,7 +189,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
                   </motion.div>
                 ))
               ) : (
-                <span className="text-sm font-body text-wtheme-text/70">No social links available</span>
+                <span className="text-sm font-body text-wtheme-text">No social links available</span>
               )}
             </div>
           </motion.div>
@@ -213,7 +213,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
       variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
       className="space-y-4"
     >
-      <h3 className="text-lg font-heading font-semibold text-wtheme-text">{title}</h3>
+      <h3 className="text-lg font-heading  text-wtheme-text">{title}</h3>
       <ul className="space-y-2">
         {links.length > 0 ? (
           links.map((link) => (
@@ -222,7 +222,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
               whileHover={{ x: 5 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <Link href={link.href} className="text-sm font-body text-wtheme-text/70 hover:text-wtheme-text flex items-center gap-2">
+              <Link href={link.href} className=" font-body text-wtheme-text hover:text-wtheme-text flex items-center gap-2">
                 {link.image && (
                   <Image 
                     src={link.image} 
@@ -237,7 +237,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
             </motion.li>
           ))
         ) : (
-          <li className="text-sm font-body text-wtheme-text/70">No links available</li>
+          <li className="text-sm font-body text-wtheme-text">No links available</li>
         )}
       </ul>
     </motion.div>

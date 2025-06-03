@@ -89,7 +89,7 @@ export default function ProcessSection({websiteId , sectionId}) {
           <h2 className="text-4xl font-heading font-bold text-wtheme-text md:text-5xl lg:text-6xl bg-clip-text">
             {content.sectionTitle}
           </h2>
-          <p className="text-lg font-body text-wtheme-text/80 md:text-xl">
+          <p className="text-lg font-body text-wtheme-text md:text-xl">
             {content.sectionDescription}
           </p>
         </motion.div>
@@ -206,7 +206,6 @@ function ProcessStep({
 
   // Use primary colors consistently
   const accentColor = "bg-primary"
-  const shadowColor = "shadow-primary"
 
   return (
     <motion.div
@@ -260,10 +259,10 @@ function ProcessStep({
         
         {/* Content */}
         <div className="p-6">
-          <h3 className="text-2xl font-heading font-bold mb-3 text-wtheme-text">
+          <h3 className="text-2xl font-heading  mb-3 text-wtheme-text">
             {getCurrentText(step, 'title')}
           </h3>
-          <p className="font-body text-wtheme-text/70">
+          <p className="font-body text-wtheme-text">
             {getCurrentText(step, 'description')}
           </p>
           

@@ -80,7 +80,7 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, clients
 
   return (
     <section className="container px-4 md:px-6">
-      <div className="max-w-5xl mx-auto mb-12">
+      <div className="max-w-5xl mx-auto pb-12">
         <h3 className="text-2xl font-bold mb-6">{galleryText}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {images.map((image, index) => (

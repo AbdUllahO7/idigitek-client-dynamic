@@ -21,7 +21,7 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label htmlFor="name" className={`text-sm font-body font-medium text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
+            <label htmlFor="name" className={`font-body  text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
               {content?.fullName}
             </label>
             <Input
@@ -33,7 +33,7 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="email" className={`text-sm font-body font-medium text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
+            <label htmlFor="email" className={` font-body text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
               {content?.email}
             </label>
             <Input
@@ -46,17 +46,17 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
             />
           </div>
         </div>
-        <div className="space-y-2">
-          <label htmlFor="subject" className={`text-sm font-body font-medium text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
+        <div className="space-y-2 text-wtheme-text">
+          <label htmlFor="subject" className={` font-body  text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
             {content?.subjectTitle}
           </label>
-          <Select required>
+          <Select required >
             <SelectTrigger className={isRTL ? "text-right" : ""} dir={direction}>
-              <SelectValue placeholder={content?.subjectPlaceholder} />
+              <SelectValue className="text-wtheme-text" placeholder={content?.subjectPlaceholder} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="text-wtheme-text">
               {subjectOptions?.map((subject, index) => (
-                <SelectItem key={index} value={subject}>
+                <SelectItem className="text-wtheme-text" key={index} value={subject}>
                   {subject}
                 </SelectItem>
               ))}
@@ -64,14 +64,15 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
           </Select>
         </div>
         <div className="space-y-2">
-          <label htmlFor="message" className={`text-sm font-body font-medium text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
+          <label htmlFor="message" className={` font-body text-wtheme-text ${isRTL ? "block text-right" : ""}`}>
             {content?.message}
           </label>
           <Textarea
             id="message"
             placeholder={content?.messagePlaceHolder}
-            className={`min-h-[120px] ${isRTL ? "text-right" : ""}`}
+            className={`min-h-[120px] ${isRTL ? "text-right" : ""} text-wtheme-text`}
             required
+            
             dir={direction}
           />
         </div>

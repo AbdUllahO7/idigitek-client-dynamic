@@ -64,7 +64,7 @@ export default function ServicesSection({ sectionId, websiteId }) {
       
     >
       {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-accent/10"></div>
+      <div className="absolute inset-0 bg-wtheme-background"></div>
       
       <div className="container px-4 md:px-6 relative">
         <div ref={ref} className="mb-16 text-center">
@@ -240,9 +240,8 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
           </p>
           
           <ButtonSectionLink
-          variant="outline" 
             href={`/Pages/ServiceDetailsPage/${service.id}`}
-            className="group  text-wtheme-text hover:text-primary-foreground hover:bg-wtheme-hover shadow-theme hover:shadow-theme-lg transition-all duration-300 border-0 font-accent font-medium px-6 py-3 rounded-lg hover:scale-105"
+            className="group  border-2 border-primary  hover:text-primary shadow-sm transition-all duration-200"
           >
             {serviceDetails}
             <ArrowRight 

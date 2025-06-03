@@ -33,7 +33,7 @@ const FeaturesSection: React.FC<FeaturesSectionProps> = ({ features = [] }) => {
   if (features.length === 0) {
     return (
       <div className="mb-16 py-16 text-center">
-        <p className="text-wtheme-text/60 font-body">{noFeaturesText}</p>
+        <p className="text-wtheme-text font-body">{noFeaturesText}</p>
       </div>
     );
   }
@@ -43,7 +43,7 @@ const FeaturesSection: React.FC<FeaturesSectionProps> = ({ features = [] }) => {
       <Tabs defaultValue={features[0].id} className="w-full">
         <TabsList className="grid w-full h-auto" style={{ gridTemplateColumns: `repeat(${features.length}, 1fr)` }}>
           {features.map((feature) => (
-            <TabsTrigger key={feature.id} value={feature.id} className="py-3 text-sm font-body">
+            <TabsTrigger key={feature.id} value={feature.id} className="py-3  text-sm font-body">
               {feature.title}
             </TabsTrigger>
           ))}
@@ -69,8 +69,8 @@ const FeatureContent: React.FC<FeatureContentProps> = ({ content, direction }) =
   
   const ContentSection = () => (
     <div>
-      <h3 className="text-2xl font-heading font-semibold mb-4 text-wtheme-text">{heading}</h3>
-      <p className="text-wtheme-text/80 font-body mb-4 leading-relaxed">
+      <h3 className="text-2xl font-heading  mb-4 text-wtheme-text">{heading}</h3>
+      <p className="text-wtheme-text font-body mb-4 leading-relaxed">
         {description}
       </p>
       {features && features.length > 0 && (
@@ -80,7 +80,7 @@ const FeatureContent: React.FC<FeatureContentProps> = ({ content, direction }) =
               <div className={`${direction === 'rtl' ? 'ml-3' : 'mr-3'} mt-1 text-primary`}>
                 <Check className="h-5 w-5" />
               </div>
-              <span className="text-wtheme-text/80 font-body">{feature}</span>
+              <span className="text-wtheme-text font-body">{feature}</span>
             </li>
           ))}
         </ul>

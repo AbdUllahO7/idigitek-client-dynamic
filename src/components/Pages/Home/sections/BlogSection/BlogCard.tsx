@@ -63,7 +63,7 @@ export function BlogCard({ post, index, isInView, isRTL }: BlogCardProps) {
           <h3 className={`font-heading font-bold text-base md:text-lg lg:text-xl leading-tight text-wtheme-text group-hover:text-primary transition-colors duration-300 ${isRTL ? "text-right" : "text-left"}`}>
             {post.title}
           </h3>
-          <p className={`text-xs md:text-sm font-body text-wtheme-text/70 line-clamp-2 ${isRTL ? "text-right" : "text-left"}`}>
+          <p className={`text-xs md:text-sm font-body text-wtheme-text line-clamp-2 ${isRTL ? "text-right" : "text-left"}`}>
             {post.excerpt}
           </p>
           <div className={`flex items-center justify-between pt-2 ${isRTL ? "flex-row-reverse" : ""}`}>

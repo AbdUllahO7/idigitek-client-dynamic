@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/contexts/language-context"
 import QueryProvider from "@/providers/QueryProvider"
 import RootLayoutClient from "./RootLayoutClient"
 import { WebsiteThemeProvider } from "@/contexts/WebsiteThemeContext"
+import CookieConsentProvider from "@/providers/cookie-consent-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -31,7 +32,10 @@ export default function RootLayout({
             <LanguageProvider>
               {/* NEW: Add WebsiteThemeProvider for dynamic themes */}
               <WebsiteThemeProvider>
+                  <CookieConsentProvider>
+
                 <RootLayoutClient>{children}</RootLayoutClient>
+                </CookieConsentProvider>
               </WebsiteThemeProvider>
             </LanguageProvider>
           </QueryProvider>

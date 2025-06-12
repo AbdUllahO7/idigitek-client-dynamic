@@ -16,7 +16,7 @@ export default function DotsNavigation({
   const { t } = useLanguage()
 
   return (
-    <div className="absolute bottom-0 left-0 bg-wtheme-background right-0 flex justify-center gap-2 pb-4 z-20">
+    <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-2 pb-4 z-20">
       {Array.from({ length: slidesCount }).map((_, index) => (
         <button
           key={index}

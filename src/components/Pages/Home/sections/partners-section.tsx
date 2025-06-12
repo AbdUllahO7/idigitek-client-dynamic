@@ -71,15 +71,14 @@ export default function PartnersSection({ websiteId, sectionId }) {
           }}
           className="flex flex-col items-center justify-center space-y-4 text-center"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-accent font-medium border border-primary/20"
-          >
-            <CheckCircle className="w-4 h-4 mr-2" />
-            {content.sectionLabel }
-          </motion.div>
+          <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+              className="inline-block mb-2 text-body  text-primary tracking-wider  uppercase"
+            >
+              {content.sectionLabel}
+            </motion.span>
           <div className="space-y-2">
             <h2 className="text-3xl font-heading font-bold tracking-tighter text-wtheme-text sm:text-5xl">
               {content.sectionTitle}

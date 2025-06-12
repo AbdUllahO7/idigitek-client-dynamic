@@ -81,18 +81,6 @@ export default function ProjectsSection({ sectionId, websiteId }) {
     setActiveIndex((prev) => prev - 1)
   }
 
-  // Get visible projects for desktop view (3 at a time)
-  const getVisibleProjects = () => {
-    if (projects.length <= 3) return projects
-    const visibleProjects = []
-    for (let i = 0; i < 3; i++) {
-      const index = activeIndex + i
-      if (index < projects.length) {
-        visibleProjects.push(projects[index])
-      }
-    }
-    return visibleProjects
-  }
 
   // Create a slug function
   const createSlug = (title) => {
@@ -113,21 +101,6 @@ export default function ProjectsSection({ sectionId, websiteId }) {
     )
   }
 
-  // Variants for animations
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-    exit: {
-      opacity: 0,
-      transition: { staggerChildren: 0.05, staggerDirection: -1 },
-    },
-  }
 
   return (
     <section className="relative w-full py-20 overflow-hidden bg-wtheme-background" id="projects" dir={direction}>
@@ -148,14 +121,14 @@ export default function ProjectsSection({ sectionId, websiteId }) {
 
       <div className="container relative z-10 px-4 md:px-6">
         <div ref={ref} className="flex flex-col items-center justify-center space-y-6 text-center mb-16">
-          <motion.div
+          <motion.span
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary  font-accent font-body"
+            transition={{ duration: 0.5 }}
+            className="inline-block mb-2 text-body  text-primary tracking-wider  uppercase"
           >
-            {content.sectionLabel || "Projects"}
-          </motion.div>
+            {content.sectionLabel}
+          </motion.span>
 
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

@@ -61,14 +61,14 @@ export default function TeamSection({websiteId , sectionId}) {
 
       <div className="container relative z-10 px-4 md:px-6">
         <div ref={ref} className="flex flex-col items-center justify-center space-y-6 text-center mb-16">
-          <motion.div
+          <motion.span
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-accent font-medium"
+            transition={{ duration: 0.5 }}
+            className="inline-block mb-2 text-body  text-primary tracking-wider  uppercase"
           >
             {content.sectionLabel}
-          </motion.div>
+          </motion.span>
 
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

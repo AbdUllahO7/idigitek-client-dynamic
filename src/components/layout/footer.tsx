@@ -213,7 +213,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
       variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
       className="space-y-4"
     >
-      <h3 className="text-lg font-heading  text-wtheme-text">{title}</h3>
+      <h3 className="text-lg font-heading   text-primary">{title}</h3>
       <ul className="space-y-2">
         {links.length > 0 ? (
           links.map((link) => (

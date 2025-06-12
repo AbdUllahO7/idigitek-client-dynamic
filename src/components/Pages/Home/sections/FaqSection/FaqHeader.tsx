@@ -13,15 +13,14 @@ export const FaqHeader = ({ content, isInView, isRTL, searchQuery, setSearchQuer
             transition={{ duration: 0.8 }}
             className="relative max-w-3xl mx-auto mb-20 text-center"
         >
-        <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 100, delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-accent font-medium rounded-full bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm"
+         <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+            className="inline-block mb-2 text-body  text-primary tracking-wider  uppercase"
         >
-            <MessageCircleQuestion className="w-4 h-4" />
-            <span>{content.sectionLabel}</span>
-        </motion.div>
+            {content.sectionLabel}
+        </motion.span>
 
         <motion.h2
             initial={{ y: 40, opacity: 0 }}

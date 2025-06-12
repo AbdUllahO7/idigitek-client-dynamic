@@ -82,10 +82,14 @@ export default function ProcessSection({websiteId , sectionId}) {
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center justify-center space-y-4 text-center max-w-3xl mx-auto"
         >
-          <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-accent font-medium text-primary mb-2">
-            {content.sectionLabel}
-            <span className="ml-2 inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-          </span>
+            <motion.span
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5 }}
+                className="inline-block mb-2 text-body  text-primary tracking-wider  uppercase"
+              >
+                {content.sectionLabel}
+              </motion.span>
           <h2 className="text-4xl font-heading font-bold text-wtheme-text md:text-5xl lg:text-6xl bg-clip-text">
             {content.sectionTitle}
           </h2>

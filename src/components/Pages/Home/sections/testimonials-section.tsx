@@ -381,7 +381,7 @@ function TestimonialCard({ testimonial, index, isInView, direction, formatDate }
             <h4 className="font-heading font-semibold text-wtheme-text group-hover:text-primary transition-colors duration-300">
               {testimonial.title || "Client Name"}
             </h4>
-            <div className="flex items-center text-xs text-wtheme-text/60 font-body mb-2">
+            <div className="flex items-center text-xs text-wtheme-text font-body mb-2">
               <Calendar className="h-3 w-3 mr-1" />
               {new Date(testimonial.date).toLocaleDateString("en-US", {
                 year: "numeric",

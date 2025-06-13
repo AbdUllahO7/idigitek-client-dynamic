@@ -41,21 +41,7 @@ export default function HeroSlide({
     return url && (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//'))
   }
   
-  // Helper function to get button variant based on type
-  const getButtonVariant = (buttonType: string) => {
-    switch (buttonType) {
-      case 'special':
-        return 'default' 
-      case 'outline':
-        return 'outline'
-      case 'ghost':
-        return 'ghost'
-      case 'secondary':
-        return 'secondary'
-      default:
-        return 'outline' // Default fallback
-    }
-  }
+
   
   // Helper function to get button class based on type
 
@@ -82,8 +68,8 @@ export default function HeroSlide({
             <Button
               asChild
               size="lg"
-              variant="outline"
-              className={`${isExternalUrl(slide.exploreButtonUrl) ? 'border-2 border-primary' : 'border-2 border-primary'}`}
+              variant="default"
+              className={`${isExternalUrl(slide.exploreButtonUrl) ? ' border-2 border-primary' : 'border-2 border-primary'} dark:bg-primary text-wtheme-text`}
             >
               {isExternalUrl(slide.exploreButtonUrl) ? (
                 <a 
@@ -117,7 +103,7 @@ export default function HeroSlide({
               asChild 
               variant="outline"
               size="lg" 
-              className={""}
+              className={" dark:bg-background text-white"}
             >
               {isExternalUrl(slide.requestButtonUrl) ? (
                 <a 

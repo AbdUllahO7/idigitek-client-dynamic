@@ -78,7 +78,7 @@ export function ContactForm({ content, isRTL, direction, handleSubmit, isSubmitt
         </div>
         <Button
           type="submit"
-          className={`w-full bg-primary text-white font-accent ${isRTL ? "flex flex-row-reverse justify-center" : ""}`}
+          className={`w-full bg-primary text-wtheme-text font-accent ${isRTL ? "flex flex-row-reverse justify-center" : ""}`}
           disabled={isSubmitting || isSubmitted}
         >
           {isSubmitting ? (

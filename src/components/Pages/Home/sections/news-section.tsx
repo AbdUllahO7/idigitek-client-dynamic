@@ -319,8 +319,8 @@ function NewsCard({ news, index, isInView, direction, formatDate, readMoreText, 
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
         >
-          <Calendar className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-          {formatDate(news.date)}
+          <Calendar className={` text-wtheme-text font-body h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
+          <span className="text-wtheme-text font-bold">{formatDate(news.date)}</span>
         </motion.div>
 
         <motion.h3

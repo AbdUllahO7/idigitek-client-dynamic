@@ -41,7 +41,7 @@ export default function SectionHeader({
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className={`mt-4 text-lg font-body text-wtheme-text/70 ${centered ? 'max-w-2xl mx-auto' : 'max-w-[600px]'}`}
+        className={`mt-4 text-lg font-body text-wtheme-text ${centered ? 'max-w-2xl mx-auto' : 'max-w-[600px]'}`}
       >
         {mainDescription}
       </motion.p>

@@ -67,7 +67,7 @@ export function BlogCard({ post, index, isInView, isRTL }: BlogCardProps) {
             {post.excerpt}
           </p>
           <div className={`flex items-center justify-between pt-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-            <span className="text-xs font-body text-wtheme-text/60">
+            <span className="text-xs font-body text-wtheme-text">
               {formatDate(new Date(post.date), "MMM d, yyyy")}
             </span>
             <ButtonSectionLink

@@ -96,7 +96,7 @@ export function useSectionContent<T extends {
           const element = subsection.elements?.find(el => el.name === fieldName)
           if (element) {
             const getTranslation = (el, lang) =>
-              el?.translations?.find(t => t.language.languageID === lang)?.content || el?.defaultContent || ""
+              el?.translations?.find(t => t.language?.languageID === lang)?.content || el?.defaultContent || ""
             item[key] = element.type === "image" ? element.imageUrl || element.defaultContent || "" : getTranslation(element, language)
             if (item[key]) hasValidFields = true
           } else {

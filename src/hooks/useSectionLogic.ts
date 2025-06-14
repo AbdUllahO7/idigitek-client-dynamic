@@ -19,6 +19,8 @@ export function useSectionLogic({
     refetch: refetchCompleteSubsections,
   } = useGetBySectionId(sectionId)
 
+  console.log("completeSubsectionsData use section logic " , completeSubsectionsData)
+
   // Extract main section data
   useEffect(() => {
     const extractMainSectionData = () => {
@@ -88,13 +90,33 @@ export function useSectionLogic({
 
       mainSectionElements.forEach((element) => {
         const translation = element.translations.find(
-          (t) => t.language.languageID === language
+          (t) => t.language && t.language.languageID === language
         ) || element.translations.find(
-          (t) => t.language.languageID === "en"
+          (t) => t.language && t.language.languageID === "en"
         )
         
         if (translation) {
           switch (element.name) {
+            // Updated to match the actual API element names
+            case "sectionBadge":
+              content.sectionLabel = translation.content
+              break
+            case "sectionTitle":
+              content.sectionTitle = translation.content
+              break
+            case "sectionDescription":
+              content.sectionDescription = translation.content
+              break
+            case "serviceDetails":
+              content.readMore = translation.content
+              break
+            case "newsDetails":
+              content.readMore = translation.content
+              break
+            case "projectDetails":
+              content.readMore = translation.content
+              break
+            // Keep old cases for backward compatibility
             case "Section Badge":
               content.sectionLabel = translation.content
               break
@@ -113,7 +135,7 @@ export function useSectionLogic({
             case "Service Details":
               content.readMore = translation.content
               break
-          case "section":
+            case "section":
               content.section = translation.section
               break
           }

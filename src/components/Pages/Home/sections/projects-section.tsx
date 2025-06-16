@@ -246,7 +246,7 @@ function ProjectCard({ project, viewCaseStudyText }) {
   const isRTL = direction === "rtl"
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
+    <div className=" rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
       {/* Image */}
       <div className="relative h-48 overflow-hidden">
         <Image
@@ -266,11 +266,11 @@ function ProjectCard({ project, viewCaseStudyText }) {
 
       {/* Content */}
       <CardContent className="p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="text-xl font-body text-wtheme-text mb-3 line-clamp-2 group-hover:text-primary transition-colors">
           {project.title}
         </h3>
         
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+        <p className="text-body text-wtheme-text mb-4 line-clamp-3">
           {project.excerpt}
         </p>
 

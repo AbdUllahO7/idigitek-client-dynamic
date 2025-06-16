@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useLanguage } from '@/contexts/language-context'
-import { HelpCircle } from 'lucide-react'
+import { HelpCircle, MessageCircleQuestionIcon } from 'lucide-react'
 
 interface FAQ {
   id: string;
@@ -52,8 +52,8 @@ interface FAQItemProps {
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
   return (
-    <div className="bg-wtheme-background p-6 rounded-lg shadow-sm">
-      <h3 className="text-xl font-heading  mb-3 text-primary">{question}</h3>
+    <div className="bg-wtheme-background border border-dashed border-primary p-6 rounded-lg shadow-xl">
+      <h3 className="text-xl font-heading text-primary  mb-3 ">{question}</h3>
       <p className="text-wtheme-text font-body">
         {answer}
       </p>

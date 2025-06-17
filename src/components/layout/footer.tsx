@@ -51,16 +51,16 @@ const generateFieldMappings = (isSpecial: boolean): Record<string, string> => {
   }
 
   if (isSpecial) {
-    for (let x = 1; x <= 5; x++) { // Increased to 5 to support more dynamic columns
+    for (let x = 1; x <= 8; x++) { // Increased to 5 to support more dynamic columns
       mappings[`socialLink${x}}`] = `Special Footer ${x} - Title`
-      for (let y = 1; y <= 5; y++) { // Increased to 5 to support more links per column
+      for (let y = 1; y <= 8; y++) { // Increased to 5 to support more links per column
         mappings[`socialLink${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - Url`
         mappings[`image${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - Image`
         mappings[`LinkName${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - LinkName`
       }
     }
   } else {
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 8; i++) {
       mappings[`socialLink${i}`] = `Footer 1 - SocialLink ${i} - Url`
       mappings[`image${i}`] = `Footer 1 - SocialLink ${i} - Image`
     }
@@ -84,7 +84,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
     [1, 2, 3, 4].some((i) => item[`socialLink${i}`]?.trim())
 
   const SpecialFeatureFilter = (item: SpecialItem) =>
-    [1, 2, 3, 4, 5].some((x) => [1, 2, 3, 4, 5].some((y) => item[`socialLink${x}_${y}`]?.trim()))
+    [1, 2, 3, 4, 5 ,6 , 7 , 8 ].some((x) => [1, 2, 3, 4, 5, 6 , 7, 8 ].some((y) => item[`socialLink${x}_${y}`]?.trim()))
 
   // Fetch content
   const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
@@ -104,7 +104,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
   const dynamicFallbackSocialMedia = useMemo(
     () =>
       contentItems.flatMap((item) =>
-        [1, 2, 3, 4].map((i) => ({
+        [1, 2, 3, 4,5,6,7,8].map((i) => ({
           socialLink: item[`socialLink${i}`] || "",
           image: item[`image${i}`],
           label: `Social ${i}`,
@@ -174,7 +174,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
                     whileHover={{ scale: 1.2, color: "var(--website-theme-primary)" }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    <Link href={social.socialLink} className="text-wtheme-text hover:text-wtheme-hover">
+                    <Link href={social.socialLink} target="_blank" className="text-wtheme-text hover:text-wtheme-hover">
                         {social.image ? 
                             <Image 
                               src={social.image} 
@@ -222,7 +222,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
               whileHover={{ x: 5 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <Link href={link.href} className=" font-body text-wtheme-text hover:text-wtheme-hover flex items-center gap-2">
+              <Link href={link.href}  className=" font-body text-wtheme-text hover:text-wtheme-hover flex items-center gap-2">
                 {link.image && (
                   <Image 
                     src={link.image} 

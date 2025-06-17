@@ -2,10 +2,9 @@
 
 import React, { useRef, useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Calendar, ChevronLeft, ChevronRight, Quote, Star, User } from "lucide-react"
+import { Calendar, ChevronLeft, ChevronRight, Quote, Star, User } from "lucide-react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import { useLanguage } from "@/contexts/language-context"
-import { ButtonSectionLink } from "@/components/SectionLinks"
 import { useSectionLogic } from "@/hooks/useSectionLogic"
 import { useSectionContent } from "@/hooks/useSectionContent"
 import { iconMap } from "@/utils/IconMap"

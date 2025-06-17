@@ -83,11 +83,11 @@ export function CtaForm({ content, direction, isRTL }: CtaFormProps) {
         className="mt-2 text-xs text-muted-foreground text-center"
       >
         {content.terms}{" "}
-        <Link href="#" className="underline underline-offset-2 hover:text-primary">
+        <Link href="#" className="underline underline-offset-2 hover:text-wtheme-hover">
           {content.termsLink}
         </Link>{" "}
         {content.and}{" "}
-        <Link href="#" className="underline underline-offset-2 hover:text-primary">
+        <Link href="#" className="underline underline-offset-2 hover:text-wtheme-hover">
           {content.privacyLink}
         </Link>
         {content.period}

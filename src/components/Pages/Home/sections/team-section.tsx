@@ -172,7 +172,7 @@ function TeamMemberCard({
             </motion.div>
           </div>
 
-          <h3 className="text-xl font-heading font-heading mb-1 text-wtheme-text group-hover:text-primary transition-colors duration-300">
+          <h3 className="text-xl font-heading font-heading mb-1 text-wtheme-text group-hover:text-wtheme-hover transition-colors duration-300">
             {getCurrentText(member, 'name')}
           </h3>
 

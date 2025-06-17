@@ -17,7 +17,7 @@ export function SidebarNewsCard({ item }) {
             />
         </div>
         <div>
-            <h4 className="text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
+            <h4 className="text-sm font-medium group-hover:text-wtheme-hover transition-colors line-clamp-2">
             {item.title}
             </h4>
             

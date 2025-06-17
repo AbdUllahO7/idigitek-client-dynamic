@@ -41,7 +41,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
       </div>
 
       <div className="flex-grow p-5">
-        <h3 className="text-base font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="text-base font-bold mb-2 line-clamp-2 group-hover:text-wtheme-hover transition-colors">
           {project.title}
         </h3>
 

@@ -35,7 +35,7 @@ export default function IndustryCard({ industry, index, isInView }: IndustryCard
             name={industry.title} 
           />
 
-          <h3 className="text-xl font-heading mb-3 text-wtheme-text group-hover:text-primary transition-colors duration-300">
+          <h3 className="text-xl font-heading mb-3 text-wtheme-text group-hover:text-wtheme-hover transition-colors duration-300">
             {industry.title}
           </h3>
 

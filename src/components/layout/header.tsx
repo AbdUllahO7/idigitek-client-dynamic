@@ -179,13 +179,12 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
               key={item.id}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
               whileHover={{ y: -2 }}
             >
               <Link
                 href={item.href}
                 onClick={(e) => handleNavClick(e, subName && subName === item.label ? subName : item.id)}
-                className=" font-heading text-wtheme-text  transition-colors"  // UPDATED: Website theme fonts and colors
+                className=" font-heading text-wtheme-text hover:text-wtheme-hover  transition-colors"  // UPDATED: Website theme fonts and colors
               >
                 {item.label}
               </Link>
@@ -217,7 +216,7 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick }: MobileNavPro
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className={isOpen ? "text-white hover:text-accent hover:bg-white/10" : "text-wtheme-text hover:text-primary"}  // UPDATED: Website theme colors
+        className={isOpen ? "text-white hover:text-accent hover:bg-white/10" : "text-wtheme-text hover:text-wtheme-hover"}  // UPDATED: Website theme colors
       >
         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
       </Button>

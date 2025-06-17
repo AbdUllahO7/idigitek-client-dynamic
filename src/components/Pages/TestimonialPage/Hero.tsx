@@ -33,7 +33,7 @@ export const TestimonialsHero = ({ t, direction }) => {
             <div ref={headerRef} className="max-w-4xl mx-auto">
             <Link
                 href="/#testimonials"
-                className="inline-flex items-center text-muted-foreground hover:text-primary mb-6 transition-colors"
+                className="inline-flex items-center text-muted-foreground hover:text-wtheme-hover mb-6 transition-colors"
             >
                 <ArrowLeft className={`${direction === 'rtl' ? 'ml-2' : 'mr-2'} h-4 w-4`} />
                 {t.backToHome}

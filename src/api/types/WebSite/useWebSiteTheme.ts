@@ -16,6 +16,7 @@ export interface WebSiteTheme {
       border: string;
       success: string;
       warning: string;
+      hover:string;
       error: string;
       info: string;
     };
@@ -28,6 +29,7 @@ export interface WebSiteTheme {
       text: string;
       textSecondary: string;
       border: string;
+      hover:string;
       success: string;
       warning: string;
       error: string;
@@ -134,6 +136,7 @@ export const COLOR_PRESETS: ColorPreset[] = [
         textSecondary: '#6c757d',
         border: '#dee2e6',
         success: '#28a745',
+        hover:'#000000',
         warning: '#ffc107',
         error: '#dc3545',
         info: '#17a2b8',
@@ -147,6 +150,7 @@ export const COLOR_PRESETS: ColorPreset[] = [
         text: '#f8f9fa',
         textSecondary: '#ced4da',
         border: '#495057',
+        hover:'#000000',
         success: '#2ecc71',
         warning: '#ffca2c',
         error: '#f03e3e',
@@ -170,6 +174,7 @@ export const COLOR_PRESETS: ColorPreset[] = [
         warning: '#ffb74d',
         error: '#cf6679',
         info: '#17a2b8',
+        hover:'#000000',
       },
       dark: {
         primary: '#bb86fc',
@@ -184,6 +189,7 @@ export const COLOR_PRESETS: ColorPreset[] = [
         warning: '#ffb74d',
         error: '#cf6679',
         info: '#22b8cf',
+        hover:'#000000',
       },
     },
   },
@@ -203,6 +209,7 @@ export const COLOR_PRESETS: ColorPreset[] = [
         warning: '#f59e0b',
         error: '#ef4444',
         info: '#17a2b8',
+        hover:'#000000',
       },
       dark: {
         primary: '#34d399',
@@ -217,6 +224,7 @@ export const COLOR_PRESETS: ColorPreset[] = [
         warning: '#fbbf24',
         error: '#f87171',
         info: '#22b8cf',
+        hover:'#000000',
       },
     },
   },
@@ -236,6 +244,7 @@ export const COLOR_PRESETS: ColorPreset[] = [
         warning: '#f59e0b',
         error: '#ef4444',
         info: '#17a2b8',
+        hover:'#000000',
       },
       dark: {
         primary: '#a78bfa',
@@ -250,6 +259,7 @@ export const COLOR_PRESETS: ColorPreset[] = [
         warning: '#fbbf24',
         error: '#f87171',
         info: '#22b8cf',
+        hover:'#000000',
       },
     },
   },
@@ -352,6 +362,11 @@ export const COLOR_LABELS: Record<
   secondary: {
     label: 'Secondary',
     description: 'Secondary color for supporting elements',
+    icon: '🖌️',
+  },
+  hover: {
+    label: 'Hover',
+    description: 'Hover color for supporting elements',
     icon: '🖌️',
   },
   accent: {
@@ -467,9 +482,9 @@ export const generateThemeCSS = (theme: WebSiteTheme, mode: 'light' | 'dark' = '
       --border-color: ${colors.border};
       --success-color: ${colors.success};
       --warning-color: ${colors.warning};
+      --hover-color: ${colors.hover};
       --error-color: ${colors.error};
       --info-color: ${colors.info};
-      
       --heading-font: ${theme.fonts.heading.family};
       --heading-weight: ${theme.fonts.heading.weight};
       --heading-size: ${theme.fonts.heading.size};

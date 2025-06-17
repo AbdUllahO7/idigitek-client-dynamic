@@ -214,7 +214,7 @@ function PartnersCarousel({ partners, isInView, isRTL, containerRef }: PartnersC
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-primary/20 bg-wtheme-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
+                className="rounded-full border-primary/20 bg-wtheme-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-wtheme-hover transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
                 onClick={handlePrev}
                 disabled={isRTL ? currentSlide >= maxSlides : currentSlide <= 0}
               >
@@ -233,7 +233,7 @@ function PartnersCarousel({ partners, isInView, isRTL, containerRef }: PartnersC
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-primary/20 bg-wtheme-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
+                className="rounded-full border-primary/20 bg-wtheme-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-wtheme-hover transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
                 onClick={handleNext}
                 disabled={isRTL ? currentSlide <= 0 : currentSlide >= maxSlides}
               >

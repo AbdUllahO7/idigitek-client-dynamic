@@ -61,7 +61,7 @@ export const RelatedPostCard: React.FC<RelatedPostCardProps> = ({
             <div className={`mb-2 ${isRTL ? "text-right" : ""}`}>
               <span className="text-xs font-medium text-primary">{post.category}</span>
             </div>
-            <h4 className={`font-medium line-clamp-2 group-hover:text-primary transition-colors duration-300 ${isRTL ? "text-right" : ""}`}>
+            <h4 className={`font-medium line-clamp-2 group-hover:text-wtheme-hover transition-colors duration-300 ${isRTL ? "text-right" : ""}`}>
               {post.title}
             </h4> 
           </div>

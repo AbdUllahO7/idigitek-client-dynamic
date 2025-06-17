@@ -72,7 +72,7 @@ export default function SlideContent({
         className="font-body font-body text-body
                     text-lg leading-relaxed text-wtheme-text
                     max-w-[600px] 
-                    hover:text-wtheme-text transition-colors duration-300"
+                    hover:text-wtheme-hover transition-colors duration-300"
       >
         {description}
       </motion.p>

@@ -378,7 +378,7 @@ function TestimonialCard({ testimonial, index, isInView, direction, formatDate }
           </div>
 
           <div className={`flex-grow ${isRTL ? "text-right" : ""}`}>
-            <h4 className="font-heading font-semibold text-wtheme-text group-hover:text-primary transition-colors duration-300">
+            <h4 className="font-heading font-semibold text-wtheme-text group-hover:text-wtheme-hover transition-colors duration-300">
               {testimonial.title || "Client Name"}
             </h4>
             <div className="flex items-center text-xs text-wtheme-text font-body mb-2">

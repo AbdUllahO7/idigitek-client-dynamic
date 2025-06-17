@@ -33,7 +33,7 @@ export function CaseStudyCard({ study, index, isInView }: CaseStudyCardProps) {
         <div className="p-6 md:p-8">
             <div className="flex flex-col md:flex-row gap-8">
             <div className="md:w-1/2 flex flex-col">
-                <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
+                <h3 className="text-2xl font-bold mb-3 group-hover:text-wtheme-hover transition-colors duration-300">
                 {study.title}
                 </h3>
 

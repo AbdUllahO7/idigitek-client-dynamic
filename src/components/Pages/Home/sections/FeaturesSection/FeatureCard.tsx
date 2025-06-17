@@ -37,7 +37,7 @@ export default function FeatureCard({ feature, isInView }: FeatureCardProps) {
         {renderIcon()}
       </div>
       <div className="space-y-1">
-        <h3 className="text-xl font-heading  text-wtheme-text group-hover:text-primary transition-colors duration-300">
+        <h3 className="text-xl font-heading  text-wtheme-text group-hover:text-wtheme-hover transition-colors duration-300">
           {feature.title}
         </h3>
         <p className="font-body text-wtheme-text">{feature.excerpt}</p>

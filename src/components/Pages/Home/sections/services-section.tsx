@@ -241,7 +241,7 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
           
           <ButtonSectionLink
             href={`/Pages/ServiceDetailsPage/${service.id}`}
-            className="group  border-2 border-primary  hover:text-primary shadow-sm transition-all duration-200"
+            className="group  border-2 border-primary  hover:text-wtheme-hover shadow-sm transition-all duration-200"
           >
             {serviceDetails}
             <ArrowRight 

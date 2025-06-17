@@ -44,7 +44,7 @@ export function NewsCard({ news, index, t }) {
             })}
             </div>
 
-            <h3 className="text-base font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+            <h3 className="text-base font-bold mb-2 line-clamp-2 group-hover:text-wtheme-hover transition-colors">
             {news.title}
             </h3>
 

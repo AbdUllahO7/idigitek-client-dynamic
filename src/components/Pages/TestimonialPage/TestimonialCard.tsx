@@ -80,7 +80,7 @@ export const TestimonialCard = ({ testimonial, index, direction }) => {
             </div>
 
             <div>
-                <h4 className="font-semibold group-hover:text-primary transition-colors duration-300">
+                <h4 className="font-semibold group-hover:text-wtheme-hover transition-colors duration-300">
                 {testimonial.author}
                 </h4>
                 <p className={`text-sm bg-clip-text text-transparent bg-gradient-to-r ${testimonial.color}`}>

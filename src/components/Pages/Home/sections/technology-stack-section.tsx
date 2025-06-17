@@ -107,7 +107,7 @@ export default function TechnologyStackSection() {
                     />
                   </div>
                   
-                  <h3 className="text-base font-medium text-center group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-base font-medium text-center group-hover:text-wtheme-hover transition-colors duration-300">
                     {getCurrentText(tech, 'name')}
                   </h3>
                 </div>

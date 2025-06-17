@@ -195,6 +195,7 @@ function applyThemeToCSS(theme: WebSiteTheme, mode: 'light' | 'dark') {
   root.style.setProperty('--website-theme-border', colors.border);
   root.style.setProperty('--website-theme-success', colors.success);
   root.style.setProperty('--website-theme-warning', colors.warning);
+  root.style.setProperty('--website-theme-hover', colors.hover);
   root.style.setProperty('--website-theme-error', colors.error);
   root.style.setProperty('--website-theme-info', colors.info);
 
@@ -250,6 +251,7 @@ function resetToDefaultTheme(mode: 'light' | 'dark') {
     border: '#e5e7eb',
     success: '#10b981',
     warning: '#f59e0b',
+    hover: '#000000',
     error: '#ef4444',
     info: '#17a2b8',
   } : {
@@ -263,6 +265,7 @@ function resetToDefaultTheme(mode: 'light' | 'dark') {
     border: '#333333',
     success: '#34d399',
     warning: '#fbbf24',
+    hover: '#000000',
     error: '#f87171',
     info: '#22b8cf',
   };

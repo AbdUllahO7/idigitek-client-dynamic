@@ -174,7 +174,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
                     whileHover={{ scale: 1.2, color: "var(--website-theme-primary)" }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    <Link href={social.socialLink} className="text-wtheme-text hover:text-wtheme-text">
+                    <Link href={social.socialLink} className="text-wtheme-text hover:text-wtheme-hover">
                         {social.image ? 
                             <Image 
                               src={social.image} 
@@ -222,7 +222,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
               whileHover={{ x: 5 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <Link href={link.href} className=" font-body text-wtheme-text hover:text-wtheme-text flex items-center gap-2">
+              <Link href={link.href} className=" font-body text-wtheme-text hover:text-wtheme-hover flex items-center gap-2">
                 {link.image && (
                   <Image 
                     src={link.image} 

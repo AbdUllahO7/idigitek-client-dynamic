@@ -16,6 +16,7 @@ export default function ProjectsSection({ sectionId, websiteId }) {
   const { direction } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(1) // Start at 1 (middle set)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const intervalRef = useRef(null)
 
   const {
@@ -45,6 +46,17 @@ export default function ProjectsSection({ sectionId, websiteId }) {
     },
   })
 
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   // Filter valid projects
   const validProjects = (contentItems || []).filter((project) =>
     project.id && project.image && project.title && project.excerpt
@@ -54,6 +66,12 @@ export default function ProjectsSection({ sectionId, websiteId }) {
   const projects = validProjects.length > 0 
     ? [...validProjects, ...validProjects, ...validProjects] 
     : []
+
+  // Get items per view based on screen size
+  const getItemsPerView = () => {
+    if (isMobile) return 1
+    return 3
+  }
 
   // Auto-play functionality
   const startAutoPlay = () => {
@@ -113,10 +131,19 @@ export default function ProjectsSection({ sectionId, websiteId }) {
     return ((currentIndex - 1) % validProjects.length)
   }
 
+  // Calculate transform for responsive design
+  const getTransform = () => {
+    const itemsPerView = getItemsPerView()
+    const percentage = 100 / itemsPerView
+    const gap = isMobile ? 16 : 24 // 16px for mobile, 24px for desktop
+    const gapOffset = (currentIndex * gap) / itemsPerView
+    return `calc(-${currentIndex * percentage}% + ${gapOffset}px)`
+  }
+
   // Handle errors
   if (sectionError || itemsError) {
     return (
-      <section className="py-20 bg-wtheme-background" dir={direction}>
+      <section className="py-12 md:py-20 bg-wtheme-background" dir={direction}>
         <div className="container mx-auto px-4 text-center">
           <p className="text-red-500">Failed to load projects</p>
         </div>
@@ -127,7 +154,7 @@ export default function ProjectsSection({ sectionId, websiteId }) {
   // Handle empty state
   if (validProjects.length === 0) {
     return (
-      <section className="py-20 bg-wtheme-background" dir={direction}>
+      <section className="py-12 md:py-20 bg-wtheme-background" dir={direction}>
         <div className="container mx-auto px-4 text-center">
           <p className="text-wtheme-text/60">No projects available</p>
         </div>
@@ -137,21 +164,21 @@ export default function ProjectsSection({ sectionId, websiteId }) {
 
   return (
     <section 
-      className="py-20 bg-wtheme-background overflow-hidden" 
+      className="py-12 md:py-20 bg-wtheme-background overflow-hidden" 
       dir={direction}
       onMouseEnter={stopAutoPlay}
       onMouseLeave={startAutoPlay}
     >
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-16">
-          <p className="text-primary text-sm uppercase tracking-wider mb-4">
+        <div className="text-center mb-8 md:mb-16">
+          <p className="text-primary text-sm uppercase tracking-wider mb-2 md:mb-4">
             {content.sectionLabel || "Portfolio"}
           </p>
-          <h2 className="text-4xl lg:text-5xl font-bold text-wtheme-text mb-6">
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-wtheme-text mb-4 md:mb-6">
             {content.sectionTitle || "Our Projects"}
           </h2>
-          <p className="text-lg text-wtheme-text/70 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-wtheme-text/70 max-w-2xl mx-auto px-4">
             {content.sectionDescription || "Explore our latest work"}
           </p>
         </div>
@@ -163,7 +190,7 @@ export default function ProjectsSection({ sectionId, websiteId }) {
             <motion.div
               className="flex"
               animate={{
-                x: `calc(-${currentIndex * (100/3)}% + ${currentIndex * (24/3)}px)`
+                x: getTransform()
               }}
               transition={{
                 duration: 0.5,
@@ -173,11 +200,14 @@ export default function ProjectsSection({ sectionId, websiteId }) {
               {projects.map((project, index) => (
                 <div
                   key={`${project.id}-${Math.floor(index / validProjects.length)}`}
-                  className="w-1/3 flex-shrink-0 px-3"
+                  className={`flex-shrink-0 ${
+                    isMobile ? 'w-full px-2' : 'w-1/3 px-3'
+                  }`}
                 >
                   <ProjectCard 
                     project={project}
                     viewCaseStudyText={content.readMore || "View Project"}
+                    isMobile={isMobile}
                   />
                 </div>
               ))}
@@ -188,29 +218,33 @@ export default function ProjectsSection({ sectionId, websiteId }) {
           <div className="absolute inset-y-0 left-0 flex items-center">
             <Button
               variant="outline"
-              size="icon"
+              size={isMobile ? "sm" : "icon"}
               onClick={prevSlide}
               disabled={isTransitioning}
-              className="ml-2 rounded-full bg-white/90 backdrop-blur border shadow-lg hover:bg-white"
+              className={`${
+                isMobile ? 'ml-1 w-8 h-8' : 'ml-2 w-10 h-10'
+              } rounded-full bg-white/90 backdrop-blur border shadow-lg hover:bg-white`}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
             </Button>
           </div>
           
           <div className="absolute inset-y-0 right-0 flex items-center">
             <Button
               variant="outline"
-              size="icon"
+              size={isMobile ? "sm" : "icon"}
               onClick={nextSlide}
               disabled={isTransitioning}
-              className="mr-2 rounded-full bg-white/90 backdrop-blur border shadow-lg hover:bg-white"
+              className={`${
+                isMobile ? 'mr-1 w-8 h-8' : 'mr-2 w-10 h-10'
+              } rounded-full bg-white/90 backdrop-blur border shadow-lg hover:bg-white`}
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
             </Button>
           </div>
 
           {/* Dots Navigation */}
-          <div className="flex justify-center mt-8 gap-2">
+          <div className="flex justify-center mt-6 md:mt-8 gap-2">
             {validProjects.map((_, index) => (
               <button
                 key={index}
@@ -220,9 +254,11 @@ export default function ProjectsSection({ sectionId, websiteId }) {
                   setCurrentIndex(validProjects.length + index + 1)
                   setTimeout(startAutoPlay, 5000)
                 }}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                className={`${
+                  isMobile ? 'w-2 h-2' : 'w-3 h-3'
+                } rounded-full transition-all duration-300 ${
                   getCurrentSlide() === index
-                    ? "bg-primary w-8"
+                    ? `bg-primary ${isMobile ? 'w-6' : 'w-8'}`
                     : "bg-primary/30 hover:bg-primary/50"
                 }`}
               />
@@ -230,8 +266,8 @@ export default function ProjectsSection({ sectionId, websiteId }) {
           </div>
 
           {/* Counter */}
-          <div className="text-center mt-4">
-            <span className="text-sm text-wtheme-text/60">
+          <div className="text-center mt-2 md:mt-4">
+            <span className="text-xs md:text-sm text-wtheme-text/60">
               {getCurrentSlide() + 1} of {validProjects.length}
             </span>
           </div>
@@ -241,14 +277,14 @@ export default function ProjectsSection({ sectionId, websiteId }) {
   )
 }
 
-function ProjectCard({ project, viewCaseStudyText }) {
+function ProjectCard({ project, viewCaseStudyText, isMobile }) {
   const { direction } = useLanguage()
   const isRTL = direction === "rtl"
 
   return (
-    <div className=" rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
+    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
       {/* Image */}
-      <div className="relative h-48 overflow-hidden">
+      <div className={`relative ${isMobile ? 'h-40' : 'h-48'} overflow-hidden`}>
         <Image
           src={project.image}
           alt={project.title}
@@ -256,8 +292,10 @@ function ProjectCard({ project, viewCaseStudyText }) {
           className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {project.category && (
-          <div className="absolute top-4 left-4">
-            <span className="bg-primary text-white px-3 py-1 rounded-full text-xs font-medium">
+          <div className={`absolute top-3 ${isMobile ? 'left-3' : 'left-4'}`}>
+            <span className={`bg-primary text-white ${
+              isMobile ? 'px-2 py-1 text-xs' : 'px-3 py-1 text-xs'
+            } rounded-full font-medium`}>
               {project.category}
             </span>
           </div>
@@ -265,17 +303,21 @@ function ProjectCard({ project, viewCaseStudyText }) {
       </div>
 
       {/* Content */}
-      <CardContent className="p-6">
-        <h3 className="text-xl font-body text-wtheme-text mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+      <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
+        <h3 className={`${
+          isMobile ? 'text-lg' : 'text-xl'
+        } font-body text-wtheme-text mb-2 md:mb-3 line-clamp-2 group-hover:text-wtheme-hover transition-colors`}>
           {project.title}
         </h3>
         
-        <p className="text-body text-wtheme-text mb-4 line-clamp-3">
+        <p className={`text-body text-wtheme-text ${
+          isMobile ? 'mb-3 text-sm' : 'mb-4 text-base'
+        } line-clamp-3`}>
           {project.excerpt}
         </p>
 
         {project.technologies && (
-          <div className="flex flex-wrap gap-1 mb-4">
+          <div className={`flex flex-wrap gap-1 ${isMobile ? 'mb-3' : 'mb-4'}`}>
             {project.technologies.slice(0, 3).map((tech, i) => (
               <Badge key={i} variant="secondary" className="text-xs">
                 {tech}
@@ -291,11 +333,15 @@ function ProjectCard({ project, viewCaseStudyText }) {
 
         <Link
           href={`/Pages/ProjectsDetailPage/${project.id}`}
-          className="inline-flex items-center text-primary font-medium hover:underline text-sm"
+          className={`inline-flex items-center text-primary font-medium hover:underline ${
+            isMobile ? 'text-sm' : 'text-sm'
+          }`}
         >
           {viewCaseStudyText}
           <ArrowRight 
-            className={`w-4 h-4 ml-1 transition-transform group-hover:translate-x-1 ${
+            className={`w-4 h-4 ${
+              isMobile ? 'ml-1' : 'ml-1'
+            } transition-transform group-hover:translate-x-1 ${
               isRTL ? "rotate-180" : ""
             }`} 
           />

@@ -21,7 +21,6 @@ export function ThemeProvider({ children, websiteId }: ThemeProviderProps) {
   const { useGetActiveTheme } = useWebSiteThemes()
   const { data: themeData, isLoading, error, refetch } = useGetActiveTheme(websiteId)
   const [activeTheme, setActiveTheme] = useState<WebSiteTheme | null>(null)
-
   // Extract theme from API response
   useEffect(() => {
     if (themeData?.data) {
@@ -74,7 +73,7 @@ function applyThemeToCSS(theme: WebSiteTheme) {
   root.style.setProperty('--theme-text', theme.colors.text)
   root.style.setProperty('--theme-accent', theme.colors.accent || theme.colors.primary)
   root.style.setProperty('--theme-border', theme.colors.border || '#e5e7eb')
-  root.style.setProperty('--theme-hover', theme.colors.hover || theme.colors.primary)
+  root.style.setProperty('--theme-hover', theme.colors.hover || "#000000")
   root.style.setProperty('--theme-error', theme.colors.error || '#ef4444')
   root.style.setProperty('--theme-success', theme.colors.success || '#10b981')
   root.style.setProperty('--theme-warning', theme.colors.warning || '#f59e0b')

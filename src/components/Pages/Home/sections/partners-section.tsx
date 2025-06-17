@@ -1,9 +1,7 @@
 "use client"
 
-import Link from "next/link"
+import type React from "react"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { CheckCircle, ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import { motion } from "framer-motion"
 import { useScrollAnimation } from "@/hooks/use-scroll-animation"
 import { useLanguage } from "@/contexts/language-context"
@@ -16,7 +14,6 @@ export default function PartnersSection({ websiteId, sectionId }) {
   const { t, direction, language } = useLanguage()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  
   const {
     content,
     isLoading: sectionLoading,
@@ -32,12 +29,12 @@ export default function PartnersSection({ websiteId, sectionId }) {
   const featureFilter = (item: { image: string }) => item.image && item.image.trim() !== ""
 
   const ContentItemsMappings = {
-        id: (subsection: any, index?: number) => `${subsection._id}-${index || 0}`,
-        date : "createdAt",
-        image: "Image {index}",
-        excerpt: "ClientComments {index} - Description",
-        color: () => "theme-gradient",
-        order: (subsection: any, index?: number) => subsection.order || index || 0,
+    id: (subsection: any, index?: number) => `${subsection._id}-${index || 0}`,
+    date: "createdAt",
+    image: "Image {index}",
+    excerpt: "ClientComments {index} - Description",
+    color: () => "theme-gradient",
+    order: (subsection: any, index?: number) => subsection.order || index || 0,
   }
 
   const {
@@ -55,7 +52,7 @@ export default function PartnersSection({ websiteId, sectionId }) {
   const isRTL = direction === "rtl"
 
   return (
-    <section id="partners" className="w-full py-20 bg-wtheme-background" dir={direction}>
+    <section id="partners" className="w-full py-20 bg-wtheme-background overflow-hidden" dir={direction}>
       <div className="container px-4 md:px-6" ref={containerRef}>
         <motion.div
           ref={ref}
@@ -72,31 +69,40 @@ export default function PartnersSection({ websiteId, sectionId }) {
           className="flex flex-col items-center justify-center space-y-4 text-center"
         >
           <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.5 }}
-              className="inline-block mb-2 text-body  text-primary tracking-wider  uppercase"
-            >
-              {content.sectionLabel}
-            </motion.span>
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+            className="inline-block mb-2 text-body text-primary tracking-wider uppercase"
+          >
+            {content.sectionLabel}
+          </motion.span>
           <div className="space-y-2">
-            <h2 className="text-3xl font-heading font-bold tracking-tighter text-wtheme-text sm:text-5xl">
+            <motion.h2
+              className="text-3xl font-heading font-bold tracking-tighter text-wtheme-text sm:text-5xl"
+              animate={{
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "linear",
+              }}
+              style={{
+                background: "linear-gradient(90deg, currentColor 0%, rgba(var(--primary), 0.8) 50%, currentColor 100%)",
+                backgroundSize: "200% 100%",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+              }}
+            >
               {content.sectionTitle}
-            </h2>
-            <p className="max-w-[900px] text-wtheme-text font-body ">
-              {content.sectionDescription}
-            </p>
+            </motion.h2>
+            <p className="max-w-[900px] text-wtheme-text font-body">{content.sectionDescription}</p>
           </div>
         </motion.div>
 
         {/* Partners Carousel */}
         <div className="mt-12">
-          <PartnersCarousel
-            partners={contentItems} // Pass contentItems instead of partners
-            isInView={isInView}
-            isRTL={isRTL}
-            containerRef={containerRef}
-          />
+          <PartnersCarousel partners={contentItems} isInView={isInView} isRTL={isRTL} containerRef={containerRef} />
         </div>
       </div>
     </section>
@@ -125,137 +131,178 @@ interface PartnersCarouselProps {
 }
 
 function PartnersCarousel({ partners, isInView, isRTL, containerRef }: PartnersCarouselProps) {
-  const [currentSlide, setCurrentSlide] = useState(0)
   const { direction } = useLanguage()
-  const carouselRef = useRef<HTMLDivElement>(null)
-  
-  // Initial state with SSR-safe default value
-  const [partnersPerView, setPartnersPerView] = useState(6)
-  const maxSlides = Math.max(0, partners.length - partnersPerView)
-  
-  // Handle responsive partners per view
+  const [isPaused, setIsPaused] = useState(false)
+  const [screenSize, setScreenSize] = useState("desktop")
+
+  // Duplicate partners array to create seamless loop
+  const duplicatedPartners = [...partners, ...partners, ...partners]
+
+  // Handle responsive screen detection
   useEffect(() => {
-    const getPartnersPerView = () => {
-      if (typeof window === "undefined") return 6 // SSR default
-      if (window.innerWidth < 640) return 2
-      if (window.innerWidth < 768) return 3
-      if (window.innerWidth < 1024) return 4
-      return 6
-    }
-    
     const handleResize = () => {
-      setPartnersPerView(getPartnersPerView())
+      if (typeof window === "undefined") return
+      if (window.innerWidth < 640) setScreenSize("mobile")
+      else if (window.innerWidth < 768) setScreenSize("sm")
+      else if (window.innerWidth < 1024) setScreenSize("md")
+      else if (window.innerWidth < 1280) setScreenSize("lg")
+      else setScreenSize("xl")
     }
-    
+
     handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const handlePrev = () => {
-    setCurrentSlide((prev) => (isRTL ? Math.min(prev + 1, maxSlides) : Math.max(prev - 1, 0)))
+  // Responsive configuration
+  const getResponsiveConfig = () => {
+    switch (screenSize) {
+      case "mobile":
+        return {
+          logoWidth: "w-24 sm:w-28",
+          logoHeight: "h-12",
+          padding: "px-1",
+          duration: Math.max(partners.length * 5, 30),
+          gradientWidth: "w-6",
+        }
+      case "sm":
+        return {
+          logoWidth: "w-28 sm:w-32",
+          logoHeight: "h-14",
+          padding: "px-2",
+          duration: Math.max(partners.length * 4, 25),
+          gradientWidth: "w-8",
+        }
+      case "md":
+        return {
+          logoWidth: "w-32 md:w-36",
+          logoHeight: "h-16",
+          padding: "px-3",
+          duration: Math.max(partners.length * 3.5, 22),
+          gradientWidth: "w-10",
+        }
+      case "lg":
+        return {
+          logoWidth: "w-36 lg:w-40",
+          logoHeight: "h-18",
+          padding: "px-4",
+          duration: Math.max(partners.length * 3, 20),
+          gradientWidth: "w-12",
+        }
+      default:
+        return {
+          logoWidth: "w-40 xl:w-44",
+          logoHeight: "h-20",
+          padding: "px-5",
+          duration: Math.max(partners.length * 2.5, 18),
+          gradientWidth: "w-16",
+        }
+    }
   }
 
-  const handleNext = () => {
-    setCurrentSlide((prev) => (isRTL ? Math.max(prev - 1, 0) : Math.min(prev + 1, maxSlides)))
-  }
-
-  // Mouse parallax effect for navigation buttons
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return
-    const rect = containerRef.current.getBoundingClientRect()
-    const x = (e.clientX - rect.left) / rect.width - 0.5
-    const y = (e.clientY - rect.top) / rect.height - 0.5
-    setMousePosition({ x, y })
-  }
-
-  const slideWidth = 100 / partnersPerView
+  const config = getResponsiveConfig()
 
   return (
-    <div className="relative" onMouseMove={handleMouseMove}>
-      <div className="relative">
-        <div className="overflow-hidden" ref={carouselRef}>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{
-              transform: `translateX(${isRTL ? currentSlide * slideWidth : -currentSlide * slideWidth}%)`,
-            }}
-          >
-            {partners.map((partner, index) => (
-              <div
-                key={index}
-                className="px-2 md:px-4"
-                style={{
-                  minWidth: `${slideWidth}%`,
-                  flex: `0 0 ${slideWidth}%`,
-                }}
-              >
-                <PartnerLogo partner={partner} index={index} />
-              </div>
-            ))}
-          </motion.div>
+    <>
+      <style jsx>{`
+        @keyframes scroll-left {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-33.333%); }
+        }
+        
+        @keyframes scroll-right {
+          0% { transform: translateX(-33.333%); }
+          100% { transform: translateX(0); }
+        }
+        
+        .marquee-container {
+          overflow: hidden;
+          position: relative;
+          width: 100%;
+          mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 5%,
+            black 95%,
+            transparent 100%
+          );
+          -webkit-mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 5%,
+            black 95%,
+            transparent 100%
+          );
+        }
+        
+        .marquee-content {
+          display: flex;
+          animation: ${isRTL ? "scroll-right" : "scroll-left"} ${config.duration}s linear infinite;
+          animation-play-state: ${isPaused ? "paused" : "running"};
+          width: fit-content;
+          will-change: transform;
+        }
+        
+        .marquee-content:hover {
+          animation-play-state: paused;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .marquee-content {
+            animation-duration: ${config.duration * 2}s;
+          }
+        }
+      `}</style>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+        className="marquee-container relative w-full"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+      >
+        <div className="marquee-content">
+          {duplicatedPartners.map((partner, index) => (
+            <div key={`partner-${index}`} className={`flex-shrink-0 ${config.padding} ${config.logoWidth}`}>
+              <PartnerLogo partner={partner} index={index} heightClass={config.logoHeight} screenSize={screenSize} />
+            </div>
+          ))}
         </div>
-
-        {/* Navigation Buttons */}
-        {partners.length > partnersPerView && (
-          <div className="flex justify-center mt-8 md:mt-12 gap-4 md:gap-6">
-            <motion.div
-              style={{
-                x: mousePosition.x * -10,
-                y: mousePosition.y * -10,
-              }}
-              transition={{ type: "spring", stiffness: 150, damping: 15 }}
-            >
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full border-primary/20 bg-wtheme-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-wtheme-hover transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
-                onClick={handlePrev}
-                disabled={isRTL ? currentSlide >= maxSlides : currentSlide <= 0}
-              >
-                <ChevronLeft className={`h-4 w-4 md:h-5 md:w-5 ${isRTL ? "rotate-180" : ""}`} />
-                <span className="sr-only">Previous</span>
-              </Button>
-            </motion.div>
-
-            <motion.div
-              style={{
-                x: mousePosition.x * 10,
-                y: mousePosition.y * -10,
-              }}
-              transition={{ type: "spring", stiffness: 150, damping: 15 }}
-            >
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full border-primary/20 bg-wtheme-background/80 backdrop-blur-sm hover:bg-primary/10 hover:text-wtheme-hover transition-all duration-300 w-10 h-10 md:w-12 md:h-12 shadow-md hover:shadow-lg"
-                onClick={handleNext}
-                disabled={isRTL ? currentSlide <= 0 : currentSlide >= maxSlides}
-              >
-                <ChevronRight className={`h-4 w-4 md:h-5 md:w-5 ${isRTL ? "rotate-180" : ""}`} />
-                <span className="sr-only">Next</span>
-              </Button>
-            </motion.div>
-          </div>
-        )}
-      </div>
-    </div>
+      </motion.div>
+    </>
   )
 }
 
 interface PartnerLogoProps {
   partner: {
-    image: string // Updated to match ContentItemsMappings
+    image: string
   }
   index: number
+  heightClass: string
+  screenSize: string
 }
 
-function PartnerLogo({ partner, index }: PartnerLogoProps) {
+function PartnerLogo({ partner, index, heightClass, screenSize }: PartnerLogoProps) {
+  const getImageSize = () => {
+    switch (screenSize) {
+      case "mobile":
+        return { width: 80, height: 40, maxHeight: "max-h-6" }
+      case "sm":
+        return { width: 100, height: 50, maxHeight: "max-h-7" }
+      case "md":
+        return { width: 120, height: 60, maxHeight: "max-h-8" }
+      case "lg":
+        return { width: 140, height: 70, maxHeight: "max-h-10" }
+      default:
+        return { width: 160, height: 80, maxHeight: "max-h-12" }
+    }
+  }
+
+  const imageConfig = getImageSize()
+
   return (
     <motion.div
       variants={{
@@ -263,21 +310,21 @@ function PartnerLogo({ partner, index }: PartnerLogoProps) {
         visible: { opacity: 1, y: 0 },
       }}
       whileHover={{
-        y: -5,
-        boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.2)",
+        y: -2,
+        scale: 1.03,
+        boxShadow: "0 8px 25px -10px rgba(0, 0, 0, 0.15)",
         borderColor: "var(--website-theme-primary)",
       }}
-      className="flex items-center justify-center rounded-lg border border-wtheme-border/50 bg-wtheme-background p-4 shadow-sm h-full"
+      className={`flex items-center justify-center rounded-md lg:rounded-lg border border-wtheme-border/50 bg-wtheme-background p-2 sm:p-3 md:p-4 lg:p-5 shadow-sm ${heightClass} w-full transition-all duration-300 hover:shadow-md`}
     >
-      <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 300, damping: 10 }}>
-        <Image
-          src={partner.image || "/placeholder.svg"} // Use image from contentItems
-          alt={partner.image || `Partner ${index + 1}`}
-          width={120}
-          height={80}
-          className="h-12 w-auto object-contain grayscale transition-all hover:grayscale-0"
-        />
-      </motion.div>
+      <Image
+        src={partner.image || "/placeholder.svg"}
+        alt={partner.image || `Partner ${index + 1}`}
+        width={imageConfig.width}
+        height={imageConfig.height}
+        className={`h-auto ${imageConfig.maxHeight} w-auto max-w-full object-contain shadow-sm shadow-primary transition-all duration-500 hover:grayscale-0`}
+        loading="lazy"
+      />
     </motion.div>
   )
 }

@@ -19,7 +19,6 @@ export function useSectionLogic({
     refetch: refetchCompleteSubsections,
   } = useGetBySectionId(sectionId)
 
-  console.log("completeSubsectionsData use section logic " , completeSubsectionsData)
 
   // Extract main section data
   useEffect(() => {

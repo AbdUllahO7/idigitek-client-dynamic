@@ -12,6 +12,7 @@ import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton"
 // Define TypeScript interfaces for data
 interface Website {
   id: string;
+  logo?: string;
   // Add other website properties as needed
 }
 
@@ -50,7 +51,7 @@ interface RootLayoutClientProps {
 }
 
 export default function RootLayoutClient({ children }: RootLayoutClientProps) {
-  const { direction } = useLanguage(); // Assume languageId is provided
+  const { direction } = useLanguage();
   const { useGetWebsitesByUserId } = useWebSite();
   const { useGetByWebsiteId } = useSections();
 
@@ -59,19 +60,17 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
   const { data: sectionsData, isLoading: sectionsIsLoading, error: sectionsError } = useGetByWebsiteId(
     websiteId || "",
     false, // includeInactive
-    // languageId // Pass languageId for translations
   );
 
+  // Get all section IDs
+  const allSectionIds: string[] = sectionsData?.data?.map((section: Section) => section._id) || [];
 
-  // Find the Header section
+  // Find specific sections (Header and Footer)
   const headerSection = sectionsData?.data.find((section: Section) => section.subName === "Header");
   const headerSectionId = headerSection?._id;
 
-
-
   const footerSection = sectionsData?.data.find((section: Section) => section.subName === "Footer");
   const footerSectionId = footerSection?._id;
-
 
   // Handle loading and error states
   if (websitesLoading || sectionsIsLoading) {
@@ -93,10 +92,21 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
   return (
     <div dir={direction}>
       <NavigationTracker />
-      {headerSectionId ? <Header logo={websites[0].logo}  sectionId={headerSectionId}/> : <Header logo={websites[0].logo} sectionId={headerSectionId} />}
+      
       {children}
-      {footerSectionId ? <Footer websiteId = {websiteId} logo={websites[0].logo}  sectionId={footerSectionId}/> : <Footer  websiteId = {websiteId} logo={websites[0].logo} sectionId={footerSectionId} />}
-
+      {footerSectionId ? (
+        <Footer 
+          websiteId={websiteId} 
+          logo={websites[0].logo} 
+          sectionId={footerSectionId} 
+        />
+      ) : (
+        <Footer 
+          websiteId={websiteId} 
+          logo={websites[0].logo} 
+          sectionId={footerSectionId} 
+        />
+      )}
     </div>
   );
 }

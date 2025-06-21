@@ -26,8 +26,7 @@ export default function NewsSection({ sectionId, websiteId }) {
     itemsKey: "news",
   })
 
-  console.log(content)
-
+  
   const { contentItems, isLoading: itemsLoading, error: itemsError } = useSectionContent({
     sectionId,
     websiteId,
@@ -37,10 +36,13 @@ export default function NewsSection({ sectionId, websiteId }) {
       title: "Title",
       excerpt: "Description",
       readMore: "news Details",
+      AddSubNavigation : "Add SubNavigation",
       date: "createdAt",
       color: () => ""
     }
   })
+
+  console.log("Add SubNavigation" ,contentItems )
 
   // Reset active index on language change
   useEffect(() => {

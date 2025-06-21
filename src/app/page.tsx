@@ -20,6 +20,7 @@ import { useWebSite } from "@/lib/webSite/use-WebSite";
 import { useSections } from "@/lib/section/use-Section";
 import { useScrollToSection } from "@/hooks/use-scroll-to-section";
 import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton";
+import Header from "@/components/layout/header";
 
 // Define TypeScript interfaces for data
 interface Website {
@@ -119,21 +120,52 @@ export default function LandingPage() {
 
   // Handle loading and error states
   if (websitesLoading || sectionsIsLoading) {
-    return <SectionSkeleton variant="default" className="py-20" />;
+    return (
+      <div className="flex min-h-screen flex-col" dir={direction}>
+        {/* Show Header even during loading */}
+        <Header 
+          sectionId="" 
+          sectionsData={[]} 
+        />
+        <SectionSkeleton variant="default" className="py-20" />
+      </div>
+    );
   }
 
   if (websitesError) {
-    return <div>Error: {(websitesError as Error).message}</div>;
+    return (
+      <div className="flex min-h-screen flex-col" dir={direction}>
+        <Header 
+          sectionId="" 
+          sectionsData={[]} 
+        />
+        <div>Error: {(websitesError as Error).message}</div>
+      </div>
+    );
   }
 
   if (sectionsError) {
-    return <div>Error: {(sectionsError as Error).message}</div>;
+    return (
+      <div className="flex min-h-screen flex-col" dir={direction}>
+        <Header 
+          sectionId="" 
+          sectionsData={[]} 
+        />
+        <div>Error: {(sectionsError as Error).message}</div>
+      </div>
+    );
   }
 
-
-
   if (!sectionsData.data || sectionsData.data.length === 0) {
-    return <div>No sections found for the website.</div>;
+    return (
+      <div className="flex min-h-screen flex-col" dir={direction}>
+        <Header 
+          sectionId="" 
+          sectionsData={[]} 
+        />
+        <div>No sections found for the website.</div>
+      </div>
+    );
   }
 
   // Separate footer section and sort other sections by order
@@ -148,6 +180,12 @@ export default function LandingPage() {
   return (
     <AnimatePresence>
       <div className="flex min-h-screen flex-col" dir={direction}>
+        {/* Pass sections data to Header for navigation-to-section mapping */}
+        <Header 
+          sectionId={websiteId || ""} 
+          sectionsData={sectionsData.data}
+        />
+        
         <main>
           {/* Render sorted non-footer sections */}
           {nonFooterSections.map((section: Section) => (

@@ -48,8 +48,6 @@ export function useSubSections() {
   const queryClient = useQueryClient();
   const endpoint = '/subsections';
 
-
-
   // Query keys
   const subsectionsKey = ['subsections']; 
   const subsectionKey = (id: string | null ) => [...subsectionsKey, id];
@@ -59,8 +57,10 @@ export function useSubSections() {
   const completeSubsectionBySectionKey = (sectionId: string) => [...subsectionBySectionKey(sectionId), 'complete'];
   const subsectionsByWebSiteKey = (websiteId: string) => [...subsectionsKey, 'website', websiteId];
   const mainSubsectionByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'main'];
+  const navigationSubsectionByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'navigation'];
   const sectionsKey = ['sections'];
   const subsectionsBySectionItemsKey = (sectionItemIds: string[]) => [...subsectionsKey, 'sectionItems', sectionItemIds.join(',')];
+  const completeSubsectionsByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'complete'];
 
   const useGetByWebSiteId = (
     websiteId: string,
@@ -178,9 +178,6 @@ export function useSubSections() {
     });
   };
 
-
-
-
   // Get complete subsection by ID (with all elements and translations)
   const useGetCompleteById = (id: string, populateSectionItem = true) => {
     return useQuery({
@@ -195,7 +192,6 @@ export function useSubSections() {
     });
   };
 
-
   // Get main subsection for a WebSite
   const useGetMainByWebSiteId = (websiteId: string) => {
     return useQuery({
@@ -207,6 +203,26 @@ export function useSubSections() {
       enabled: !!websiteId && websiteId !== "null"
     });
   };
+
+  // Get navigation subsections for a WebSite (returns array - could be multiple)
+  const useGetNavigationByWebSiteId = (
+    websiteId: string, 
+    activeOnly = true, 
+    limit = 100, 
+    skip = 0
+  ) => {
+    return useQuery({
+      queryKey: [...navigationSubsectionByWebSiteKey(websiteId), { activeOnly, limit, skip }],
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/navigation`, {
+          params: { activeOnly, limit, skip }
+        });
+        return data;
+      },
+      enabled: !!websiteId && websiteId !== "null"
+    });
+  };
+
   const useGetBySectionItemIds = (
       sectionItemIds: string[], 
       activeOnly = true, 
@@ -226,10 +242,24 @@ export function useSubSections() {
         enabled: !!sectionItemIds && sectionItemIds.length > 0 && sectionItemIds.every(id => !!id && id !== "null")
       });
     };
-
-
-
-  // Return all hooks including the new activation hooks
+const useGetCompleteByWebSiteId = (
+    websiteId: string,
+    activeOnly = true,
+    limit = 100,
+    skip = 0
+  ) => {
+    return useQuery({
+      queryKey: [...completeSubsectionsByWebSiteKey(websiteId), { activeOnly, limit, skip }],
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/complete`, {
+          params: { activeOnly, limit, skip }
+        });
+        return data;
+      },
+      enabled: !!websiteId && websiteId !== "null"
+    });
+  };
+  // Return all hooks including the new navigation hook
   return {
     useGetAll,
     useGetById,
@@ -240,6 +270,8 @@ export function useSubSections() {
     useGetCompleteById,
     useGetByWebSiteId,
     useGetMainByWebSiteId,
-    useGetBySectionItemIds
+    useGetNavigationByWebSiteId,
+    useGetBySectionItemIds,
+    useGetCompleteByWebSiteId
   };
 }

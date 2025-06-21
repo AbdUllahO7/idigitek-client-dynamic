@@ -20,7 +20,7 @@ import { useWebSite } from "@/lib/webSite/use-WebSite";
 import { useSections } from "@/lib/section/use-Section";
 import { useScrollToSection } from "@/hooks/use-scroll-to-section";
 import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton";
-import Header from "@/components/layout/header";
+// 🚫 REMOVED Header import - it's now handled by RootLayoutClient
 
 // Define TypeScript interfaces for data
 interface Website {
@@ -122,11 +122,7 @@ export default function LandingPage() {
   if (websitesLoading || sectionsIsLoading) {
     return (
       <div className="flex min-h-screen flex-col" dir={direction}>
-        {/* Show Header even during loading */}
-        <Header 
-          sectionId="" 
-          sectionsData={[]} 
-        />
+        {/* 🚫 REMOVED Header - it's handled by RootLayoutClient */}
         <SectionSkeleton variant="default" className="py-20" />
       </div>
     );
@@ -135,10 +131,7 @@ export default function LandingPage() {
   if (websitesError) {
     return (
       <div className="flex min-h-screen flex-col" dir={direction}>
-        <Header 
-          sectionId="" 
-          sectionsData={[]} 
-        />
+        {/* 🚫 REMOVED Header - it's handled by RootLayoutClient */}
         <div>Error: {(websitesError as Error).message}</div>
       </div>
     );
@@ -147,10 +140,7 @@ export default function LandingPage() {
   if (sectionsError) {
     return (
       <div className="flex min-h-screen flex-col" dir={direction}>
-        <Header 
-          sectionId="" 
-          sectionsData={[]} 
-        />
+        {/* 🚫 REMOVED Header - it's handled by RootLayoutClient */}
         <div>Error: {(sectionsError as Error).message}</div>
       </div>
     );
@@ -159,10 +149,7 @@ export default function LandingPage() {
   if (!sectionsData.data || sectionsData.data.length === 0) {
     return (
       <div className="flex min-h-screen flex-col" dir={direction}>
-        <Header 
-          sectionId="" 
-          sectionsData={[]} 
-        />
+        {/* 🚫 REMOVED Header - it's handled by RootLayoutClient */}
         <div>No sections found for the website.</div>
       </div>
     );
@@ -180,11 +167,7 @@ export default function LandingPage() {
   return (
     <AnimatePresence>
       <div className="flex min-h-screen flex-col" dir={direction}>
-        {/* Pass sections data to Header for navigation-to-section mapping */}
-        <Header 
-          sectionId={websiteId || ""} 
-          sectionsData={sectionsData.data}
-        />
+        {/* 🚫 REMOVED Header - it's now globally handled by RootLayoutClient */}
         
         <main>
           {/* Render sorted non-footer sections */}

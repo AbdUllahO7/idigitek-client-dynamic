@@ -93,20 +93,23 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
     <div dir={direction}>
       <NavigationTracker />
       
-      {children}
-      {footerSectionId ? (
-        <Footer 
+      {/* 🔧 FIXED: Now passing sectionsData and websiteId to Header so navigation can work */}
+      {headerSectionId && (
+        <Header 
+          sectionId={headerSectionId}
           websiteId={websiteId} 
           logo={websites[0].logo} 
-          sectionId={footerSectionId} 
-        />
-      ) : (
-        <Footer 
-          websiteId={websiteId} 
-          logo={websites[0].logo} 
-          sectionId={footerSectionId} 
+          sectionsData={sectionsData?.data || []} 
         />
       )}
+          
+      {children}
+      
+      <Footer 
+        websiteId={websiteId} 
+        logo={websites[0].logo} 
+        sectionId={footerSectionId} 
+      />
     </div>
   );
 }

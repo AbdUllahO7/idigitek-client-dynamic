@@ -33,31 +33,34 @@ interface NavItem {
 
 interface HeaderProps {
   sectionId: string
+  websiteId?: string // 🔧 ADDED: websiteId prop for navigation data
   logo?: string
   subName?: string
   sectionsData?: any[] // Add sections data to find matching section IDs
 }
 
-export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subName, sectionsData }: HeaderProps) {
+export default function Header({ sectionId, websiteId, logo = "/assets/iDIGITEK.webp", subName, sectionsData }: HeaderProps) {
   const { language, direction } = useLanguage()
   const scrollToSection = useScrollToSection()
   const router = useRouter()
   const pathname = usePathname()
-  const websiteId = localStorage.getItem("websiteId")
+  // 🔧 FIXED: Use websiteId prop if provided, otherwise fallback to localStorage
+  const actualWebsiteId = websiteId || localStorage.getItem("websiteId")
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [hoveredNavId, setHoveredNavId] = useState<string | null>(null)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const { useGetNavigationByWebSiteId, useGetCompleteByWebSiteId } = useSubSections()
-  const { data: sections } = useGetNavigationByWebSiteId(websiteId)
-  const { data: allSections } = useGetCompleteByWebSiteId(websiteId)
+  const { data: sections } = useGetNavigationByWebSiteId(actualWebsiteId)
+  const { data: allSections } = useGetCompleteByWebSiteId(actualWebsiteId)
 
   // Debug logging for received data
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       console.log('Header Debug - All Sections Data:', allSections)
       console.log('Header Debug - Navigation Sections Data:', sections)
+      console.log('Header Debug - Sections Data Prop:', sectionsData)
       if (allSections?.data) {
         allSections.data.forEach((section: any, idx: number) => {
           // Check both elements and contentElements arrays for this section
@@ -95,7 +98,7 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
         })
       }
     }
-  }, [allSections, sections])
+  }, [allSections, sections, sectionsData])
 
   // Helper function to get translated content
   const getTranslatedContent = (element: any, language: string) => {
@@ -325,26 +328,62 @@ export default function Header({ sectionId, logo = "/assets/iDIGITEK.webp", subN
     }
   }, [])
 
-  // Function to find section ID by section name
+  // 🔧 IMPROVED: Function to find section ID by section name using sectionsData prop
   const findSectionIdBySectionName = (sectionName: string): string | null => {
-    if (!sectionsData) return null
+    // First try to use sectionsData prop (from RootLayoutClient)
+    if (sectionsData && sectionsData.length > 0) {
+      const matchingSection = sectionsData.find((section: any) => 
+        section.name === sectionName || section.subName === sectionName
+      )
+      
+      if (matchingSection) {
+        console.log('Found section in sectionsData:', matchingSection)
+        return matchingSection._id
+      }
+    }
     
-    const matchingSection = sectionsData.find((section: any) => 
-      section.name === sectionName || section.subName === sectionName
-    )
+    // Fallback to navigation sections if sectionsData doesn't have what we need
+    if (sections?.data) {
+      const matchingNavSection = sections.data.find((section: any) => 
+        section.section?.name === sectionName || section.section?.subName === sectionName
+      )
+      
+      if (matchingNavSection) {
+        console.log('Found section in navigation data:', matchingNavSection)
+        return matchingNavSection.section?._id
+      }
+    }
     
-    return matchingSection?._id || null
+    console.log('No matching section found for:', sectionName)
+    return null
   }
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isDynamicUrl?: boolean, navItem?: NavItem) => {
     e.preventDefault()
     
+    console.log('Nav click:', { href, navItem, isDynamicUrl, pathname })
+    
     // If href is "#" and we have a navItem with sectionName, try to scroll to the section
     if (href === "#" && navItem?.sectionName) {
+      console.log('Trying to find section for:', navItem.sectionName)
       const sectionId = findSectionIdBySectionName(navItem.sectionName)
+      console.log('Found section ID:', sectionId)
+      
       if (sectionId) {
         if (pathname === "/") {
+          console.log('Scrolling to section:', sectionId)
           scrollToSection(sectionId)
+        } else {
+          console.log('Navigating to home with section:', navItem.sectionName)
+          router.push(`/#${navItem.sectionName.toLowerCase()}`)
+        }
+        setIsOpen(false)
+        return
+      } else {
+        console.log('No section ID found, trying alternative approach')
+        // If we can't find the section ID, try using the section name directly
+        if (pathname === "/") {
+          scrollToSection(navItem.sectionName)
         } else {
           router.push(`/#${navItem.sectionName.toLowerCase()}`)
         }

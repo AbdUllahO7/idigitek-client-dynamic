@@ -282,7 +282,7 @@ function ProjectCard({ project, viewCaseStudyText, isMobile }) {
   const isRTL = direction === "rtl"
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
+    <div className=" rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
       {/* Image */}
       <div className={`relative ${isMobile ? 'h-40' : 'h-48'} overflow-hidden`}>
         <Image

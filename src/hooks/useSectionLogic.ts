@@ -88,9 +88,9 @@ export function useSectionLogic({
       }
 
       mainSectionElements.forEach((element) => {
-        const translation = element.translations.find(
+        const translation = element.translations?.find(
           (t) => t.language && t.language.languageID === language
-        ) || element.translations.find(
+        ) || element.translations?.find(
           (t) => t.language && t.language.languageID === "en"
         )
         

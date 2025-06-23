@@ -35,11 +35,11 @@ const getContentByLanguage = (element: any, language: string) => {
         return "";
     }
     
-    if (!element.translations || element.translations.length === 0) {
+    if (!element.translations || element?.translations?.length === 0) {
         return element.defaultContent || "";
     }
 
-    const translation = element.translations.find((trans: any) => 
+    const translation = element?.translations?.find((trans: any) => 
         trans.language?.languageID === language
     );
     
@@ -301,7 +301,7 @@ const extractFaqData = (faqSection: any, language: string) => {
 
 export default function SmartDriveThroughPage({ params }: { params: Promise<{ id: string }> }) {
     const { language, direction } = useLanguage();
-    const t = translations[language] || translations.en;
+    const t = translations[language] || translations?.en;
     const resolvedParams = use(params)
     const projectId = resolvedParams.id
 

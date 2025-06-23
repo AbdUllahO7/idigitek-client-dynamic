@@ -39,11 +39,11 @@ export const PostHeader: React.FC<PostHeaderProps> = ({ blog }) => {
     if (!element) {
       return ""
     }
-    if (!element.translations || !element.translations.length) {
+    if (!element.translations || !element.translations?.length) {
       return element.defaultContent || ""
     }
 
-    const translation = element.translations.find((t: any) => t.language.languageID === lang)
+    const translation = element.translations?.find((t: any) => t.language.languageID === lang)
     const content = translation ? translation.content : element.defaultContent
     return content || ""
   }

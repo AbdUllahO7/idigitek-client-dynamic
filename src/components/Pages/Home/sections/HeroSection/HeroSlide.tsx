@@ -103,7 +103,7 @@ export default function HeroSlide({
               asChild 
               variant="outline"
               size="lg" 
-              className={" dark:bg-background text-white"}
+              className={`${isExternalUrl(slide.exploreButtonUrl) ? ' border-2 border-primary' : 'border-2 border-primary'} dark:bg-primary text-wtheme-text`}
             >
               {isExternalUrl(slide.requestButtonUrl) ? (
                 <a 

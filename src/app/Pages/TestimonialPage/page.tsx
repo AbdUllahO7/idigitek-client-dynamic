@@ -12,7 +12,7 @@ import { CTASection } from "@/components/Pages/TestimonialPage/CTASection";
 
 export default function TestimonialsPage() {
   const { language, direction } = useLanguage();
-  const t = translations[language] || translations.en;
+  const t = translations[language] || translations?.en;
 
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);

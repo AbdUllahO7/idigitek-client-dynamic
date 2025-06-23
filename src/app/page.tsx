@@ -20,7 +20,6 @@ import { useWebSite } from "@/lib/webSite/use-WebSite";
 import { useSections } from "@/lib/section/use-Section";
 import { useScrollToSection } from "@/hooks/use-scroll-to-section";
 import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton";
-// 🚫 REMOVED Header import - it's now handled by RootLayoutClient
 
 // Define TypeScript interfaces for data
 interface Website {
@@ -59,7 +58,7 @@ export default function LandingPage() {
   const { direction } = useLanguage();
   const { useGetWebsitesByUserId } = useWebSite();
   const { useGetByWebsiteId } = useSections();
-  const scrollToSection = useScrollToSection(); // Import the hook
+  const scrollToSection = useScrollToSection();
 
   const { data: websites, isLoading: websitesLoading, error: websitesError } = useGetWebsitesByUserId();
   const websiteId = websites && websites.length > 0 ? websites[0].id : undefined;
@@ -81,16 +80,16 @@ export default function LandingPage() {
   // Scroll to section based on URL hash (subName) on page load
   useEffect(() => {
     if (typeof window !== "undefined" && sectionsData?.data) {
-      const hash = window.location.hash; // e.g., #news
+      const hash = window.location.hash;
       if (hash) {
-        const subName = hash.substring(1); // Remove # to get subName (e.g., "news")
+        const subName = hash.substring(1);
         const targetSection = sectionsData.data.find(
           (section: Section) => section.subName.toLowerCase() === subName.toLowerCase()
         );
         if (targetSection) {
           setTimeout(() => {
-            scrollToSection(targetSection._id); // Scroll to section._id
-          }, 500); // Delay to ensure sections are rendered
+            scrollToSection(targetSection._id);
+          }, 500);
         }
       }
     }
@@ -103,8 +102,8 @@ export default function LandingPage() {
     IndustrySolutions: (id: string, websiteId?: string) => (
       <IndustrySolutionsSection websiteId={websiteId} sectionId={id} />
     ),
-    Services: (id: string, websiteId?: string) => <ServicesSection  websiteId={websiteId} sectionId={id} />,
-    whyChooseUs: (id: string, websiteId?: string) => <FeaturesSection  websiteId={websiteId} sectionId={id}/>,
+    Services: (id: string, websiteId?: string) => <ServicesSection websiteId={websiteId} sectionId={id} />,
+    whyChooseUs: (id: string, websiteId?: string) => <FeaturesSection websiteId={websiteId} sectionId={id} />,
     Projects: (id: string, websiteId?: string) => <ProjectsSection websiteId={websiteId} sectionId={id} />,
     OurProcess: (id: string, websiteId?: string) => <ProcessSection websiteId={websiteId} sectionId={id} />,
     Team: (id: string, websiteId?: string) => <TeamSection websiteId={websiteId} sectionId={id} />,
@@ -115,14 +114,12 @@ export default function LandingPage() {
     FAQ: (id: string, websiteId?: string) => <FaqSection websiteId={websiteId} sectionId={id} />,
     Blog: (id: string, websiteId?: string) => <BlogSection websiteId={websiteId} sectionId={id} />,
     Contact: (id: string, websiteId?: string) => <ContactSection websiteId={websiteId} sectionId={id} />,
-   
   };
 
   // Handle loading and error states
   if (websitesLoading || sectionsIsLoading) {
     return (
       <div className="flex min-h-screen flex-col" dir={direction}>
-        {/* 🚫 REMOVED Header - it's handled by RootLayoutClient */}
         <SectionSkeleton variant="default" className="py-20" />
       </div>
     );
@@ -131,7 +128,6 @@ export default function LandingPage() {
   if (websitesError) {
     return (
       <div className="flex min-h-screen flex-col" dir={direction}>
-        {/* 🚫 REMOVED Header - it's handled by RootLayoutClient */}
         <div>Error: {(websitesError as Error).message}</div>
       </div>
     );
@@ -140,7 +136,6 @@ export default function LandingPage() {
   if (sectionsError) {
     return (
       <div className="flex min-h-screen flex-col" dir={direction}>
-        {/* 🚫 REMOVED Header - it's handled by RootLayoutClient */}
         <div>Error: {(sectionsError as Error).message}</div>
       </div>
     );
@@ -149,39 +144,23 @@ export default function LandingPage() {
   if (!sectionsData.data || sectionsData.data.length === 0) {
     return (
       <div className="flex min-h-screen flex-col" dir={direction}>
-        {/* 🚫 REMOVED Header - it's handled by RootLayoutClient */}
         <div>No sections found for the website.</div>
       </div>
     );
   }
 
-  // Separate footer section and sort other sections by order
-  const footerSectionName = "Contact";
-  const footerSection = sectionsData.data.find(
-    (section: Section) => section.subName === footerSectionName
-  );
-  const nonFooterSections = sectionsData.data
-    .filter((section: Section) => section.subName !== footerSectionName)
-    .sort((a: Section, b: Section) => a.order - b.order);
-
   return (
     <AnimatePresence>
       <div className="flex min-h-screen flex-col" dir={direction}>
-        {/* 🚫 REMOVED Header - it's now globally handled by RootLayoutClient */}
-        
         <main>
-          {/* Render sorted non-footer sections */}
-          {nonFooterSections.map((section: Section) => (
-            <div key={section._id} id={section._id}>
-              {sectionComponents[section.subName]?.(section._id, websiteId) || null}
-            </div>
-          ))}
-          {/* Always render footer section last */}
-          {footerSection && (
-            <div key={footerSection._id} id={footerSection._id}>
-              {sectionComponents[footerSection.subName]?.(footerSection._id, websiteId)}
-            </div>
-          )}
+          {/* Render all sections sorted by order */}
+          {sectionsData.data
+            .sort((a: Section, b: Section) => a.order - b.order)
+            .map((section: Section) => (
+              <div key={section._id} id={section._id}>
+                {sectionComponents[section.subName]?.(section._id, websiteId) || null}
+              </div>
+            ))}
         </main>
       </div>
     </AnimatePresence>

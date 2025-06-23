@@ -61,7 +61,7 @@ export default function ContactSection({ websiteId, sectionId }: { websiteId: st
   const isRTL = direction === "rtl"
 
   return (
-    <section id="contact" className="w-full py-12 bg-wtheme-background" dir={direction}>
+    <section id="ContactSection" className="w-full py-12 bg-wtheme-background" dir={direction}>
       <div className="container px-4 md:px-6">
         <ContactHeader ref={ref} isInView={isInView} content={content} />
 

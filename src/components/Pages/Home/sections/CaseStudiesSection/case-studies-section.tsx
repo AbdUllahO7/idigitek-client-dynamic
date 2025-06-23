@@ -20,7 +20,7 @@ export default function CaseStudiesSection() {
   const caseStudies = caseStudiesData[language] || caseStudiesData.en
   
   // Get section translations for current language
-  const sectionText = sectionTranslations[language] || sectionTranslations.en
+  const sectionText = sectionTranslations[language] || sectionTranslations?.en
 
   const nextCase = () => {
     setActiveIndex((prev) => (prev === caseStudies.length - 1 ? 0 : prev + 1))

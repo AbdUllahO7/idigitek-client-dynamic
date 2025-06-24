@@ -4,7 +4,7 @@ import type React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Menu, X, ChevronDown, ExternalLink } from "lucide-react"
+import { Menu, X, ChevronDown } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { LanguageToggle } from "@/components/language-toggle"
@@ -66,7 +66,22 @@ export default function Header({
   // Helper function to get translated content
   const getTranslatedContent = (element: any, language: string) => {
     const translation = element?.translations?.find((t: any) => t.language.languageID === language)
-    return translation?.content || element?.defaultContent || ""
+    const content = translation?.content || element?.defaultContent || ""
+    
+    // Handle multilingual objects like {en: "text", ar: "text", tr: "text"}
+    if (typeof content === 'object' && content !== null) {
+      return content[language] || content['en'] || Object.values(content)[0] || ""
+    }
+    
+    return content || ""
+  }
+
+  // Helper function to get multilingual section name
+  const getMultilingualSectionName = (section: any, language: string) => {
+    if (typeof section?.name === 'object' && section?.name !== null) {
+      return section?.name[language] || section?.name['en'] || Object.values(section?.name)[0] || ""
+    }
+    return section?.name || ""
   }
 
   // Helper function to check if a section has addSubNavigation enabled
@@ -84,7 +99,14 @@ export default function Header({
 
     const titleElement = allElements.find((el: any) => el.name === "Title" && el.type === "text")
 
-    return titleElement ? getTranslatedContent(titleElement, language) : ""
+    const title = titleElement ? getTranslatedContent(titleElement, language) : ""
+    
+    // Ensure we return a string, not an object
+    if (typeof title === 'object' && title !== null) {
+      return title[language] || title['en'] || Object.values(title)[0] || ""
+    }
+    
+    return title || ""
   }
 
   // Helper function to get dynamic URL from section
@@ -98,7 +120,8 @@ export default function Header({
 
   // Helper function to generate fallback URL from section
   const generateFallbackSectionUrl = (section: any) => {
-    return section.slug ? `#${section.slug}` : `#${section.name.toLowerCase().replace(/\s+/g, "-")}`
+    const sectionName = getMultilingualSectionName(section, language);
+    return section.slug ? `#${section.slug}` : `#${sectionName.toLowerCase().replace(/\s+/g, "-")}`
   }
 
   // Function to find sections with addSubNavigation enabled
@@ -108,7 +131,9 @@ export default function Header({
     const filteredSections = allSections.data.filter((section: any) => {
       const hasSubNav = hasAddSubNavigation(section)
       if (!hasSubNav) return false
-      return section.sectionItem?.section?.name === parentSectionName
+      
+      const parentName = getMultilingualSectionName(section.sectionItem?.section, language);
+      return parentName === parentSectionName
     })
 
     return filteredSections
@@ -116,10 +141,11 @@ export default function Header({
         const dynamicUrl = getDynamicUrl(section)
         const fallbackUrl = generateFallbackSectionUrl(section)
         const finalUrl = dynamicUrl || fallbackUrl
+        const title = getSectionTitle(section, language)
 
         return {
           id: section._id,
-          label: getSectionTitle(section, language),
+          label: title,
           href: finalUrl,
           source: "section" as const,
           isDynamicUrl: !!dynamicUrl,
@@ -128,53 +154,78 @@ export default function Header({
       .filter((item: SubNavItem) => item.label)
   }
 
-  // Process navigation items from backend data
-// Process navigation items from backend data, ordered by sectionsData
-const navItems: NavItem[] = sectionsData
-  ?.map((section: any) => {
-    // Find matching subsection in navigation data
-    const matchingSubsection = sections?.data?.find(
-      (subsection: any) => subsection.section?.name === section.name || subsection.section?.subName === section.subName
-    );
+  // 🎯 UPDATED: Process navigation items properly from sectionsData (parent sections)
+  const navItems: NavItem[] = sectionsData
+    ?.filter((section: any) => section.subName !== "Header" && section.subName !== "Footer") // Exclude Header and Footer from navigation
+    ?.map((section: any) => {
+      // Find corresponding navigation data for this section
+      const navigationData = sections?.data?.find(
+        (navSection: any) => navSection.section?.name === section.name || navSection.section?.subName === section.subName
+      );
 
-    if (!matchingSubsection) return null;
+      // Get navigation-specific elements if available
+      let navLabel = getMultilingualSectionName(section, language); // Use multilingual helper
+      let navHref = `#${section.subName || navLabel.toLowerCase().replace(/\s+/g, "-")}`;
 
-    const parentNameElement = matchingSubsection.elements.find((el: any) => el.name === "name");
-    const parentUrlElement = matchingSubsection.elements.find((el: any) => el.name === "url");
+      if (navigationData) {
+        const nameElement = navigationData.elements?.find((el: any) => el.name === "name");
+        const urlElement = navigationData.elements?.find((el: any) => el.name === "url");
+        
+        if (nameElement) {
+          const customLabel = getTranslatedContent(nameElement, language);
+          if (customLabel) {
+            navLabel = customLabel;
+          }
+        }
+        
+        if (urlElement) {
+          const customUrl = getTranslatedContent(urlElement, language);
+          if (customUrl && customUrl !== "#") {
+            navHref = customUrl;
+          }
+        }
+      }
 
-    // Get existing sub-navigation items
-    const existingSubNavItems = matchingSubsection.elements
-      .filter((el: any) => el.metadata?.isSubNavigation && el.metadata?.fieldType === "title")
-      .map((titleEl: any) => {
-        const urlEl = matchingSubsection.elements.find(
-          (el: any) =>
-            el.metadata?.isSubNavigation &&
-            el.metadata?.subNavId === titleEl.metadata?.subNavId &&
-            el.metadata?.fieldType === "url"
-        );
-        return {
-          id: titleEl._id,
-          label: getTranslatedContent(titleEl, language),
-          href: getTranslatedContent(urlEl, language) || "#",
-          source: "navigation" as const,
-          isDynamicUrl: false,
-        };
-      });
+      // Get sub-navigation items from navigation data
+      const existingSubNavItems = navigationData?.elements
+        ?.filter((el: any) => el.metadata?.isSubNavigation && el.metadata?.fieldType === "title")
+        ?.map((titleEl: any) => {
+          const urlEl = navigationData.elements.find(
+            (el: any) =>
+              el.metadata?.isSubNavigation &&
+              el.metadata?.subNavId === titleEl.metadata?.subNavId &&
+              el.metadata?.fieldType === "url"
+          );
+          
+          const subNavLabel = getTranslatedContent(titleEl, language);
+          const subNavHref = getTranslatedContent(urlEl, language) || "#";
+          
+          return {
+            id: titleEl._id,
+            label: subNavLabel,
+            href: subNavHref,
+            source: "navigation" as const,
+            isDynamicUrl: false,
+          };
+        })
+        ?.filter((item: any) => item.label) // Only include items with valid labels
+        || [];
 
-    const parentSectionName = matchingSubsection.section?.name;
-    const additionalSubNavItems = getAdditionalSubNavItems(parentSectionName, language);
-    const allSubNavItems = [...existingSubNavItems, ...additionalSubNavItems];
+      // Get additional sub-navigation items from sections with addSubNavigation enabled
+      const additionalSubNavItems = getAdditionalSubNavItems(getMultilingualSectionName(section, language), language);
+      const allSubNavItems = [...existingSubNavItems, ...additionalSubNavItems];
 
-    return {
-      id: matchingSubsection._id,
-      href: getTranslatedContent(parentUrlElement, language) || "#",
-      label: getTranslatedContent(parentNameElement, language),
-      order: matchingSubsection.order,
-      subNavItems: allSubNavItems,
-      sectionName: parentSectionName,
-    };
-  })
-  .filter((item: NavItem | null) => item !== null) || [];
+      return {
+        id: section._id,
+        href: navHref,
+        label: navLabel,
+        order: section.order || 0,
+        subNavItems: allSubNavItems,
+        sectionName: getMultilingualSectionName(section, language),
+      };
+    })
+    ?.filter((item: NavItem | null) => item !== null && item.label) // Only include items with valid labels
+    ?.sort((a, b) => a.order - b.order) || [];
 
   // Hover handlers with improved UX
   const handleMouseEnter = (navId: string) => {
@@ -250,7 +301,10 @@ const navItems: NavItem[] = sectionsData
   const findSectionIdBySectionName = (sectionName: string): string | null => {
     if (sectionsData && sectionsData.length > 0) {
       const matchingSection = sectionsData.find(
-        (section: any) => section.name === sectionName || section.subName === sectionName,
+        (section: any) => {
+          const sectionNameStr = getMultilingualSectionName(section, language);
+          return sectionNameStr === sectionName || section.subName === sectionName;
+        }
       )
 
       if (matchingSection) {
@@ -260,7 +314,10 @@ const navItems: NavItem[] = sectionsData
 
     if (sections?.data) {
       const matchingNavSection = sections.data.find(
-        (section: any) => section.section?.name === sectionName || section.section?.subName === sectionName,
+        (section: any) => {
+          const sectionNameStr = getMultilingualSectionName(section.section, language);
+          return sectionNameStr === sectionName || section.section?.subName === sectionName;
+        }
       )
 
       if (matchingNavSection) {
@@ -280,43 +337,38 @@ const navItems: NavItem[] = sectionsData
     e.preventDefault()
 
     // Handle section navigation
-    if (href === "#" && navItem?.sectionName) {
-      const sectionId = findSectionIdBySectionName(navItem.sectionName)
+    if (href.startsWith("#") || href === "#") {
+      const sectionIdentifier = href === "#" && navItem?.sectionName 
+        ? navItem.sectionName 
+        : href.substring(1);
+
+      const sectionId = findSectionIdBySectionName(sectionIdentifier);
 
       if (sectionId) {
         if (pathname === "/") {
           scrollToSection(sectionId)
         } else {
-          router.push(`/#${navItem.sectionName.toLowerCase()}`)
+          router.push(`/#${sectionIdentifier.toLowerCase()}`)
         }
-        setIsOpen(false)
-        return
       } else {
+        // Fallback to using the identifier directly
         if (pathname === "/") {
-          scrollToSection(navItem.sectionName)
+          scrollToSection(sectionIdentifier)
         } else {
-          router.push(`/#${navItem.sectionName.toLowerCase()}`)
+          router.push(`/#${sectionIdentifier.toLowerCase()}`)
         }
-        setIsOpen(false)
-        return
       }
+      setIsOpen(false)
+      return
     }
 
-    // Handle other navigation
-    if (href !== "#") {
-      if (isDynamicUrl) {
-        window.open(href, "_self")
-      } else if (href.startsWith("#")) {
-        const sectionId = href.substring(1)
-        if (pathname === "/") {
-          scrollToSection(sectionId)
-        } else {
-          router.push(`/${href}`)
-        }
-      } else {
-        router.push(href)
-      }
+    // Handle external URLs
+    if (isDynamicUrl) {
+      window.open(href, "_self")
+    } else {
+      router.push(href)
     }
+    
     setIsOpen(false)
   }
 
@@ -410,7 +462,6 @@ const navItems: NavItem[] = sectionsData
                               >
                                 <span className="flex-1">{subItem.label}</span>
                                 <div className="flex items-center gap-2">
-                                  {subItem.isDynamicUrl && <ExternalLink className="h-3 w-3 text-accent" />}
                                   {subItem.source === "section" && <div className="w-2 h-2 rounded-full bg-accent" />}
                                 </div>
                               </Link>
@@ -543,7 +594,6 @@ function MobileNav({ isOpen, setIsOpen, navItems, handleNavClick, direction }: M
                             >
                               <span className="text-base">{subItem.label}</span>
                               <div className="flex items-center gap-2">
-                                {subItem.isDynamicUrl && <ExternalLink className="h-4 w-4 text-accent" />}
                                 {subItem.source === "section" && <div className="w-2 h-2 rounded-full bg-accent" />}
                               </div>
                             </Link>

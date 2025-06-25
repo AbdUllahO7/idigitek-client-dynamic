@@ -19,7 +19,6 @@ export default function NewsSection({ sectionId, websiteId }) {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const { language } = useLanguage()
 
-  // Fetch section content and items
 
   const { content, isLoading: sectionLoading, error: sectionError, refetch, direction, formatDate } = useSectionLogic({
     sectionId,

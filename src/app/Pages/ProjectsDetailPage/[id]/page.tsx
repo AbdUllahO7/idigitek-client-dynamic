@@ -20,7 +20,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const { data: projectData, error: projectError } = useGetCompleteById(projectId)
   const { data: sectionData, error: sectionError } = useGetBySectionItemIds([projectData?.data?.sectionItem?._id])
 
-  console.log("projectData" , projectData)
 
   // Handle errors or loading states
   if (projectError || sectionError) {

@@ -97,18 +97,13 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
     onError: (err: any) => {
       console.error('❌ Theme fetch error:', err.message, { websiteId: currentWebsiteId });
     },
-    onSuccess: (data) => {
-      console.log('✅ Theme fetch success:', data.data?.themeName, { websiteId: currentWebsiteId });
-    },
   });
 
   const [activeTheme, setActiveTheme] = useState<WebSiteTheme | null>(null);
 
   // Extract theme from API response
   useEffect(() => {
-    console.log('🔄 Theme data changed:', themeData);
     if (themeData?.data) {
-      console.log('✅ Setting active theme:', themeData.data.themeName);
       setActiveTheme(themeData.data);
     } else if (!currentWebsiteId) {
       console.log('🚫 Clearing theme - no website selected');
@@ -123,28 +118,23 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
     if (!isInitialized) return;
 
     if (activeTheme) {
-      console.log('🎨 Applying theme to CSS:', activeTheme.themeName, { mode: colorMode });
       applyThemeToCSS(activeTheme, colorMode);
     } else {
-      console.log('🔄 Resetting to default theme');
       resetToDefaultTheme(colorMode);
     }
   }, [activeTheme, isInitialized, colorMode]);
 
   const refreshTheme = () => {
-    console.log('🔄 Refreshing theme for website:', currentWebsiteId);
     if (currentWebsiteId) {
       refetch();
     }
   };
 
   const handleSetWebsiteId = (id: string) => {
-    console.log('🆔 Setting website ID:', id);
     setCurrentWebsiteId(id);
   };
 
   const handleSetColorMode = (mode: 'light' | 'dark') => {
-    console.log('🌗 Setting color mode:', mode);
     setColorMode(mode);
   };
 
@@ -182,7 +172,6 @@ function applyThemeToCSS(theme: WebSiteTheme, mode: 'light' | 'dark') {
   const root = document.documentElement;
   const colors = theme.colors[mode];
 
-  console.log('🎨 Applying theme colors:', colors, { mode });
 
   // Apply color variables
   root.style.setProperty('--website-theme-primary', colors.primary);
@@ -230,14 +219,12 @@ function applyThemeToCSS(theme: WebSiteTheme, mode: 'light' | 'dark') {
   document.body.classList.add(`website-theme-${theme._id}`);
   document.body.classList.toggle('dark', mode === 'dark');
 
-  console.log('✅ Website theme applied successfully:', theme.themeName, { mode });
 }
 
 // Function to reset to default theme
 function resetToDefaultTheme(mode: 'light' | 'dark') {
   if (typeof window === 'undefined') return;
 
-  console.log('🔄 Resetting to default theme', { mode });
 
   const root = document.documentElement;
   const defaultColors = mode === 'light' ? {

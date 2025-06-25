@@ -42,7 +42,6 @@ export default function NewsSection({ sectionId, websiteId }) {
     }
   })
 
-  console.log("Add SubNavigation" ,contentItems )
 
   // Reset active index on language change
   useEffect(() => {

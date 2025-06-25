@@ -7,7 +7,7 @@ export function useWebSite() {
   const endpoint = '/websites';
   
   // Get current user ID from context or wherever it's stored
-  const userId = "685c0b3cc5cdf037b7841bd0";
+  const userId = "685c0bb14bda12d3bdf493d8";
   
   // Query keys now include user ID to prevent cross-user cache conflicts
   const websitesKey = ['websites', userId];

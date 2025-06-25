@@ -1,6 +1,6 @@
 "use client";
 
-import { JSX, useEffect } from "react";
+import { JSX, useEffect, useState } from "react";
 import ServicesSection from "@/components/Pages/Home/sections/services-section";
 import ProcessSection from "@/components/Pages/Home/sections/process-section";
 import TestimonialsSection from "@/components/Pages/Home/sections/testimonials-section";
@@ -20,6 +20,62 @@ import { useWebSite } from "@/lib/webSite/use-WebSite";
 import { useSections } from "@/lib/section/use-Section";
 import { useScrollToSection } from "@/hooks/use-scroll-to-section";
 import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton";
+
+// Custom hook for intersection observer
+function useIntersectionObserver(threshold = 0.1, rootMargin = "200px") {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [targetRef, setTargetRef] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!targetRef) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
+          observer.disconnect(); // Only trigger once
+        }
+      },
+      { threshold, rootMargin }
+    );
+
+    observer.observe(targetRef);
+
+    return () => observer.disconnect();
+  }, [targetRef, threshold, rootMargin]);
+
+  return { isIntersecting, targetRef: setTargetRef };
+}
+
+// Lazy Section Component
+function LazySection({ 
+  section, 
+  websiteId, 
+  sectionComponents 
+}: { 
+  section: Section;
+  websiteId?: string;
+  sectionComponents: { [key: string]: (id: string, websiteId?: string) => JSX.Element };
+}) {
+  const { isIntersecting, targetRef } = useIntersectionObserver();
+  const [hasLoaded, setHasLoaded] = useState(false);
+
+  useEffect(() => {
+    if (isIntersecting && !hasLoaded) {
+      setHasLoaded(true);
+    }
+  }, [isIntersecting, hasLoaded]);
+
+  return (
+    <div ref={targetRef} id={section._id}>
+      {hasLoaded ? (
+        sectionComponents[section.subName]?.(section._id, websiteId) || null
+      ) : (
+        <SectionSkeleton variant="default" className="py-20" />
+      )}
+    </div>
+  );
+}
 
 // Define TypeScript interfaces for data
 interface Website {
@@ -67,7 +123,9 @@ export default function LandingPage() {
     false,
   );
 
-  localStorage.setItem("websiteId", websiteId || "");
+  if (websiteId) {
+    localStorage.setItem("websiteId", websiteId);
+  }
 
   // Set smooth scrolling globally
   useEffect(() => {
@@ -149,18 +207,32 @@ export default function LandingPage() {
     );
   }
 
+  const sortedSections = sectionsData.data.sort((a: Section, b: Section) => a.order - b.order);
+
   return (
     <AnimatePresence>
       <div className="flex min-h-screen flex-col" dir={direction}>
         <main>
-          {/* Render all sections sorted by order */}
-          {sectionsData.data
-            .sort((a: Section, b: Section) => a.order - b.order)
-            .map((section: Section) => (
-              <div key={section._id} id={section._id}>
-                {sectionComponents[section.subName]?.(section._id, websiteId) || null}
-              </div>
-            ))}
+          {sortedSections.map((section: Section, index: number) => {
+            // Always load the first section (Hero) immediately
+            if (index === 0) {
+              return (
+                <div key={section._id} id={section._id}>
+                  {sectionComponents[section.subName]?.(section._id, websiteId) || null}
+                </div>
+              );
+            }
+
+            // Lazy load other sections
+            return (
+              <LazySection
+                key={section._id}
+                section={section}
+                websiteId={websiteId}
+                sectionComponents={sectionComponents}
+              />
+            );
+          })}
         </main>
       </div>
     </AnimatePresence>

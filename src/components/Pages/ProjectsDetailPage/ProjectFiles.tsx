@@ -3,26 +3,24 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/language-context"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { 
-  FileText, 
-  Download, 
-  Eye, 
-  ExternalLink, 
-  Maximize2, 
-  Minimize2, 
-  ZoomIn, 
-  ZoomOut, 
-  ChevronLeft, 
+import {
+  FileText,
+  Download,
+  Eye,
+  ExternalLink,
+  Maximize2,
+  Minimize2,
+  ZoomIn,
+  ZoomOut,
+  ChevronLeft,
   ChevronRight,
   File,
   FileImage,
   FileArchive,
   Share2,
-  Globe
+  Globe,
 } from "lucide-react"
 
 interface ProjectFilesProps {
@@ -92,16 +90,16 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
 
   // Get file icon based on file type
   const getFileIcon = (fileUrl: string, mimeType?: string) => {
-    const extension = fileUrl.split('.').pop()?.toLowerCase()
+    const extension = fileUrl.split(".").pop()?.toLowerCase()
     const type = mimeType?.toLowerCase()
 
-    if (type?.includes('pdf') || extension === 'pdf') {
+    if (type?.includes("pdf") || extension === "pdf") {
       return <FileText className="h-4 w-4" />
     }
-    if (type?.includes('image') || ['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(extension || '')) {
+    if (type?.includes("image") || ["jpg", "jpeg", "png", "gif", "svg"].includes(extension || "")) {
       return <FileImage className="h-4 w-4" />
     }
-    if (['zip', 'rar', '7z', 'tar'].includes(extension || '')) {
+    if (["zip", "rar", "7z", "tar"].includes(extension || "")) {
       return <FileArchive className="h-4 w-4" />
     }
     return <File className="h-4 w-4" />
@@ -109,16 +107,16 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
 
   // Get file type for display
   const getFileType = (fileUrl: string, mimeType?: string): string => {
-    const extension = fileUrl.split('.').pop()?.toLowerCase()
+    const extension = fileUrl.split(".").pop()?.toLowerCase()
     const type = mimeType?.toLowerCase()
 
-    if (type?.includes('pdf') || extension === 'pdf') return 'PDF'
-    if (type?.includes('image')) return 'Image'
-    if (type?.includes('word') || ['doc', 'docx'].includes(extension || '')) return 'Word'
-    if (type?.includes('excel') || ['xls', 'xlsx'].includes(extension || '')) return 'Excel'
-    if (type?.includes('powerpoint') || ['ppt', 'pptx'].includes(extension || '')) return 'PowerPoint'
-    if (['zip', 'rar', '7z', 'tar'].includes(extension || '')) return 'Archive'
-    return extension?.toUpperCase() || 'File'
+    if (type?.includes("pdf") || extension === "pdf") return "PDF"
+    if (type?.includes("image")) return "Image"
+    if (type?.includes("word") || ["doc", "docx"].includes(extension || "")) return "Word"
+    if (type?.includes("excel") || ["xls", "xlsx"].includes(extension || "")) return "Excel"
+    if (type?.includes("powerpoint") || ["ppt", "pptx"].includes(extension || "")) return "PowerPoint"
+    if (["zip", "rar", "7z", "tar"].includes(extension || "")) return "Archive"
+    return extension?.toUpperCase() || "File"
   }
 
   // Get all file elements for the current language
@@ -128,27 +126,26 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
     }
 
     const files: FileData[] = []
-    
+
     // Find file elements that match the current language
-    const fileElements = project.elements.filter(element => 
-      element.type === 'file' && 
-      element.fileUrl &&
-      element.name.includes(language.toUpperCase())
+    const fileElements = project.elements.filter(
+      (element) => element.type === "file" && element.fileUrl && element.name.includes(language.toUpperCase()),
     )
 
-    fileElements.forEach(element => {
+    fileElements.forEach((element) => {
       // Extract display name from translations or element name
-      const displayName = getTranslatedContent(element, language) || 
-                          element.defaultContent || 
-                          element.name.replace(/File \w+ \d+/, '').trim() ||
-                          `File ${files.length + 1}`
+      const displayName =
+        getTranslatedContent(element, language) ||
+        element.defaultContent ||
+        element.name.replace(/File \w+ \d+/, "").trim() ||
+        `File ${files.length + 1}`
 
       files.push({
         element,
         displayName,
         fileUrl: element.fileUrl!,
         fileType: getFileType(element.fileUrl!, element.fileMimeType),
-        language: language
+        language: language,
       })
     })
 
@@ -164,7 +161,7 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
       setSelectedFile(currentLanguageFiles[currentLanguageFiles.length - 1])
     } else if (currentLanguageFiles.length === 0) {
       setSelectedFile(null)
-    } else if (selectedFile && !currentLanguageFiles.find(f => f.element._id === selectedFile.element._id)) {
+    } else if (selectedFile && !currentLanguageFiles.find((f) => f.element._id === selectedFile.element._id)) {
       // If current selected file is not in the new language files, select the last one
       setSelectedFile(currentLanguageFiles[currentLanguageFiles.length - 1])
     }
@@ -174,7 +171,7 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
   const handleDownload = (file: FileData) => {
     const link = document.createElement("a")
     link.href = file.fileUrl
-    link.download = `${file.displayName}.${file.fileUrl.split('.').pop()}`
+    link.download = `${file.displayName}.${file.fileUrl.split(".").pop()}`
     link.click()
   }
 
@@ -201,7 +198,7 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
   }
 
   // NOW it's safe to have early returns - ALL HOOKS have been called above
-  
+
   // Check if project.elements is not found or empty
   if (!project?.elements || project.elements.length === 0) {
     return null
@@ -213,23 +210,25 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
   }
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 ">
+    <div className="w-full min-h-screen ">
       {/* Top Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <FileText className="h-6 w-6 text-gray-700" />
+              <FileText className="h-6 w-6 text-gray-700 dark:text-gray-300" />
             </div>
-            <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1">
+            <Badge
+              variant="secondary"
+              className="flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+            >
               <Globe className="h-3 w-3" />
               {language.toUpperCase()}
             </Badge>
           </div>
-          <span className="text-sm text-gray-500 flex items-center gap-2">
+          <span className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
             {currentLanguageFiles.length}
-                          <FileText className="h-6 w-6 text-gray-700" />
- 
+            <FileText className="h-6 w-6 text-gray-700 dark:text-gray-300" />
           </span>
         </div>
       </div>
@@ -238,9 +237,9 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
       <div className="flex h-[calc(100vh-80px)] container mx-auto max-w-7xl">
         {/* Sidebar - Only show if multiple files */}
         {currentLanguageFiles.length > 1 && (
-          <div className="w-72 bg-white border-r border-gray-200 flex flex-col">
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+          <div className="w-72  flex flex-col">
+            <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
                 <File className="h-4 w-4" />
                 Related Files
               </h3>
@@ -250,29 +249,31 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
                 {currentLanguageFiles.map((file, index) => (
                   <button
                     key={file.element._id}
-                    className={`w-full text-left p-3 rounded-lg transition-all duration-200 hover:bg-gray-50 ${
-                      selectedFile?.element._id === file.element._id 
-                        ? 'bg-blue-50 border border-blue-200' 
-                        : 'hover:bg-gray-50'
+                    className={`w-full text-left p-3 rounded-lg transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                      selectedFile?.element._id === file.element._id
+                        ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700"
+                        : "hover:bg-gray-50 dark:hover:bg-gray-700"
                     }`}
                     onClick={() => setSelectedFile(file)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`flex-shrink-0 ${
-                        selectedFile?.element._id === file.element._id ? 'text-blue-600' : 'text-gray-400'
-                      }`}>
+                      <div
+                        className={`flex-shrink-0 ${
+                          selectedFile?.element._id === file.element._id
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-gray-400 dark:text-gray-500"
+                        }`}
+                      >
                         {getFileIcon(file.fileUrl, file.element.fileMimeType)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                           {file.displayName}
                         </p>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          {file.fileType}
-                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{file.fileType}</p>
                       </div>
                       {selectedFile?.element._id === file.element._id && (
-                        <Eye className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                        <Eye className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                       )}
                     </div>
                   </button>
@@ -287,14 +288,17 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
           {selectedFile && (
             <>
               {/* File Header */}
-              <div className="bg-white border-b border-gray-200 px-6 py-4">
+              <div className=" px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 text-gray-700">
+                    <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                       {getFileIcon(selectedFile.fileUrl, selectedFile.element.fileMimeType)}
                       <span className="font-medium line-clamp-1">{selectedFile.displayName}</span>
                     </div>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge
+                      variant="outline"
+                      className="text-xs border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400"
+                    >
                       {selectedFile.fileType}
                     </Badge>
                   </div>
@@ -308,30 +312,37 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            const currentIndex = currentLanguageFiles.findIndex(f => f.element._id === selectedFile.element._id)
+                            const currentIndex = currentLanguageFiles.findIndex(
+                              (f) => f.element._id === selectedFile.element._id,
+                            )
                             const prevIndex = currentIndex > 0 ? currentIndex - 1 : currentLanguageFiles.length - 1
                             setSelectedFile(currentLanguageFiles[prevIndex])
                           }}
                           title="Previous file"
+                          className="hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <span className="text-sm text-gray-500 px-2">
-                          {currentLanguageFiles.findIndex(f => f.element._id === selectedFile.element._id) + 1} / {currentLanguageFiles.length}
+                        <span className="text-sm text-gray-500 dark:text-gray-400 px-2">
+                          {currentLanguageFiles.findIndex((f) => f.element._id === selectedFile.element._id) + 1} /{" "}
+                          {currentLanguageFiles.length}
                         </span>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            const currentIndex = currentLanguageFiles.findIndex(f => f.element._id === selectedFile.element._id)
+                            const currentIndex = currentLanguageFiles.findIndex(
+                              (f) => f.element._id === selectedFile.element._id,
+                            )
                             const nextIndex = currentIndex < currentLanguageFiles.length - 1 ? currentIndex + 1 : 0
                             setSelectedFile(currentLanguageFiles[nextIndex])
                           }}
                           title="Next file"
+                          className="hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
-                        <div className="w-px h-6 bg-gray-200 mx-2" />
+                        <div className="w-px h-6 bg-gray-200 dark:bg-gray-600 mx-2" />
                       </>
                     )}
 
@@ -342,6 +353,7 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
                         size="sm"
                         onClick={() => window.open(selectedFile.fileUrl, "_blank")}
                         title="Open in new tab"
+                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         <ExternalLink className="h-4 w-4" />
                       </Button>
@@ -350,6 +362,7 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
                         size="sm"
                         onClick={() => handleDownload(selectedFile)}
                         title="Download"
+                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         <Download className="h-4 w-4" />
                       </Button>
@@ -358,24 +371,26 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
                         size="sm"
                         onClick={() => handleShare(selectedFile)}
                         title="Share"
+                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         <Share2 className="h-4 w-4" />
                       </Button>
 
                       {/* Zoom Controls for PDFs */}
-                      {selectedFile.fileType === 'PDF' && (
+                      {selectedFile.fileType === "PDF" && (
                         <>
-                          <div className="w-px h-6 bg-gray-200 mx-2" />
+                          <div className="w-px h-6 bg-gray-200 dark:bg-gray-600 mx-2" />
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={handleZoomOut}
                             disabled={zoomLevel <= 50}
                             title="Zoom out"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700"
                           >
                             <ZoomOut className="h-4 w-4" />
                           </Button>
-                          <span className="text-sm text-gray-500 px-2 min-w-[50px] text-center">
+                          <span className="text-sm text-gray-500 dark:text-gray-400 px-2 min-w-[50px] text-center">
                             {zoomLevel}%
                           </span>
                           <Button
@@ -384,18 +399,20 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
                             onClick={handleZoomIn}
                             disabled={zoomLevel >= 200}
                             title="Zoom in"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700"
                           >
                             <ZoomIn className="h-4 w-4" />
                           </Button>
                         </>
                       )}
 
-                      <div className="w-px h-6 bg-gray-200 mx-2" />
+                      <div className="w-px h-6 bg-gray-200 dark:bg-gray-600 mx-2" />
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsFullscreen(!isFullscreen)}
-                        title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+                        title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                       </Button>
@@ -407,16 +424,14 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
               {/* File Content */}
               <div
                 className={`flex-1 relative ${
-                  isFullscreen 
-                    ? "fixed inset-0  z-50" 
-                    : "bg-gray-100"
+                  isFullscreen ? "fixed inset-0 bg-white dark:bg-gray-900 z-50" : "bg-gray-100 dark:bg-gray-800"
                 }`}
               >
                 {/* Fullscreen Exit Button */}
                 {isFullscreen && (
                   <Button
                     variant="secondary"
-                    className="absolute top-4 right-4 z-10"
+                    className="absolute top-4 right-4 z-10 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
                     onClick={() => setIsFullscreen(false)}
                     title="Exit fullscreen"
                   >
@@ -426,16 +441,16 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
                 )}
 
                 {/* File Viewer */}
-                {selectedFile.fileType === 'PDF' ? (
+                {selectedFile.fileType === "PDF" ? (
                   <iframe
                     src={`${selectedFile.fileUrl}#zoom=${zoomLevel}&view=FitH&toolbar=0&navpanes=0&scrollbar=1`}
                     className="w-full h-full border-0"
                     title={`${selectedFile.displayName} Viewer`}
                   />
-                ) : selectedFile.fileType === 'Image' ? (
+                ) : selectedFile.fileType === "Image" ? (
                   <div className="w-full h-full flex items-center justify-center p-4">
                     <img
-                      src={selectedFile.fileUrl}
+                      src={selectedFile.fileUrl || "/placeholder.svg"}
                       alt={selectedFile.displayName}
                       className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
                       style={{
@@ -445,20 +460,20 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
                   </div>
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center">
-                    <div className="bg-white rounded-lg p-8 shadow-lg max-w-md">
-                      <div className="text-gray-400 mb-4 flex justify-center">
+                    <div className="x rounded-lg p-8 shadow-lg max-w-md border border-gray-200 dark:border-gray-700">
+                      <div className="text-gray-400 dark:text-gray-500 mb-4 flex justify-center">
                         {getFileIcon(selectedFile.fileUrl, selectedFile.element.fileMimeType)}
                       </div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                         {selectedFile.displayName}
                       </h3>
-                      <p className="text-gray-600 mb-6 text-sm">
+                      <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
                         This file type cannot be previewed in the browser.
                       </p>
                       <div className="flex gap-3 justify-center">
                         <Button
                           onClick={() => window.open(selectedFile.fileUrl, "_blank")}
-                          className="bg-blue-600 hover:bg-blue-700"
+                          className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
                         >
                           <ExternalLink className="h-4 w-4 mr-2" />
                           Open File
@@ -466,6 +481,7 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
                         <Button
                           variant="outline"
                           onClick={() => handleDownload(selectedFile)}
+                          className="border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                         >
                           <Download className="h-4 w-4 mr-2" />
                           Download

@@ -5,23 +5,9 @@ import { useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/language-context"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import {
-  FileText,
-  Download,
-  Eye,
-  ExternalLink,
-  Maximize2,
-  Minimize2,
-  ZoomIn,
-  ZoomOut,
-  ChevronLeft,
-  ChevronRight,
-  File,
-  FileImage,
-  FileArchive,
-  Share2,
-  Globe,
-} from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { FileText, Download, Eye, ExternalLink, Maximize2, Minimize2, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, File, FileImage, FileArchive, Share2, Globe, Files } from 'lucide-react'
 
 interface ProjectFilesProps {
   project: {
@@ -94,15 +80,15 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
     const type = mimeType?.toLowerCase()
 
     if (type?.includes("pdf") || extension === "pdf") {
-      return <FileText className="h-4 w-4" />
+      return <FileText className="h-5 w-5" />
     }
     if (type?.includes("image") || ["jpg", "jpeg", "png", "gif", "svg"].includes(extension || "")) {
-      return <FileImage className="h-4 w-4" />
+      return <FileImage className="h-5 w-5" />
     }
     if (["zip", "rar", "7z", "tar"].includes(extension || "")) {
-      return <FileArchive className="h-4 w-4" />
+      return <FileArchive className="h-5 w-5" />
     }
-    return <File className="h-4 w-4" />
+    return <File className="h-5 w-5" />
   }
 
   // Get file type for display
@@ -197,8 +183,6 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
     setZoomLevel((prev) => Math.max(prev - 25, 50))
   }
 
-  // NOW it's safe to have early returns - ALL HOOKS have been called above
-
   // Check if project.elements is not found or empty
   if (!project?.elements || project.elements.length === 0) {
     return null
@@ -210,289 +194,274 @@ export const ProjectFiles: React.FC<ProjectFilesProps> = ({ project, clients }) 
   }
 
   return (
-    <div className="w-full min-h-screen ">
-      {/* Top Header */}
-      <div className="px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <FileText className="h-6 w-6 text-gray-700 dark:text-gray-300" />
-            </div>
-            <Badge
-              variant="secondary"
-              className="flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-            >
-              <Globe className="h-3 w-3" />
-              {language.toUpperCase()}
-            </Badge>
-          </div>
-          <span className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-            {currentLanguageFiles.length}
-            <FileText className="h-6 w-6 text-gray-700 dark:text-gray-300" />
-          </span>
-        </div>
-      </div>
+    <div className="w-full min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+  
 
       {/* Main Content */}
-      <div className="flex h-[calc(100vh-80px)] container mx-auto max-w-7xl">
-        {/* Sidebar - Only show if multiple files */}
-        {currentLanguageFiles.length > 1 && (
-          <div className="w-72  flex flex-col">
-            <div className="p-4 border-b border-gray-100 dark:border-gray-700">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                <File className="h-4 w-4" />
-                Related Files
-              </h3>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              <div className="p-2 space-y-1">
-                {currentLanguageFiles.map((file, index) => (
-                  <button
-                    key={file.element._id}
-                    className={`w-full text-left p-3 rounded-lg transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700 ${
-                      selectedFile?.element._id === file.element._id
-                        ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700"
-                        : "hover:bg-gray-50 dark:hover:bg-gray-700"
-                    }`}
-                    onClick={() => setSelectedFile(file)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`flex-shrink-0 ${
-                          selectedFile?.element._id === file.element._id
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-gray-400 dark:text-gray-500"
-                        }`}
-                      >
-                        {getFileIcon(file.fileUrl, file.element.fileMimeType)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                          {file.displayName}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{file.fileType}</p>
-                      </div>
-                      {selectedFile?.element._id === file.element._id && (
-                        <Eye className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                      )}
-                    </div>
-                  </button>
-                ))}
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="flex gap-6 h-[calc(100vh-200px)]">
+          {/* Sidebar - Only show if multiple files */}
+          {currentLanguageFiles.length > 1 && (
+            <Card className="w-80 flex flex-col">
+              <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <File className="h-4 w-4" />
+                   ({currentLanguageFiles.length})
+                </h3>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Main Viewer */}
-        <div className="flex-1 flex flex-col">
-          {selectedFile && (
-            <>
-              {/* File Header */}
-              <div className=" px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                      {getFileIcon(selectedFile.fileUrl, selectedFile.element.fileMimeType)}
-                      <span className="font-medium line-clamp-1">{selectedFile.displayName}</span>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className="text-xs border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400"
+              <CardContent className="flex-1 overflow-y-auto p-2">
+                <div className="space-y-1">
+                  {currentLanguageFiles.map((file, index) => (
+                    <button
+                      key={file.element._id}
+                      className={`w-full text-left p-3 rounded-lg transition-all duration-200 group ${
+                        selectedFile?.element._id === file.element._id
+                          ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 shadow-sm"
+                          : "hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-transparent"
+                      }`}
+                      onClick={() => setSelectedFile(file)}
                     >
-                      {selectedFile.fileType}
-                    </Badge>
-                  </div>
-
-                  {/* Navigation and Actions */}
-                  <div className="flex items-center gap-2">
-                    {/* File Navigation */}
-                    {currentLanguageFiles.length > 1 && (
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            const currentIndex = currentLanguageFiles.findIndex(
-                              (f) => f.element._id === selectedFile.element._id,
-                            )
-                            const prevIndex = currentIndex > 0 ? currentIndex - 1 : currentLanguageFiles.length - 1
-                            setSelectedFile(currentLanguageFiles[prevIndex])
-                          }}
-                          title="Previous file"
-                          className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex-shrink-0 p-2 rounded-md transition-colors ${
+                            selectedFile?.element._id === file.element._id
+                              ? "bg-blue-100 dark:bg-blue-800/30 text-blue-600 dark:text-blue-400"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-600"
+                          }`}
                         >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        <span className="text-sm text-gray-500 dark:text-gray-400 px-2">
-                          {currentLanguageFiles.findIndex((f) => f.element._id === selectedFile.element._id) + 1} /{" "}
-                          {currentLanguageFiles.length}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            const currentIndex = currentLanguageFiles.findIndex(
-                              (f) => f.element._id === selectedFile.element._id,
-                            )
-                            const nextIndex = currentIndex < currentLanguageFiles.length - 1 ? currentIndex + 1 : 0
-                            setSelectedFile(currentLanguageFiles[nextIndex])
-                          }}
-                          title="Next file"
-                          className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                        <div className="w-px h-6 bg-gray-200 dark:bg-gray-600 mx-2" />
-                      </>
-                    )}
+                          {getFileIcon(file.fileUrl, file.element.fileMimeType)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                            {file.displayName}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{file.fileType}</p>
+                        </div>
+                        {selectedFile?.element._id === file.element._id && (
+                          <Eye className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => window.open(selectedFile.fileUrl, "_blank")}
-                        title="Open in new tab"
-                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDownload(selectedFile)}
-                        title="Download"
-                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleShare(selectedFile)}
-                        title="Share"
-                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <Share2 className="h-4 w-4" />
-                      </Button>
+          {/* Main Viewer */}
+          <Card className="flex-1 flex flex-col">
+            {selectedFile && (
+              <>
+                {/* File Header */}
+                <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg flex-shrink-0">
+                          {getFileIcon(selectedFile.fileUrl, selectedFile.element.fileMimeType)}
+                        </div>
+                        <div className="min-w-0">
+                          <h2 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+                            {selectedFile.displayName}
+                          </h2>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="text-xs">
+                              {selectedFile.fileType}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                      {/* Zoom Controls for PDFs */}
-                      {selectedFile.fileType === "PDF" && (
+                    {/* Controls */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {/* File Navigation */}
+                      {currentLanguageFiles.length > 1 && (
                         <>
-                          <div className="w-px h-6 bg-gray-200 dark:bg-gray-600 mx-2" />
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleZoomOut}
-                            disabled={zoomLevel <= 50}
-                            title="Zoom out"
-                            className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                          >
-                            <ZoomOut className="h-4 w-4" />
-                          </Button>
-                          <span className="text-sm text-gray-500 dark:text-gray-400 px-2 min-w-[50px] text-center">
-                            {zoomLevel}%
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleZoomIn}
-                            disabled={zoomLevel >= 200}
-                            title="Zoom in"
-                            className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                          >
-                            <ZoomIn className="h-4 w-4" />
-                          </Button>
+                          <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-700 rounded-lg p-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const currentIndex = currentLanguageFiles.findIndex(
+                                  (f) => f.element._id === selectedFile.element._id,
+                                )
+                                const prevIndex = currentIndex > 0 ? currentIndex - 1 : currentLanguageFiles.length - 1
+                                setSelectedFile(currentLanguageFiles[prevIndex])
+                              }}
+                              className="h-8 w-8 p-0"
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <span className="text-sm text-gray-600 dark:text-gray-400 px-2 font-medium">
+                              {currentLanguageFiles.findIndex((f) => f.element._id === selectedFile.element._id) + 1} /{" "}
+                              {currentLanguageFiles.length}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const currentIndex = currentLanguageFiles.findIndex(
+                                  (f) => f.element._id === selectedFile.element._id,
+                                )
+                                const nextIndex = currentIndex < currentLanguageFiles.length - 1 ? currentIndex + 1 : 0
+                                setSelectedFile(currentLanguageFiles[nextIndex])
+                              }}
+                              className="h-8 w-8 p-0"
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <Separator orientation="vertical" className="h-6" />
                         </>
                       )}
 
-                      <div className="w-px h-6 bg-gray-200 dark:bg-gray-600 mx-2" />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setIsFullscreen(!isFullscreen)}
-                        title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
-                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                      </Button>
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => window.open(selectedFile.fileUrl, "_blank")}
+                          className="h-8 w-8 p-0"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDownload(selectedFile)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleShare(selectedFile)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+
+                        {/* Zoom Controls for PDFs */}
+                        {selectedFile.fileType === "PDF" && (
+                          <>
+                            <Separator orientation="vertical" className="h-6" />
+                            <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-700 rounded-lg p-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleZoomOut}
+                                disabled={zoomLevel <= 50}
+                                className="h-8 w-8 p-0"
+                              >
+                                <ZoomOut className="h-4 w-4" />
+                              </Button>
+                              <span className="text-sm text-gray-600 dark:text-gray-400 px-2 min-w-[50px] text-center font-medium">
+                                {zoomLevel}%
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleZoomIn}
+                                disabled={zoomLevel >= 200}
+                                className="h-8 w-8 p-0"
+                              >
+                                <ZoomIn className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </>
+                        )}
+
+                        <Separator orientation="vertical" className="h-6" />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setIsFullscreen(!isFullscreen)}
+                          className="h-8 w-8 p-0"
+                        >
+                          {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* File Content */}
-              <div
-                className={`flex-1 relative ${
-                  isFullscreen ? "fixed inset-0 bg-white dark:bg-gray-900 z-50" : "bg-gray-100 dark:bg-gray-800"
-                }`}
-              >
-                {/* Fullscreen Exit Button */}
-                {isFullscreen && (
-                  <Button
-                    variant="secondary"
-                    className="absolute top-4 right-4 z-10 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    onClick={() => setIsFullscreen(false)}
-                    title="Exit fullscreen"
-                  >
-                    <Minimize2 className="h-4 w-4 mr-2" />
-                    Exit Fullscreen
-                  </Button>
-                )}
+                {/* File Content */}
+                <CardContent
+                  className={`flex-1 relative p-0 ${
+                    isFullscreen ? "fixed inset-0 bg-white dark:bg-gray-900 z-50" : ""
+                  }`}
+                >
+                  {/* Fullscreen Exit Button */}
+                  {isFullscreen && (
+                    <Button
+                      className="absolute top-4 right-4 z-10 shadow-lg"
+                      onClick={() => setIsFullscreen(false)}
+                    >
+                      <Minimize2 className="h-4 w-4 mr-2" />
+                      Exit Fullscreen
+                    </Button>
+                  )}
 
-                {/* File Viewer */}
-                {selectedFile.fileType === "PDF" ? (
-                  <iframe
-                    src={`${selectedFile.fileUrl}#zoom=${zoomLevel}&view=FitH&toolbar=0&navpanes=0&scrollbar=1`}
-                    className="w-full h-full border-0"
-                    title={`${selectedFile.displayName} Viewer`}
-                  />
-                ) : selectedFile.fileType === "Image" ? (
-                  <div className="w-full h-full flex items-center justify-center p-4">
-                    <img
-                      src={selectedFile.fileUrl || "/placeholder.svg"}
-                      alt={selectedFile.displayName}
-                      className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                      style={{
-                        transform: `scale(${zoomLevel / 100})`,
-                      }}
+                  {/* File Viewer */}
+                  {selectedFile.fileType === "PDF" ? (
+                    <iframe
+                      src={`${selectedFile.fileUrl}#zoom=${zoomLevel}&view=FitH&toolbar=0&navpanes=0&scrollbar=1`}
+                      className="w-full h-full border-0 rounded-b-lg"
+                      title={`${selectedFile.displayName} Viewer`}
                     />
-                  </div>
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center">
-                    <div className="x rounded-lg p-8 shadow-lg max-w-md border border-gray-200 dark:border-gray-700">
-                      <div className="text-gray-400 dark:text-gray-500 mb-4 flex justify-center">
-                        {getFileIcon(selectedFile.fileUrl, selectedFile.element.fileMimeType)}
-                      </div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                        {selectedFile.displayName}
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
-                        This file type cannot be previewed in the browser.
-                      </p>
-                      <div className="flex gap-3 justify-center">
-                        <Button
-                          onClick={() => window.open(selectedFile.fileUrl, "_blank")}
-                          className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Open File
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => handleDownload(selectedFile)}
-                          className="border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-                        >
-                          <Download className="h-4 w-4 mr-2" />
-                          Download
-                        </Button>
-                      </div>
+                  ) : selectedFile.fileType === "Image" ? (
+                    <div className="w-full h-full flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-800 rounded-b-lg">
+                      <img
+                        src={selectedFile.fileUrl || "/placeholder.svg"}
+                        alt={selectedFile.displayName}
+                        className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                        style={{
+                          transform: `scale(${zoomLevel / 100})`,
+                        }}
+                      />
                     </div>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-gray-50 dark:bg-gray-800 rounded-b-lg">
+                      <Card className="max-w-md text-center">
+                        <CardContent className="p-8">
+                          <div className="text-gray-400 dark:text-gray-500 mb-4 flex justify-center">
+                            <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full">
+                              {getFileIcon(selectedFile.fileUrl, selectedFile.element.fileMimeType)}
+                            </div>
+                          </div>
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                            {selectedFile.displayName}
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+                            This file type cannot be previewed in the browser. You can open it externally or download it.
+                          </p>
+                          <div className="flex gap-3 justify-center">
+                            <Button
+                              onClick={() => window.open(selectedFile.fileUrl, "_blank")}
+                              className="bg-blue-600 hover:bg-blue-700"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Open File
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => handleDownload(selectedFile)}
+                            >
+                              <Download className="h-4 w-4 mr-2" />
+                              Download
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
+                </CardContent>
+              </>
+            )}
+          </Card>
         </div>
       </div>
     </div>

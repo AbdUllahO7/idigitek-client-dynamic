@@ -60,6 +60,8 @@ export default function Header({
   const [hoveredNavId, setHoveredNavId] = useState<string | null>(null)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  console.log("sectionsData", sectionsData)
+
   const { useGetNavigationByWebSiteId, useGetCompleteByWebSiteId } = useSubSections()
   const { data: sections } = useGetNavigationByWebSiteId(actualWebsiteId)
   const { data: allSections } = useGetCompleteByWebSiteId(actualWebsiteId)

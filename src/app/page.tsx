@@ -109,6 +109,7 @@ interface Section {
   name: string;
   subName: string;
   order: number;
+  isActive: boolean; // Added isActive property to the interface
   sectionItems: SectionItem[];
 }
 
@@ -144,7 +145,7 @@ export default function LandingPage() {
       if (hash) {
         const subName = hash.substring(1);
         const targetSection = sectionsData.data.find(
-          (section: Section) => section.subName.toLowerCase() === subName.toLowerCase()
+          (section: Section) => section.subName.toLowerCase() === subName.toLowerCase() && section.isActive
         );
         if (targetSection) {
           setTimeout(() => {
@@ -211,9 +212,11 @@ export default function LandingPage() {
     );
   }
 
-  const sortedSections = sectionsData.data.sort((a: Section, b: Section) => a.order - b.order);
+  // Filter active sections only, then sort by order
+  const activeSections = sectionsData.data.filter((section: Section) => section.isActive);
+  const sortedSections = activeSections.sort((a: Section, b: Section) => a.order - b.order);
   
-  // Separate footer sections from other sections
+  // Separate footer sections from other sections (both already filtered for active sections)
   const footerSections = sortedSections.filter((section: Section) => 
     section.subName.toLowerCase() === 'footer'
   );

@@ -185,27 +185,10 @@ export default function ProjectsSection({ sectionId, websiteId }) {
     setTimeout(startAutoPlay, 5000)
   }
 
-  // Handle errors
-  if (sectionError || itemsError) {
-    return (
-      <section className="py-12 md:py-20 bg-wtheme-background" dir={direction}>
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-red-500">Failed to load projects</p>
-        </div>
-      </section>
-    )
-  }
+
 
   // Handle empty state
-  if (validProjects.length === 0) {
-    return (
-      <section className="py-12 md:py-20 bg-wtheme-background" dir={direction}>
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-wtheme-text/60">No projects available</p>
-        </div>
-      </section>
-    )
-  }
+
 
   return (
     <section 

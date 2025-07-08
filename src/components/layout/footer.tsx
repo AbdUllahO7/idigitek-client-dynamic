@@ -198,7 +198,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
             <div className="flex items-center gap-2">
               <Image src={logo} alt="Idigitek Solutions Logo" width={100} height={100} className="rounded" />
             </div>
-            <p className="text-sm font-body text-wtheme-text">{contentItems[0]?.description || "No description available"}</p>
+            <p className="text-sm font-body text-wtheme-text">{contentItems[0]?.description }</p>
             <div className="flex space-x-4">
               {SpecialLoading || itemsLoading ? (
                 <span className="text-sm font-body text-wtheme-text">Loading...</span>
@@ -226,7 +226,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
                   </motion.div>
                 ))
               ) : (
-                <span className="text-sm font-body text-wtheme-text">No social links available</span>
+                <span className="text-sm font-body text-wtheme-text"></span>
               )}
             </div>
           </motion.div>
@@ -311,7 +311,7 @@ function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { s
             </motion.li>
           ))
         ) : (
-          <li className="text-sm font-body text-wtheme-text">No links available</li>
+          <li className="text-sm font-body text-wtheme-text"></li>
         )}
       </ul>
     </motion.div>

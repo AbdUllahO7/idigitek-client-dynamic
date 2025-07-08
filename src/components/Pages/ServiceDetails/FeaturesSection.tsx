@@ -28,15 +28,8 @@ interface FeaturesSectionProps {
 const FeaturesSection: React.FC<FeaturesSectionProps> = ({ features = [] }) => {
   const { language, direction } = useLanguage();
   
-  const noFeaturesText = language === 'ar' ? 'لا توجد ميزات متاحة' : 'No features available';
 
-  if (features.length === 0) {
-    return (
-      <div className="mb-16 py-16 text-center">
-        <p className="text-wtheme-text font-body">{noFeaturesText}</p>
-      </div>
-    );
-  }
+  
 
   return (
     <div className="mb-16" dir={direction}>

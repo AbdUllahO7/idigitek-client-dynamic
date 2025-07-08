@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { useLanguage } from "@/contexts/language-context"
-import { Tag, Plus, Check, Star } from "lucide-react"
 import { iconMap } from '@/utils/IconMap';
 
 // Icon mapping for dynamic icons
@@ -39,38 +38,7 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ benefits = [], overvi
   const paragraphs = description ? description.split('\n\n').filter(p => p.trim()) : [];
 
 
-  // Don't render if no overview data
-  if (!overviewData || (!title && !description)) {
-    return (
-      <div className="grid md:grid-cols-3 gap-8 mb-16" dir={direction}>
-        <div className="md:col-span-2">
-          <p className="text-wtheme-text/60">
-            {language === 'ar' ? 'لا توجد بيانات نظرة عامة متاحة' : 'No overview data available'}
-          </p>
-        </div>
-        <div className="bg-primary/5 rounded-xl p-6">
-          {benefits && benefits.length > 0 ? (
-            <ul className="space-y-4">
-              {benefits.map((benefit) => (
-                <BenefitItem 
-                  key={benefit.id} 
-                  iconName={benefit.icon}
-                  title={benefit.title} 
-                  description={benefit.description} 
-                  direction={direction}
-                />
-              ))}
-            </ul>
-          ) : (
-            <p className="text-wtheme-text/60">
-              {language === 'ar' ? 'لا توجد فوائد متاحة' : 'No benefits available'}
-            </p>
-          )}
-        </div>
-      </div>
-    );
-  }
-
+ 
   return (
     <div className="grid md:grid-cols-3 gap-8 mb-16" dir={direction}>
       <div className="md:col-span-2">
@@ -96,7 +64,6 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ benefits = [], overvi
           </ul>
         ) : (
           <p className="text-wtheme-text/60">
-            {language === 'ar' ? 'لا توجد فوائد متاحة' : 'No benefits available'}
           </p>
         )}
       </div>

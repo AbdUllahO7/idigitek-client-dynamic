@@ -3,7 +3,6 @@
 import React from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
-import { Car, ShoppingCart, CheckCircle, Truck, Clock, Mic } from "lucide-react"
 import { iconMap } from '@/utils/IconMap'
 
 
@@ -22,15 +21,7 @@ interface HowItWorksSectionProps {
 const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({ steps = [] }) => {
   const { language, direction } = useLanguage();
   
-  const noStepsText = language === 'ar' ? 'لا توجد خطوات متاحة' : 'No steps available';
 
-  if (steps.length === 0) {
-    return (
-      <div className="mb-16 py-16 text-center">
-        <p className="text-gray-600 dark:text-gray-400">{noStepsText}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="mb-16" dir={direction}>

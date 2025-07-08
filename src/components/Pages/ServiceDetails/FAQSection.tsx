@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { useLanguage } from '@/contexts/language-context'
-import { HelpCircle, MessageCircleQuestionIcon } from 'lucide-react'
 
 interface FAQ {
   id: string;
@@ -17,18 +16,7 @@ interface FAQSectionProps {
 const FAQSection: React.FC<FAQSectionProps> = ({ faqs = [] }) => {
   const { language, direction } = useLanguage();
   
-  const noFaqsText = language === 'ar' ? 'لا توجد أسئلة شائعة متاحة' : 'No FAQs available';
 
-  if (faqs.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-12">
-        <div className="text-center py-16">
-          <HelpCircle className="h-16 w-16 text-wtheme-text mx-auto mb-4" />
-          <p className="text-wtheme-text/60 font-body">{noFaqsText}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-12" dir={direction}>

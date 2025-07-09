@@ -106,10 +106,7 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
     if (themeData?.data) {
       setActiveTheme(themeData.data);
     } else if (!currentWebsiteId) {
-      console.log('🚫 Clearing theme - no website selected');
       setActiveTheme(null);
-    } else if (currentWebsiteId && !isLoading && !themeData && isInitialized) {
-      console.log('⚠️ No theme data for website:', currentWebsiteId);
     }
   }, [themeData, currentWebsiteId, isLoading, isInitialized]);
 

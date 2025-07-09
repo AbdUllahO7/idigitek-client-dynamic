@@ -60,7 +60,6 @@ export default function Header({
   const [hoveredNavId, setHoveredNavId] = useState<string | null>(null)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  console.log("sectionsData", sectionsData)
 
   const { useGetNavigationByWebSiteId, useGetCompleteByWebSiteId } = useSubSections()
   const { data: sections } = useGetNavigationByWebSiteId(actualWebsiteId)
@@ -238,17 +237,7 @@ export default function Header({
     ?.filter((item: NavItem | null) => item !== null && item.label)
     ?.sort((a, b) => a.order - b.order) || []
 
-  // Debug logging for navigation visibility
-  useEffect(() => {
-    if (sections?.data) {
-      console.log("🧭 Navigation sections data:", sections.data)
-      sections.data.forEach((navSection: any) => {
-        const visible = isNavigationVisible(navSection)
-        const sectionName = getMultilingualSectionName(navSection.section, language)
-        console.log(`🧭 Navigation for "${sectionName}": ${visible ? "VISIBLE" : "HIDDEN"}`)
-      })
-    }
-  }, [sections?.data, language])
+  
 
   // Hover handlers
   const handleMouseEnter = (navId: string) => {

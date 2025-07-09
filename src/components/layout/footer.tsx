@@ -170,12 +170,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
 
   
 
-  console.log('Footer Debug:', {
-    Special: Special[0],
-    dynamicColumns,
-    SpecialLoading,
-    SpecialError
-  })
+
 
   return (
     <motion.footer
@@ -203,7 +198,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
               {SpecialLoading || itemsLoading ? (
                 <span className="text-sm font-body text-wtheme-text">Loading...</span>
               ) : SpecialError || itemsError ? (
-                <span className="text-sm font-body text-destructive">Error loading social links</span>
+                <span className="text-sm font-body text-destructive"></span>
               ) : dynamicFallbackSocialMedia.length > 0 ? (
                 dynamicFallbackSocialMedia.map((social, index) => (
                   <motion.div
@@ -258,7 +253,6 @@ function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { s
     // For external links, let the default Link behavior handle it
   }
 
-  console.log("title", title)
 
   return (
     <motion.div

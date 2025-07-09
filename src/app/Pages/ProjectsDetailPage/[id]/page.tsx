@@ -30,7 +30,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     return <SectionSkeleton variant="default" className="py-20"/>
   }
 
-  console.log("ProjectDetailPage rendered with projectData:", sectionData)
 
   // Find the main project section (contains Background Image, Title, Description, etc.)
   const projectSection = sectionData?.data.find((section: any) =>

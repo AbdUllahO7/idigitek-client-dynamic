@@ -136,7 +136,7 @@ export default function ServicesSection({ sectionId, websiteId }: ServicesSectio
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <p className="text-red-500 mb-4">Error loading services</p>
+            <p className="text-red-500 mb-4"></p>
             <Button onClick={() => refetch?.()} variant="outline">
               Try Again
             </Button>

@@ -101,7 +101,6 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
     filter: slideFilter
   })
 
-  console.log("slides" , slides)
 
 
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {

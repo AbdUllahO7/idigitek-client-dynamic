@@ -19,11 +19,7 @@ const apiClient = axios.create({
 // Keep your existing interceptors...
 apiClient.interceptors.request.use(
   (config) => {
-    console.log('🚀 Making API request:', {
-      url: config.url,
-      method: config.method?.toUpperCase(),
-      fullURL: `${config.baseURL}${config.url}`,
-    });
+ 
     return config;
   },
   (error) => {
@@ -34,10 +30,7 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log('✅ API response received:', {
-      status: response.status,
-      url: response.config.url,
-    });
+  
     return response;
   },
   (error: AxiosError) => {

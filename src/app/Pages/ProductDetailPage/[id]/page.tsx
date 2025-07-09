@@ -25,7 +25,6 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
     if (!productData || !sectionData) {
       return <SectionSkeleton variant="default" className="py-20"/>
     }
-    console.log("Product Data:", productData.data)
 
   return (
     <div className="relative w-full py-16 bg-wtheme-background md:py-24 overflow-hidden" dir={direction}>

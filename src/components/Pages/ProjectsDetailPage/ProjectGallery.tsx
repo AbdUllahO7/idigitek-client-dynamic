@@ -43,7 +43,6 @@ interface ProjectGalleryProps {
 
 export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, clients }) => {
   const { language, direction } = useLanguage()
-  console.log("asdasdasdasdsadsaasasdasdasdas")
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
 
   if (!project?.elements || project.elements.length === 0) {
@@ -112,7 +111,6 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, clients
   }
 
 
-  console.log("images" , images)
 
   return (
     <>

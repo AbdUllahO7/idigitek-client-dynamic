@@ -425,6 +425,7 @@ export default function Header({
               <Image
                 src={logo || "/placeholder.svg"}
                 alt="Logo"
+                priority={true}
                 width={120}
                 height={40}
                 className={`h-8 w-auto transition-all duration-300 ${isOpen ? "brightness-0 invert" : ""}`}

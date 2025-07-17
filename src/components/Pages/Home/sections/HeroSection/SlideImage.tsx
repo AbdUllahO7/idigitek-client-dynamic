@@ -33,6 +33,7 @@ export default function SlideImage({ image, title, color }: SlideImageProps) {
             height={600}
             alt={title}
             className="w-full h-auto rounded-xl"
+            priority={true}
           />
         </div>
       </motion.div>

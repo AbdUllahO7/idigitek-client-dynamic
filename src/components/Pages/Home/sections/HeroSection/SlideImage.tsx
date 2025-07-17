@@ -27,14 +27,13 @@ export default function SlideImage({ image, title, color }: SlideImageProps) {
         className={`relative bg-gradient-to-r p-1 ${color} rounded-2xl shadow-xl`}
       >
         <div className="bg-background rounded-xl overflow-hidden">
-          <Image
-            src={image}
-            width={600}
-            height={600}
-            alt={title}
-            className="w-full h-auto rounded-xl"
-            priority={true}
-          />
+       
+             <motion.img
+                    src={image}
+                    alt={title}
+                    whileHover={{ scale: 1.05 }}
+                       className="w-full h-auto rounded-xl"
+                  />
         </div>
       </motion.div>
     </motion.div>

@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -47,7 +46,7 @@ export default function HeroSlide({
 
 
   return (
-    <motion.div
+    <nav
       key={index}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -97,35 +96,7 @@ export default function HeroSlide({
             </Button>
           )}
 
-          {/* Request Button */}
-          {slide.requestButton && (
-            <Button 
-              asChild 
-              variant="outline"
-              size="lg" 
-              className={`${isExternalUrl(slide.exploreButtonUrl) ? ' border-2 border-primary' : 'border-2 border-primary'} dark:bg-primary text-wtheme-text`}
-            >
-              {isExternalUrl(slide.requestButtonUrl) ? (
-                <a 
-                  href={slide.requestButtonUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  {slide.requestButton}
-                </a>
-              ) : (
-                <Link 
-                  href={slide.requestButtonUrl || "#"} 
-                  onClick={slide.requestButtonUrl && !isExternalUrl(slide.requestButtonUrl) 
-                    ? (e) => handleNavClick(e, slide.requestButtonUrl.replace('#', '')) 
-                    : undefined
-                  }
-                >
-                  {slide.requestButton}
-                </Link>
-              )}
-            </Button>
-          )}
+      
         </div>
       </SlideContent>
 
@@ -135,6 +106,6 @@ export default function HeroSlide({
         title={slide.title}
         color={slide.color}
       />
-    </motion.div>
+    </nav>
   )
 }

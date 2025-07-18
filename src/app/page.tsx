@@ -21,12 +21,8 @@ import { useSections } from "@/lib/section/use-Section";
 import { useScrollToSection } from "@/hooks/use-scroll-to-section";
 import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton";
 import ProductsSection from "@/components/Pages/Home/sections/ProductsSection/ProductsSection";
-import Footer from "@/components/layout/footer";
 
-// Define TypeScript interfaces for data
-interface Website {
-  id: string;
-}
+
 
 interface ContentElement {
   _id: string;

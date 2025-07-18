@@ -46,7 +46,7 @@ export default function HeroSlide({
 
 
   return (
-    <motion.div
+    <nav
       key={index}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -106,6 +106,6 @@ export default function HeroSlide({
         title={slide.title}
         color={slide.color}
       />
-    </motion.div>
+    </nav>
   )
 }

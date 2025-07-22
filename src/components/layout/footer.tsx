@@ -7,6 +7,7 @@ import { motion } from "@/components/ui/framer-motion"
 import { useScrollAnimation } from "@/hooks/use-scroll-animation"
 import { useSectionContent } from "@/hooks/useSectionContent"
 import { useScrollToSection } from "@/hooks/use-scroll-to-section"
+import { FadeIn } from "@/utils/lightweightAnimations"
 
 // Types
 interface ContentItem {
@@ -61,7 +62,7 @@ const generateFieldMappings = (isSpecial: boolean): Record<string, string> => {
       mappings[`socialLink${x}}`] = `Special Footer ${x} - Title`
       for (let y = 1; y <= 8; y++) {
         mappings[`socialLink${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - Url`
-        mappings[`sectionId${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - SectionId` // Added sectionId mapping
+        mappings[`sectionId${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - SectionId`
         mappings[`image${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - Image`
         mappings[`LinkName${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - LinkName`
       }
@@ -145,7 +146,7 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
             // Determine if this is an internal link (has sectionId) or external link (has URL)
             const isInternal = Boolean(sectionId && sectionId.trim())
             const href = isInternal 
-              ? `#${sectionId}` // Use sectionId for internal links
+              ? `#${sectionId}`
               : url?.startsWith("http") 
                 ? url 
                 : url ? `https://${url}` : "#"
@@ -168,10 +169,6 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
     return columns
   }, [Special])
 
-  
-
-
-
   return (
     <motion.footer
       ref={ref}
@@ -186,12 +183,12 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
     >
       <div className="container px-4 md:px-6">
         <div className={`grid gap-8 ${dynamicColumns.length > 0 ? `md:grid-cols-2 lg:grid-cols-${Math.min(dynamicColumns.length + 1, 4)}` : 'md:grid-cols-1'}`}>
-          <motion.div
+          <FadeIn
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
             className="space-y-4"
           >
             <div className="flex items-center gap-2">
-              <Image src={logo} alt="Idigitek Solutions Logo" width={100} height={100} className="rounded" />
+              <Image src={logo} alt="Idigitek Solutions Logo" priority={true} width={100} height={100} className="rounded" />
             </div>
             <p className="text-sm font-body text-wtheme-text">{contentItems[0]?.description || "No description available"}</p>
             <div className="flex space-x-4">
@@ -201,30 +198,34 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
                 <span className="text-sm font-body text-destructive"></span>
               ) : dynamicFallbackSocialMedia.length > 0 ? (
                 dynamicFallbackSocialMedia.map((social, index) => (
-                  <motion.div
+                  <FadeIn
                     key={`${social.label}-${index}`}
-                    whileHover={{ scale: 1.2, color: "var(--website-theme-primary)" }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    <Link href={social.socialLink} target="_blank" className="text-wtheme-text hover:text-wtheme-hover">
-                        {social.image ? 
-                            <Image 
-                              src={social.image} 
-                              alt={social.label} 
-                              width={20} 
-                              height={20} 
-                              className="w-5 h-5 object-contain m-1 "
-                            /> : null
-                          }                      
+                    <Link 
+                      href={social.socialLink} 
+                      className="text-wtheme-text hover:text-wtheme-hover"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {social.image ? 
+                        <Image 
+                          src={social.image} 
+                          alt={social.label} 
+                          width={20} 
+                          priority={true}
+                          height={20} 
+                          className="w-5 h-5 object-contain m-1 "
+                        /> : null
+                      }                      
                       <span className="sr-only">{social.label}</span>
                     </Link>
-                  </motion.div>
+                  </FadeIn>
                 ))
               ) : (
-                <span className="text-sm font-body text-wtheme-text">No social links available</span>
+                <span className="text-sm font-body text-wtheme-text"></span>
               )}
             </div>
-          </motion.div>
+          </FadeIn>
 
           {/* Dynamic columns rendering with enhanced props */}
           {dynamicColumns.map((column, index) => (
@@ -245,17 +246,16 @@ export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subN
  * Enhanced Footer column component with section scrolling support
  */
 function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { scrollToSection: (sectionId: string) => void }) {
-  const handleLinkClick = (link: FooterColumnProps['links'][0]) => {
+  const handleLinkClick = (link: FooterColumnProps['links'][0], e: React.MouseEvent) => {
     if (link.isInternal && link.sectionId) {
       // Prevent default link behavior for internal links
+      e.preventDefault()
       scrollToSection(link.sectionId)
     }
-    // For external links, let the default Link behavior handle it
   }
 
-
   return (
-    <motion.div
+    <FadeIn
       variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
       className="space-y-4"
     >
@@ -270,7 +270,7 @@ function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { s
             >
               {link.isInternal ? (
                 <button
-                  onClick={() => handleLinkClick(link)}
+                  onClick={(e) => handleLinkClick(link, e)}
                   className="font-body text-wtheme-text hover:text-wtheme-hover flex items-center gap-2 text-left"
                 >
                   {link.image && (
@@ -278,7 +278,8 @@ function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { s
                       src={link.image} 
                       alt={link.label} 
                       width={16} 
-                      height={16} 
+                      height={16}
+                      priority={true} 
                       className="w-4 h-4 object-contain"
                     />
                   )}
@@ -287,15 +288,17 @@ function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { s
               ) : (
                 <Link 
                   href={link.href} 
-                  target={link.href.startsWith('http') ? "_blank" : undefined}
                   className="font-body text-wtheme-text hover:text-wtheme-hover flex items-center gap-2"
+                  target="_self"
+                  rel="noopener noreferrer"
                 >
                   {link.image && (
                     <Image 
                       src={link.image} 
                       alt={link.label} 
                       width={16} 
-                      height={16} 
+                      height={16}
+                      priority={true} 
                       className="w-4 h-4 object-contain"
                     />
                   )}
@@ -305,9 +308,9 @@ function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { s
             </motion.li>
           ))
         ) : (
-          <li className="text-sm font-body text-wtheme-text">No links available</li>
+          <li className="text-sm font-body text-wtheme-text"></li>
         )}
       </ul>
-    </motion.div>
+    </FadeIn>
   )
 }

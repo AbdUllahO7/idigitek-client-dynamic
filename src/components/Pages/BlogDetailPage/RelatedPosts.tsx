@@ -1,5 +1,4 @@
 import React from "react"
-import { motion } from "framer-motion"
 import { RelatedPostCard } from "./RelatedPostCard"
 import { FadeIn } from "@/utils/lightweightAnimations"
 

@@ -3,10 +3,10 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { motion } from "@/components/ui/framer-motion"
+import { useScrollAnimation } from "@/hooks/use-scroll-animation"
 import { useSectionContent } from "@/hooks/useSectionContent"
 import { useScrollToSection } from "@/hooks/use-scroll-to-section"
-import { FadeIn } from "@/utils/lightweightAnimations"
-import { useOptimizedIntersection } from "@/hooks/useIntersectionObserver"
 
 // Types
 interface ContentItem {
@@ -61,7 +61,7 @@ const generateFieldMappings = (isSpecial: boolean): Record<string, string> => {
       mappings[`socialLink${x}}`] = `Special Footer ${x} - Title`
       for (let y = 1; y <= 8; y++) {
         mappings[`socialLink${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - Url`
-        mappings[`sectionId${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - SectionId`
+        mappings[`sectionId${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - SectionId` // Added sectionId mapping
         mappings[`image${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - Image`
         mappings[`LinkName${x}_${y}`] = `Special Footer ${x} - SocialLink ${y} - LinkName`
       }
@@ -80,11 +80,7 @@ const generateFieldMappings = (isSpecial: boolean): Record<string, string> => {
  * Main Footer component
  */
 export default function Footer({ sectionId, logo = "/assets/iDIGITEK.webp", subName, websiteId }: FooterProps) {
-const { ref } = useOptimizedIntersection({
-  threshold: 0.2,
-  triggerOnce: true,
-  rootMargin: '100px'
-})
+  const { ref, isInView } = useScrollAnimation()
   const scrollToSection = useScrollToSection()
 
   // Field mappings
@@ -149,7 +145,7 @@ const { ref } = useOptimizedIntersection({
             // Determine if this is an internal link (has sectionId) or external link (has URL)
             const isInternal = Boolean(sectionId && sectionId.trim())
             const href = isInternal 
-              ? `#${sectionId}`
+              ? `#${sectionId}` // Use sectionId for internal links
               : url?.startsWith("http") 
                 ? url 
                 : url ? `https://${url}` : "#"
@@ -172,17 +168,30 @@ const { ref } = useOptimizedIntersection({
     return columns
   }, [Special])
 
+  
+
+
+
   return (
-    <div
-      className="w-full opacity-1 border-t border-wtheme-border/50 bg-wtheme-background py-12 md:py-16"
+    <motion.footer
+      ref={ref}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={{
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+      }}
+      id="contact"
+      className="w-full border-t border-wtheme-border/50 bg-wtheme-background py-12 md:py-16"
     >
       <div className="container px-4 md:px-6">
         <div className={`grid gap-8 ${dynamicColumns.length > 0 ? `md:grid-cols-2 lg:grid-cols-${Math.min(dynamicColumns.length + 1, 4)}` : 'md:grid-cols-1'}`}>
-          <FadeIn
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
             className="space-y-4"
           >
             <div className="flex items-center gap-2">
-              <Image src={logo} alt="Idigitek Solutions Logo" priority={true} width={100} height={100} className="rounded" />
+              <Image src={logo} alt="Idigitek Solutions Logo" width={100} height={100} className="rounded" />
             </div>
             <p className="text-sm font-body text-wtheme-text">{contentItems[0]?.description || "No description available"}</p>
             <div className="flex space-x-4">
@@ -192,34 +201,31 @@ const { ref } = useOptimizedIntersection({
                 <span className="text-sm font-body text-destructive"></span>
               ) : dynamicFallbackSocialMedia.length > 0 ? (
                 dynamicFallbackSocialMedia.map((social, index) => (
-                  <FadeIn
+                  <motion.div
                     key={`${social.label}-${index}`}
+                    whileHover={{ scale: 1.2, color: "var(--website-theme-primary)" }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    <Link 
-                      href={social.socialLink} 
-                      className="text-wtheme-text hover:text-wtheme-hover"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {social.image ? 
-                        <Image 
-                          src={social.image} 
-                          alt={social.label} 
-                          width={20} 
-                          priority={true}
-                          height={20} 
-                          className="w-5 h-5 object-contain m-1 "
-                        /> : null
-                      }                      
+                    <Link href={social.socialLink} className="text-wtheme-text hover:text-wtheme-hover">
+                        {social.image ? 
+                            <Image 
+                              src={social.image} 
+                              alt={social.label} 
+                              width={20} 
+                          
+                              height={20} 
+                              className="w-5 h-5 object-contain m-1 "
+                            /> : null
+                          }                      
                       <span className="sr-only">{social.label}</span>
                     </Link>
-                  </FadeIn>
+                  </motion.div>
                 ))
               ) : (
                 <span className="text-sm font-body text-wtheme-text"></span>
               )}
             </div>
-          </FadeIn>
+          </motion.div>
 
           {/* Dynamic columns rendering with enhanced props */}
           {dynamicColumns.map((column, index) => (
@@ -232,7 +238,7 @@ const { ref } = useOptimizedIntersection({
           ))}
         </div>
       </div>
-    </div>
+    </motion.footer>
   )
 }
 
@@ -240,28 +246,31 @@ const { ref } = useOptimizedIntersection({
  * Enhanced Footer column component with section scrolling support
  */
 function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { scrollToSection: (sectionId: string) => void }) {
-  const handleLinkClick = (link: FooterColumnProps['links'][0], e: React.MouseEvent) => {
+  const handleLinkClick = (link: FooterColumnProps['links'][0]) => {
     if (link.isInternal && link.sectionId) {
       // Prevent default link behavior for internal links
-      e.preventDefault()
       scrollToSection(link.sectionId)
     }
   }
 
+
   return (
-    <FadeIn
+    <motion.div
+      variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
       className="space-y-4"
     >
       <h3 className="text-lg font-heading text-primary">{title}</h3>
       <ul className="space-y-2">
         {links.length > 0 ? (
           links.map((link) => (
-            <li
+            <motion.li
               key={link.label}
+              whileHover={{ x: 5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               {link.isInternal ? (
                 <button
-                  onClick={(e) => handleLinkClick(link, e)}
+                  onClick={() => handleLinkClick(link)}
                   className="font-body text-wtheme-text hover:text-wtheme-hover flex items-center gap-2 text-left"
                 >
                   {link.image && (
@@ -269,8 +278,7 @@ function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { s
                       src={link.image} 
                       alt={link.label} 
                       width={16} 
-                      height={16}
-                      priority={true} 
+                      height={16} 
                       className="w-4 h-4 object-contain"
                     />
                   )}
@@ -280,28 +288,25 @@ function FooterColumn({ title, links, scrollToSection }: FooterColumnProps & { s
                 <Link 
                   href={link.href} 
                   className="font-body text-wtheme-text hover:text-wtheme-hover flex items-center gap-2"
-                  target="_self"
-                  rel="noopener noreferrer"
                 >
                   {link.image && (
                     <Image 
                       src={link.image} 
                       alt={link.label} 
                       width={16} 
-                      height={16}
-                      priority={true} 
+                      height={16} 
                       className="w-4 h-4 object-contain"
                     />
                   )}
                   {link.label}
                 </Link>
               )}
-            </li>
+            </motion.li>
           ))
         ) : (
           <li className="text-sm font-body text-wtheme-text"></li>
         )}
       </ul>
-    </FadeIn>
+    </motion.div>
   )
 }

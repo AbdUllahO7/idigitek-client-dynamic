@@ -3,11 +3,9 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useScrollAnimation } from "@/hooks/use-scroll-animation"
 import { useSectionContent } from "@/hooks/useSectionContent"
 import { useScrollToSection } from "@/hooks/use-scroll-to-section"
 import { FadeIn } from "@/utils/lightweightAnimations"
-import { OptimizedFadeIn } from "@/utils/OptimizedAnimations"
 import { useOptimizedIntersection } from "@/hooks/useIntersectionObserver"
 
 // Types

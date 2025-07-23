@@ -1,177 +1,97 @@
+// src/components/Blog/BlogSection.tsx
 "use client";
 
-import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { useRef } from "react";
+import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { useLanguage } from "@/contexts/language-context";
-import { ButtonSectionLink } from "@/components/SectionLinks";
-import { formatDate } from "@/lib/utils";
-import { OptimizedFadeIn } from "@/utils/OptimizedAnimations";
-import React, { memo, useMemo } from "react";
-import { useOptimizedIntersection } from "@/hooks/useIntersectionObserver";
+import { useSectionLogic } from "@/hooks/useSectionLogic";
+import { useSectionContent } from "@/hooks/useSectionContent";
+import { BlogCarousel } from "./BlogCarousel";
+import { FadeIn } from "@/utils/lightweightAnimations";
 
-interface Post {
-  id: string;
-  image: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  date: string;
-  color: string;
-  order?: number;
-  isMain?: boolean;
-}
-
-interface BlogCardProps {
-  post: Post;
-  index: number;
-  isRTL: boolean;
-  className?: string;
-}
-
-const OptimizedBlogCard = memo<BlogCardProps>(({ post, index, isRTL, className = "" }) => {
+export default function BlogSection({ websiteId, sectionId }: { websiteId: string; sectionId: string }) {
+  const {  isInView } = useScrollAnimation();
   const { direction } = useLanguage();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // استخدام intersection observer محسّن
-  const { ref, isInView } = useOptimizedIntersection({
-    threshold: 0.1,
-    triggerOnce: true,
-    rootMargin: '100px'
+  const {
+    content,
+  } = useSectionLogic({
+    sectionId,
+    websiteId,
+    itemsKey: "blogs",
   });
 
-  // حساب التاريخ مرة واحدة
-  const formattedDate = useMemo(() => {
-    try {
-      return formatDate(new Date(post.date), "MMM d, yyyy");
-    } catch (error) {
-      return post.date;
-    }
-  }, [post.date]);
+  const {
+    contentItems,
+  } = useSectionContent({
+    sectionId,
+    websiteId,
+    fieldMappings: {
+      id: "_id",
+      image: "Background Image",
+      title: "Title",
+      excerpt: "Description",
+      content: "Content",
+      category: "Category",
+      date: "Date",
+      color: () => "theme-gradient",
+    },
+  });
 
-  // حساب النص مرة واحدة
-  const readMoreText = useMemo(() => {
-    return direction === "ltr" ? "Read more" : "اقرأ المزيد";
-  }, [direction]);
-
-  // تحسين معالجة الصور
-  const handleImageError = useMemo(() => {
-    return (e: React.SyntheticEvent<HTMLImageElement>) => {
-      const target = e.target as HTMLImageElement;
-      if (target.src !== "/placeholder.svg") {
-        target.src = "/placeholder.svg";
-      }
-    };
-  }, []);
+  const isRTL = direction === "rtl";
 
   return (
-    <OptimizedFadeIn
-      ref={ref}
-      className={`group flex flex-col h-full rounded-2xl border border-wtheme-border/40 bg-wtheme-background/80 backdrop-blur-sm shadow-lg shadow-primary/5 overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 ${className}`}
-      delay={index * 100}
-      duration={600}
-      direction="up"
-      distance={30}
-    >
-      {/* Image Container - محسّن للأداء */}
-      <div className="relative w-full h-40 sm:h-48 md:h-56 overflow-hidden">
-        {/* Category Badge */}
-        <div className={`absolute top-3 md:top-4 ${isRTL ? "right-3 md:right-4" : "left-3 md:left-4"} z-10`}>
-          <span className="inline-block px-2 py-0.5 md:px-3 md:py-1 text-xs font-accent font-medium rounded-full bg-primary text-white backdrop-blur-sm shadow-sm">
-            {post.category || "No Category"}
-          </span>
-        </div>
+    <section className="relative w-full overflow-hidden py-16 md:py-24 bg-wtheme-background" id="blog" dir={direction}>
+      {/* Modern layered background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-wtheme-background via-wtheme-background/95 to-wtheme-background/90 z-0" />
 
-        {/* Image with optimized loading */}
-        <div className="relative w-full h-full group-hover:scale-[1.02] transition-transform duration-700 ease-out">
-          <Image
-            src={post.image || "/placeholder.svg"}
-            alt={post.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover"
-            onError={handleImageError}
-            loading={index < 3 ? "eager" : "lazy"} // تحميل أول 3 صور فقط eager
-            quality={index < 3 ? 85 : 75} // جودة أقل للصور غير المهمة
-          />
-          
-          {/* Hover Overlay - محسّن بـ CSS */}
-          <div 
-            className="absolute inset-0 bg-gradient-to-t from-wtheme-background/90 via-wtheme-background/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            style={{ willChange: 'opacity' }}
-          />
-        </div>
-      </div>
+      {/* Animated dot pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(var(--website-theme-primary),0.1)_1px,transparent_1px)] bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,black,transparent)] opacity-70" />
 
-      {/* Content Container */}
-      <div className="flex flex-col flex-1 p-4 md:p-5 lg:p-7">
-        <div className="space-y-3 md:space-y-4 flex-1">
-          {/* Title */}
-          <h3 
-            className={`font-heading font-bold text-base md:text-lg lg:text-xl leading-tight text-wtheme-text group-hover:text-wtheme-hover transition-colors duration-300 ${isRTL ? "text-right" : "text-left"}`}
-            title={post.title} // للـ accessibility
-          >
-            {post.title}
-          </h3>
-          
-          {/* Excerpt */}
-          <p 
-            className={`text-xs md:text-sm font-body text-wtheme-text line-clamp-2 ${isRTL ? "text-right" : "text-left"}`}
-            title={post.excerpt} // للـ accessibility
-          >
-            {post.excerpt}
-          </p>
-          
-          {/* Footer with Date and Button */}
-          <div className={`flex items-center justify-between pt-2 mt-auto ${isRTL ? "flex-row-reverse" : ""}`}>
-            <time 
-              className="text-xs font-body text-wtheme-text"
-              dateTime={post.date}
-            >
-              {formattedDate}
-            </time>
+      {/* Floating gradient orbs */}
+      <div className="absolute top-20 left-[10%] w-64 h-64 md:w-96 md:h-96 lg:w-[35rem] lg:h-[35rem] bg-secondary/10 rounded-full blur-3xl md:blur-[8rem] -z-10" />
+      <div className="absolute bottom-40 right-[5%] w-48 h-48 md:w-72 md:h-72 lg:w-[25rem] lg:h-[25rem] bg-accent/10 rounded-full blur-2xl md:blur-[7rem] -z-10" />
+
+      <div className="container relative px-4 md:px-6 mx-auto z-10" ref={containerRef}>
+        <FadeIn
+       
+        
+          className="flex flex-col items-center justify-center space-y-6 md:space-y-8 text-center mb-12 md:mb-20"
+        >
+          <span
             
-            <ButtonSectionLink
-              href={`/Pages/BlogDetailPage/${post.id}`}
-              className="group text-xs md:text-sm font-accent px-3 py-1.5 md:px-4 md:py-2 bg-primary text-white shadow hover:opacity-90 transition-opacity duration-300"
-              aria-label={`Read more about ${post.title}`}
+              className="inline-block mb-2 text-body  text-primary tracking-wider  uppercase"
             >
-              {readMoreText}
-              <ArrowRight
-                className={`${isRTL ? "mr-1 md:mr-2 rotate-180" : "ml-1 md:ml-2"} h-3 w-3 md:h-4 md:w-4 transition-transform duration-300 ${isRTL ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"}`}
-                aria-hidden="true"
-              />
-            </ButtonSectionLink>
+              {content.sectionLabel}
+          </span>
+          <div className="space-y-3 md:space-y-5 max-w-4xl">
+            <h2
+            
+              className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-heading font-bold tracking-tight text-wtheme-text"
+            >
+              {content.sectionTitle}
+            </h2>
+
+            <p
+           
+              className="text-base md:text-xl lg:text-2xl font-body text-wtheme-text max-w-3xl mx-auto"
+            >
+              {content.sectionDescription}
+            </p>
           </div>
+        </FadeIn>
+
+        {/* Blog Posts Carousel */}
+        <div className="mt-8 md:mt-12">
+          <BlogCarousel
+            posts={contentItems}
+            isInView={isInView}
+            containerRef={containerRef}
+            isRTL={isRTL}
+          />
         </div>
       </div>
-    </OptimizedFadeIn>
+    </section>
   );
-});
-
-OptimizedBlogCard.displayName = 'OptimizedBlogCard';
-
-export { OptimizedBlogCard };
-
-export const useBlogCardOptimizations = (posts: Post[]) => {
-  // تقسيم المقالات إلى مجموعات للتحميل التدريجي
-  const postGroups = useMemo(() => {
-    const chunkSize = 6; // تحميل 6 مقالات في كل مرة
-    const groups = [];
-    for (let i = 0; i < posts.length; i += chunkSize) {
-      groups.push(posts.slice(i, i + chunkSize));
-    }
-    return groups;
-  }, [posts]);
-
-  // معلومات التحسين
-  const optimizationInfo = useMemo(() => ({
-    totalPosts: posts.length,
-    groupsCount: postGroups.length,
-    averagePostsPerGroup: postGroups.length > 0 ? Math.round(posts.length / postGroups.length) : 0
-  }), [posts.length, postGroups.length]);
-
-  return {
-    postGroups,
-    optimizationInfo
-  };
-};
+}

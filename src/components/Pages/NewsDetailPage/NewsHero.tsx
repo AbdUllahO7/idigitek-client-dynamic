@@ -7,12 +7,7 @@ import { formatDate } from "@/lib/utils"
 import { FadeIn } from "@/utils/lightweightAnimations"
 import { useOptimizedIntersection } from "@/hooks/useIntersectionObserver"
 
-export function NewsHero({ news, t }) {
-  const { ref, isInView } = useOptimizedIntersection({
-  threshold: 0.2,
-  triggerOnce: true,
-  rootMargin: '100px'
-})
+export function NewsHero({ news }) {
 
   const { language } = useLanguage()
 

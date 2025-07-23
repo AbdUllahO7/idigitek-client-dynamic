@@ -1,9 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
 import React from "react";
 import { useLanguage } from "@/contexts/language-context";
 import { iconMap } from "@/utils/IconMap";
+import { FadeIn } from "@/utils/lightweightAnimations";
 
 interface FeatureCardProps {
   feature: {
@@ -25,10 +25,8 @@ export default function FeatureCard({ feature, isInView }: FeatureCardProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.6 }}
+    <FadeIn
+
       className="group flex items-start gap-4 rounded-xl p-1 transition-all duration-300 hover:bg-primary/5 "
     >
       <div
@@ -42,6 +40,6 @@ export default function FeatureCard({ feature, isInView }: FeatureCardProps) {
         </h3>
         <p className="font-body text-wtheme-text">{feature.excerpt}</p>
       </div>
-    </motion.div>
+    </FadeIn>
   );
 }

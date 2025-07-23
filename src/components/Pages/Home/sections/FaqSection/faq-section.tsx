@@ -1,20 +1,23 @@
 "use client"
 
-import React, { useState, useRef } from "react"
-import { motion, useInView } from "framer-motion"
+import React, { useState } from "react"
 import { useLanguage } from "@/contexts/language-context"
 
 // Import components
 import { FaqHeader } from "./FaqHeader"
 import { FaqItem } from "./FaqItem"
-import { translationsDataFaq } from "../../ConstData/ConstData"
 import { BackgroundEffects } from "./BackgroundEffects"
 import { useSectionLogic } from "@/hooks/useSectionLogic"
 import { useSectionContent } from "@/hooks/useSectionContent"
+import { FadeIn } from "@/utils/lightweightAnimations"
+import { useOptimizedIntersection } from "@/hooks/useIntersectionObserver"
 
 export default function FaqSection({ websiteId, sectionId }) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, amount: 0.1 })
+ const { ref, isInView } = useOptimizedIntersection({
+  threshold: 0.2,
+  triggerOnce: true,
+  rootMargin: '100px'
+})
   const [searchQuery, setSearchQuery] = useState("")
   const { t, direction, language } = useLanguage()
   
@@ -67,19 +70,17 @@ export default function FaqSection({ websiteId, sectionId }) {
     >
       <BackgroundEffects />
 
-      <div className="container relative z-10 px-4 md:px-6" ref={ref}>
+      <div className="container relative z-10 px-4 md:px-6" >
         <FaqHeader 
           content={content} 
-          isInView={isInView} 
+          isInView={true} 
           isRTL={isRTL} 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+        <FadeIn
+      
           className="max-w-4xl mx-auto"
         >
           <div className="grid gap-6">
@@ -93,7 +94,7 @@ export default function FaqSection({ websiteId, sectionId }) {
               />
             ))}
           </div>
-        </motion.div>
+        </FadeIn>
       </div>
     </section>
   )

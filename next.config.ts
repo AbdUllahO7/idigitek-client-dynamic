@@ -1,36 +1,83 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-   typescript: {
-    // ⚠️ Dangerously allow production builds to successfully complete even if
-    // your project has TypeScript errors.
+  // Your original working settings
+  typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
+  
   images: {
-    // Option 1: Use dangerouslyAllowSVG and unoptimized for all images
-    unoptimized: true, // This will bypass the Image Optimization API completely
-
-    // Option 2: If you still want some optimization but for any domain
-    // domains: ['*'], // This doesn't actually work, but shown for clarity
+    unoptimized: true, // Keep this - it was working!
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**', // Match any https hostname
+        hostname: '**',
         pathname: '/**',
       },
       {
         protocol: 'http',
-        hostname: '**', // Match any http hostname
+        hostname: '**',
         pathname: '/**',
       },
     ],
-    // Allow SVG images as they are sometimes blocked
     dangerouslyAllowSVG: true,
-    // Increase the content security policy if needed
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+
+  swcMinify: true, // Use SWC for faster builds
+  
+  compiler: {
+    // Remove console logs in production
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn']
+    } : false,
+  },
+
+
+  compress: true,
+  poweredByHeader: false,
+
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          // 🚀 FIX: Preconnect to Vercel scripts (fixes Lighthouse warning)
+          {
+            key: 'Link',
+            value: '<https://vercel-scripts.com>; rel=preconnect, <https://va.vercel-scripts.com>; rel=preconnect'
+          },
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+        ],
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
   },
 };
 

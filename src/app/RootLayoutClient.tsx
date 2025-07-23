@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/language-context"
 import { useWebSite } from "@/lib/webSite/use-WebSite"
 import { useSections } from "@/lib/section/use-Section"
 import { SectionSkeleton } from "@/components/Skeleton/SectionSkeleton"
+import { PreloadInitializer } from "@/components/PreloadInitializer"
 
 // Define TypeScript interfaces for data
 interface Website {
@@ -63,7 +64,6 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
   );
 
   // Get all section IDs
-  const allSectionIds: string[] = sectionsData?.data?.map((section: Section) => section._id) || [];
 
   // Find specific sections (Header and Footer)
   const headerSection = sectionsData?.data.find((section: Section) => section.subName === "Header");
@@ -89,27 +89,27 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
     return <div>No websites found.</div>;
   }
 
-  return (
-    <div dir={direction}>
-      <NavigationTracker />
-      
-      {/* 🔧 FIXED: Now passing sectionsData and websiteId to Header so navigation can work */}
-      {headerSectionId && (
-        <Header 
-          sectionId={headerSectionId}
-          websiteId={websiteId} 
-          logo={websites[0].logo} 
-          sectionsData={sectionsData?.data || []} 
-        />
-      )}
-          
-      {children}
-      
-      <Footer 
+return (
+  <div dir={direction}>
+    <PreloadInitializer />
+    <NavigationTracker />
+    
+    {headerSectionId && (
+      <Header 
+        sectionId={headerSectionId}
         websiteId={websiteId} 
         logo={websites[0].logo} 
-        sectionId={footerSectionId} 
+        sectionsData={sectionsData?.data || []} 
       />
-    </div>
-  );
+    )}
+        
+    {children}
+    
+    <Footer 
+      websiteId={websiteId} 
+      logo={websites[0].logo} 
+      sectionId={footerSectionId} 
+    />
+  </div>
+);
 }

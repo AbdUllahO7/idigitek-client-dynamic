@@ -5,11 +5,11 @@ import { useRef } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ShoppingCart, Car, Code, Loader2 } from "lucide-react"
-import { useInView } from "framer-motion"
-import { motion } from "framer-motion"
 import { ButtonSectionLink } from "@/components/SectionLinks"
 import { useSectionLogic } from "@/hooks/useSectionLogic"
 import { useSectionContent } from "@/hooks/useSectionContent"
+import { FadeIn } from "@/utils/lightweightAnimations"
+import { useOptimizedIntersection } from "@/hooks/useIntersectionObserver"
 
 // Define interfaces for type safety
 interface ServiceItem {
@@ -57,9 +57,11 @@ const DynamicIcon: React.FC<DynamicIconProps> = ({ name, className = "" }) => {
 };
 
 export default function ServicesSection({ sectionId, websiteId }: ServicesSectionProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: false, amount: 0.1 });
-
+const { ref, isInView } = useOptimizedIntersection({
+  threshold: 0.2,
+  triggerOnce: true,
+  rootMargin: '100px'
+})
   const { content, isLoading: sectionLoading, error: sectionError, refetch, direction } = useSectionLogic({
     sectionId,
     websiteId,
@@ -103,30 +105,24 @@ export default function ServicesSection({ sectionId, websiteId }: ServicesSectio
       
       <div className="container px-4 md:px-6 relative">
         <div ref={ref} className="mb-16 text-center">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5 }}
+          <span
+         
             className="inline-block mb-2 text-body text-primary tracking-wider uppercase"
           >
             {content.sectionLabel || "Services"}
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+          </span>
+          <h2
+           
             className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight mb-4 text-wtheme-text"
           >
             {content.sectionTitle || "Our Services"}
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+          </h2>
+          <p
+          
             className="max-w-2xl mx-auto text-wtheme-text/70 text-lg font-body"
           >
             {content.sectionDescription || "Discover our comprehensive range of services"}
-          </motion.p>
+          </p>
         </div>
 
         {isLoading ? (
@@ -161,7 +157,6 @@ export default function ServicesSection({ sectionId, websiteId }: ServicesSectio
 
 function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: false, amount: 0.2 });
   const isEven = index % 2 === 0;
   const isRTL = direction === "rtl";
   
@@ -192,30 +187,23 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
   };
 
   return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={{
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { duration: 0.6 } },
-      }}
+    <FadeIn
+      
       className="relative group"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 bg-theme-gradient opacity-5 rounded-2xl blur-xl group-hover:opacity-10 transition-opacity duration-500"></div>
       
       <div className={`flex flex-col ${getFlexDirection()} gap-8 items-center relative`}>
-        <motion.div
-          initial={{ opacity: 0, x: getAnimationDirection(true) }}
-          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: getAnimationDirection(true) }}
-          transition={{ duration: 0.7, delay: 0.2 }}
+        <FadeIn
+
           className="w-full lg:w-1/2"
         >
           <div className="relative overflow-hidden rounded-2xl shadow-theme-lg aspect-video border border-wtheme-border/20">
             <Image
               src={service.image || "/placeholder.svg"}
               alt={service.title || "Service image"}
+              priority={true}
               fill
               className="object-cover transition-transform duration-500 hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -225,12 +213,10 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
             {/* Overlay gradient using theme colors */}
             <div className="absolute inset-0 bg-theme-gradient-radial opacity-20 mix-blend-overlay"></div>
           </div>
-        </motion.div>
+        </FadeIn>
 
-        <motion.div
-          initial={{ opacity: 0, x: getAnimationDirection(false) }}
-          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: getAnimationDirection(false) }}
-          transition={{ duration: 0.7, delay: 0.4 }}
+        <FadeIn
+       
           className="w-full lg:w-1/2"
         >
           <div className="flex items-center gap-4 mb-4">
@@ -255,8 +241,8 @@ function ServiceCard({ service, index, direction, serviceDetails }: ServiceCardP
               className={`${isRTL ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4 transition-transform duration-300 ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} 
             />
           </ButtonSectionLink>
-        </motion.div>
+        </FadeIn>
       </div>
-    </motion.div>
+    </FadeIn>
   );
 }

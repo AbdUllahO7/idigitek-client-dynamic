@@ -1,15 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "@/components/ui/framer-motion"
 import { useScrollAnimation } from "@/hooks/use-scroll-animation"
 import { useLanguage } from "@/contexts/language-context"
 import { ContactHeader } from "./ContactHeader"
-import { translationsDataContact } from "../../ConstData/ConstData"
 import { ContactInfo } from "./ContactInfo"
 import { ContactForm } from "./ContactForm"
 import { useSectionLogic } from "@/hooks/useSectionLogic"
 import { useSectionContent } from "@/hooks/useSectionContent"
+import { FadeIn } from "@/utils/lightweightAnimations"
 
 export default function ContactSection({ websiteId, sectionId }: { websiteId: string; sectionId: string }) {
   const { ref, isInView } = useScrollAnimation()
@@ -66,26 +65,16 @@ export default function ContactSection({ websiteId, sectionId }: { websiteId: st
 
         <div className="mx-auto grid max-w-6xl gap-8 py-12 md:grid-cols-2">
           {/* Contact Information */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, x: isRTL ? 30 : -30 },
-              visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.2 } },
-            }}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
+          <FadeIn
+          
             className="space-y-8"
           >
             <ContactInfo content={InfoItemsSection[0]} isRTL={isRTL} />
-          </motion.div>
+          </FadeIn>
 
           {/* Contact Form */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, x: isRTL ? -30 : 30 },
-              visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.2 } },
-            }}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
+          <FadeIn
+       
             className="rounded-xl border border-wtheme-border bg-wtheme-background p-6 shadow-sm"
           >
             <ContactForm
@@ -97,7 +86,7 @@ export default function ContactSection({ websiteId, sectionId }: { websiteId: st
               handleSubmit={() => {
               }}
             />
-          </motion.div>
+          </FadeIn>
         </div>
       </div>
     </section>

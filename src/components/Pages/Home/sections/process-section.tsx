@@ -2,18 +2,22 @@
 
 import { useRef } from "react"
 import Image from "next/image"
-import { motion, useScroll, useTransform, useInView } from "framer-motion"
+import {  useScroll, useTransform } from "framer-motion"
 import { useLanguage } from "@/contexts/language-context"
-import { ProcessSteps } from "../ConstData/ConstData"
 import { useSectionLogic } from "@/hooks/useSectionLogic"
 import { useSectionContent } from "@/hooks/useSectionContent"
+import { FadeIn } from "@/utils/lightweightAnimations"
+import { useOptimizedIntersection } from "@/hooks/useIntersectionObserver"
 
 export default function ProcessSection({websiteId , sectionId}) {
   const { t,  language } = useLanguage()
   const sectionRef = useRef(null)
-  const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
   
-
+  const { isInView } = useOptimizedIntersection({
+    threshold: 0.2,
+    triggerOnce: true,
+    rootMargin: '100px'
+  })
     const { content, isLoading: sectionLoading, error: sectionError, refetch, direction, formatDate } = useSectionLogic({
       sectionId,
       websiteId,
@@ -66,37 +70,31 @@ export default function ProcessSection({websiteId , sectionId}) {
       <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-center opacity-5" />
       
       {/* Background decorative shapes */}
-      <motion.div 
-        style={{ y: yBgShape1, opacity: opacityBg }}
+      <FadeIn
         className="absolute right-0 top-20 w-96 h-96 rounded-full bg-secondary/10 blur-3xl"
       />
-      <motion.div 
-        style={{ y: yBgShape2, opacity: opacityBg }}
+      <FadeIn 
         className="absolute -left-20 bottom-40 w-80 h-80 rounded-full bg-accent/10 blur-3xl"
       />
 
       <div className="container relative z-10 px-4 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
+        <FadeIn
+       
           className="flex flex-col items-center justify-center space-y-4 text-center max-w-3xl mx-auto"
         >
-            <motion.span
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5 }}
+            <span
+            
                 className="inline-block mb-2 text-body  text-primary tracking-wider  uppercase"
               >
                 {content.sectionLabel}
-              </motion.span>
+              </span>
           <h2 className="text-4xl font-heading font-bold text-wtheme-text md:text-5xl lg:text-6xl bg-clip-text">
             {content.sectionTitle}
           </h2>
           <p className="text-lg font-body text-wtheme-text md:text-xl">
             {content.sectionDescription}
           </p>
-        </motion.div>
+        </FadeIn>
 
         <div className="mt-24 space-y-32 lg:space-y-0 lg:grid lg:grid-cols-1 lg:gap-16 xl:gap-24">
                   <div className="mt-24 space-y-32 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-16 xl:gap-24">
@@ -126,10 +124,8 @@ export default function ProcessSection({websiteId , sectionId}) {
         <div className="hidden lg:block absolute top-0 left-0 right-0 h-full pointer-events-none">
           <svg className="absolute top-[28%] left-0 w-full h-[60%]" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
             {/* Main zigzag path */}
-            <motion.path
-              initial={{ pathLength: 0 }}
-              animate={isInView ? { pathLength: 1 } : { pathLength: 0 }}
-              transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
+            <path
+            
               d="M0,20 L50,0 L50,33 L100,20 M0,80 L50,60 L50,100 L100,80"
               fill="none"
               stroke="url(#themeGradient)"
@@ -174,75 +170,30 @@ interface ProcessStepProps {
 function ProcessStep({ 
   step, 
   index, 
-  isInView, 
   isLast, 
   getCurrentText 
 }: ProcessStepProps) {
-  const stepRef = useRef(null)
-  const isStepInView = useInView(stepRef, { once: false, amount: 0.3 })
-  const { direction } = useLanguage()
   const isOdd = index % 2 === 1
   
-  // Different animations based on screen size
-  const mobileVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 0.6,
-        delay: index * 0.2 
-      } 
-    }
-  }
-  
-  const desktopVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 0.6,
-        delay: 0.3 + index * 0.2 
-      } 
-    }
-  }
 
   // Use primary colors consistently
   const accentColor = "bg-primary"
 
   return (
-    <motion.div
-      ref={stepRef}
+    <FadeIn
       className={`relative lg:flex lg:flex-col lg:h-full lg:justify-center ${isOdd ? 'lg:mt-64' : ''}`}
-      initial="hidden"
-      animate={isStepInView ? "visible" : "hidden"}
-      variants={{
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: {
-            staggerChildren: 0.1,
-          },
-        },
-      }}
+     
     >
       {/* Number indicator */}
-      <motion.div
-        variants={mobileVariants}
+      <FadeIn
         className={`z-20 flex items-center justify-center w-16 h-16 rounded-full ${accentColor} text-white text-xl font-heading font-bold   lg:absolute lg:-top-8 lg:left-1/2 lg:-translate-x-1/2 mb-6 mx-auto lg:mb-0`}
       >
         {step.number}
-      </motion.div>
+      </FadeIn>
       
       {/* Content Card */}
-      <motion.div
-        variants={desktopVariants}
-        whileHover={{ 
-          y: -5, 
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-          transition: { duration: 0.3 }
-        }}
+      <FadeIn
+  
         className="relative z-10 backdrop-blur-sm rounded-2xl border border-wtheme-border/50 bg-wtheme-background overflow-hidden shadow-xl"
       >
         {/* Image */}
@@ -253,6 +204,7 @@ function ProcessStep({
             alt={getCurrentText(step, 'title')}
             width={600}
             height={400}
+            priority={true}
             className="object-cover w-full h-full"
           />
           
@@ -277,17 +229,15 @@ function ProcessStep({
             <div className={`h-1.5 w-1.5 rounded-full bg-wtheme-text/30`}></div>
           </div>
         </div>
-      </motion.div>
+      </FadeIn>
       
       {/* Connecting line for mobile */}
       {!isLast && (
-        <motion.div
-          initial={{ height: 0 }}
-          animate={isStepInView ? { height: 60 } : { height: 0 }}
-          transition={{ duration: 1, delay: 0.5 }}
+        <FadeIn
+      
           className={`absolute -bottom-16 left-1/2 w-0.5 ${accentColor} -translate-x-1/2 lg:hidden`}
         />
       )}
-    </motion.div>
+    </FadeIn>
   )
 }

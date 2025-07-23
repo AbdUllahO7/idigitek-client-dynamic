@@ -12,7 +12,7 @@ interface FadeInProps {
   className?: string;
 }
 
-// 🚀 Lightweight FadeIn component (replaces motion.div)
+// 🚀 Lightweight FadeIn component (replaces OptimizedFadeIn)
 export function FadeIn({ children, delay = 0, duration = 600, className = "" }: FadeInProps) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

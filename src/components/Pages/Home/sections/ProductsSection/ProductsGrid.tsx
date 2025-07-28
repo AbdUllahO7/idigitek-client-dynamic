@@ -5,6 +5,7 @@ import React, { useState } from "react"
 import { X } from "lucide-react"
 import { ProductCard } from "./ProductCard";
 import { FadeIn } from "@/utils/lightweightAnimations";
+import { OptimizedFadeIn } from '../../../../../utils/OptimizedAnimations';
 
 interface Product {
   id: string;
@@ -117,7 +118,7 @@ export function ProductsGrid({ products, isInView, containerRef, isRTL }: Produc
               alt="Product detail"
               className="w-full h-full object-contain rounded-lg"
             />
-          </OptimizedFadeIn>
+          </OptimizedFadeIn >
         </div>
       )}
     </>

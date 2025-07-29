@@ -98,7 +98,7 @@ const { ref, isInView } = useOptimizedIntersection({
   return (
     <section 
       id="services" 
-      className="w-full pb-10 pt-10 text-wtheme-text overflow-hidden relative"
+      className="w-full pb-10 text-wtheme-text overflow-hidden relative"
     >
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-wtheme-background"></div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef } from "react"
+import { memo } from "react"
 import { FadeIn } from "@/utils/lightweightAnimations"
 
 interface ContactHeaderProps {
@@ -12,24 +12,34 @@ interface ContactHeaderProps {
   }
 }
 
-export const ContactHeader = forwardRef<HTMLDivElement, ContactHeaderProps>(
-  ({  content }) => {
+export const ContactHeader = memo(
+  ({ content }: ContactHeaderProps) => {
+    if (!content) {
+      return null;
+    }
+
     return (
       <FadeIn
-     
         className="flex flex-col items-center justify-center space-y-4 text-center"
       >
-        <span
-                 
-                  className="inline-block mb-2 text-body  text-primary tracking-wider  uppercase"
-                >
-                  {content.sectionLabel}
-        </span>
+        {content.sectionLabel && (
+          <span className="inline-block mb-2 text-body text-primary tracking-wider uppercase">
+            {content.sectionLabel}
+          </span>
+        )}
+        
         <div className="space-y-2">
-          <h2 className="text-3xl font-heading font-bold tracking-tighter sm:text-5xl text-wtheme-text">{content.sectionTitle}</h2>
-          <p className="max-w-[900px] text-wtheme-text font-body md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-            {content.sectionDescription}
-          </p>
+          {content.sectionTitle && (
+            <h2 className="text-3xl font-heading font-bold tracking-tighter sm:text-5xl text-wtheme-text">
+              {content.sectionTitle}
+            </h2>
+          )}
+          
+          {content.sectionDescription && (
+            <p className="max-w-[900px] text-wtheme-text font-body md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              {content.sectionDescription}
+            </p>
+          )}
         </div>
       </FadeIn>
     )

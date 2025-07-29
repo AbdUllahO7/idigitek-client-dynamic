@@ -10,7 +10,6 @@ import {
   Headphones,
   MessageSquare,
   User,
-  Calendar,
   Mail,
   Phone,
   MapPin,

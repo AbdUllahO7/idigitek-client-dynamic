@@ -1,9 +1,23 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMemo, useCallback } from 'react';
 import apiClient from '../api-client';
 import { CreateSectionRequest, Section, SectionItem, SectionOrderUpdateRequest, SectionQueryParams, SectionResponse, SubSection, SupportedLanguage, UpdateSectionRequest } from '@/api/types/section/section.type';
 import { useLanguage } from '@/contexts/language-context';
 import { getMultilingualDescription, getMultilingualName } from '@/utils/MultilingualManagement';
 
+// Query key factory - moved outside to prevent recreation
+const createQueryKeys = () => ({
+  all: ['sections'] as const,
+  lists: () => [...createQueryKeys().all, 'list'] as const,
+  list: (filters: Record<string, any>) => [...createQueryKeys().lists(), filters] as const,
+  details: () => [...createQueryKeys().all, 'detail'] as const,
+  detail: (id: string, options?: Record<string, any>) => [...createQueryKeys().details(), id, options] as const,
+  websites: () => [...createQueryKeys().all, 'website'] as const,
+  website: (websiteId: string, options?: Record<string, any>) => [...createQueryKeys().websites(), websiteId, options] as const,
+  complete: (id: string) => [...createQueryKeys().detail(id), 'complete'] as const,
+  allComplete: () => [...createQueryKeys().all, 'allComplete'] as const,
+  websiteComplete: (websiteId: string) => [...createQueryKeys().website(websiteId), 'complete'] as const,
+});
 
 // Base section hook
 export function useSections() {
@@ -11,37 +25,36 @@ export function useSections() {
   const endpoint = '/sections';
   const { language } = useLanguage();
 
+  // Memoized query keys factory
+  const queryKeys = useMemo(() => createQueryKeys(), []);
 
-  // Query keys
-  const sectionsKey = ['sections'];
-  const sectionKey = (id: string) => [...sectionsKey, id];
-  const completeDataKey = (id: string) => [...sectionKey(id), 'complete'];
-  const allCompleteDataKey = [...sectionsKey, 'allComplete'];
-  const websiteSectionsKey = (websiteId: string) => [...sectionsKey, 'website', websiteId];
-  const websiteSectionsCompleteKey = (websiteId: string) => [...websiteSectionsKey(websiteId), 'complete'];
-
-  // Helper function to get section name by current language using utility
-  const getSectionNameByLanguage = (section: Section): string => {
+  // Memoized helper functions to prevent recreation on every render
+  const getSectionNameByLanguage = useCallback((section: Section): string => {
     if (section.displayName) {
       return section.displayName; // Use server-provided display name
     }
     
     return getMultilingualName(section, language as SupportedLanguage);
-  };
+  }, [language]);
 
-  // Helper function to get section description by current language using utility
-  const getSectionDescriptionByLanguage = (section: Section): string => {
+  const getSectionDescriptionByLanguage = useCallback((section: Section): string => {
     if (section.displayDescription) {
       return section.displayDescription; // Use server-provided display description
     }
     
     return getMultilingualDescription(section, language as SupportedLanguage);
-  };
+  }, [language]);
+
+  // Optimized error handler
+  const handleError = useCallback((error: any, context: string) => {
+    console.error(`Error ${context}:`, error);
+    throw error;
+  }, []);
 
   // Get all sections (optionally with section items count)
   const useGetAll = (includeItemsCount = false, activeOnly = true) => {
     return useQuery({
-      queryKey: [...sectionsKey, { includeItemsCount, activeOnly, language }],
+      queryKey: queryKeys.list({ includeItemsCount, activeOnly, language }),
       queryFn: async (): Promise<SectionResponse> => {
         try {
           const params: SectionQueryParams = { 
@@ -53,17 +66,18 @@ export function useSections() {
           const { data } = await apiClient.get(endpoint, { params });
           return data;
         } catch (error: any) {
-          console.error("Error fetching sections:", error);
-          throw error;
+          handleError(error, "fetching sections");
         }
       },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
     });
   };
 
   // Get a single section by ID (optionally with section items)
   const useGetById = (id: string, includeItems = false) => {
     return useQuery({
-      queryKey: [...sectionKey(id), { includeItems, language }],
+      queryKey: queryKeys.detail(id, { includeItems, language }),
       queryFn: async (): Promise<SectionResponse> => {
         try {
           const params: SectionQueryParams = { 
@@ -74,11 +88,12 @@ export function useSections() {
           const { data } = await apiClient.get(`${endpoint}/${id}`, { params });
           return data;
         } catch (error: any) {
-          console.error(`Error fetching section ${id}:`, error);
-          throw error;
+          handleError(error, `fetching section ${id}`);
         }
       },
       enabled: !!id && id !== 'undefined' && id !== 'null',
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
     });
   };
 
@@ -89,7 +104,7 @@ export function useSections() {
     enabled = true
   ) => {
     return useQuery({
-      queryKey: [...websiteSectionsKey(websiteId), { includeInactive, language }],
+      queryKey: queryKeys.website(websiteId, { includeInactive, language }),
       queryFn: async (): Promise<SectionResponse> => {
         try {
           const params: SectionQueryParams = {
@@ -101,14 +116,51 @@ export function useSections() {
           const { data } = await apiClient.get(`${endpoint}/website/${websiteId}`, { params });
           return data;
         } catch (error: any) {
-          console.error(`Error fetching sections for website ${websiteId}:`, error);
-          throw error;
+          handleError(error, `fetching sections for website ${websiteId}`);
         }
       },
       enabled: !!websiteId && enabled && websiteId !== 'undefined' && websiteId !== 'null',
       staleTime: 0,
+      gcTime: 5 * 60 * 1000, // 5 minutes
     });
   };
+
+  // Optimized cache invalidation helper
+  const invalidateWebsiteQueries = useCallback((websiteId: string) => {
+    const websiteIdStr = websiteId.toString();
+    queryClient.invalidateQueries({ 
+      queryKey: queryKeys.website(websiteIdStr)
+    });
+    queryClient.invalidateQueries({ 
+      queryKey: queryKeys.websiteComplete(websiteIdStr)
+    });
+  }, [queryClient, queryKeys]);
+
+  // Optimized cache invalidation for section updates
+  const invalidateSectionQueries = useCallback((sectionId?: string, websiteId?: string) => {
+    // Batch invalidations for better performance
+    const invalidations = [
+      { queryKey: queryKeys.all },
+      { queryKey: queryKeys.allComplete() }
+    ];
+
+    if (sectionId) {
+      invalidations.push(
+        { queryKey: queryKeys.detail(sectionId) },
+        { queryKey: queryKeys.complete(sectionId) }
+      );
+    }
+
+    // Execute all invalidations
+    invalidations.forEach(invalidation => {
+      queryClient.invalidateQueries(invalidation);
+    });
+
+    // Handle website-specific invalidations
+    if (websiteId) {
+      invalidateWebsiteQueries(websiteId);
+    }
+  }, [queryClient, queryKeys, invalidateWebsiteQueries]);
 
   // Create a new section with multilingual support
   const useCreate = () => {
@@ -131,20 +183,13 @@ export function useSections() {
         }
       },
       onSuccess: (data) => {
-        // Invalidate all section queries to ensure fresh data
-        queryClient.invalidateQueries({ queryKey: sectionsKey });
+        // Optimistic update for better UX
         if (data._id) {
-          queryClient.setQueryData(sectionKey(data._id), data);
+          queryClient.setQueryData(queryKeys.detail(data._id), data);
         }
-        // Also invalidate website-specific queries if the section has a WebSiteId
-        if (data.WebSiteId) {
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsKey(data.WebSiteId.toString()) 
-          });
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsCompleteKey(data.WebSiteId.toString()) 
-          });
-        }
+        
+        // Batch invalidations
+        invalidateSectionQueries(data._id, data.WebSiteId?.toString());
       },
     });
   };
@@ -170,20 +215,11 @@ export function useSections() {
         }
       },
       onSuccess: (data, { id }) => {
-        // Update cached data and invalidate queries
-        queryClient.setQueryData(sectionKey(id), data);
-        queryClient.invalidateQueries({ queryKey: sectionsKey });
-        queryClient.invalidateQueries({ queryKey: completeDataKey(id) });
-        queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        // Optimistic update
+        queryClient.setQueryData(queryKeys.detail(id), data);
         
-        if (data.WebSiteId) {
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsKey(data.WebSiteId.toString()) 
-          });
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsCompleteKey(data.WebSiteId.toString()) 
-          });
-        }
+        // Batch invalidations
+        invalidateSectionQueries(id, data.WebSiteId?.toString());
       },
     });
   };
@@ -196,35 +232,35 @@ export function useSections() {
           const { data: responseData } = await apiClient.patch(`${endpoint}/${id}/status`, { isActive });
           return responseData;
         } catch (error: any) {
-          console.error(`Error toggling section ${id} active status:`, error);
-          throw error;
+          handleError(error, `toggling section ${id} active status`);
         }
       },
       onSuccess: (data, { id }) => {
-        queryClient.setQueryData(sectionKey(id), data);
-        queryClient.invalidateQueries({ queryKey: sectionsKey });
-        queryClient.invalidateQueries({ queryKey: completeDataKey(id) });
-        queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        // Optimistic update
+        queryClient.setQueryData(queryKeys.detail(id), data);
         
-        if (data.WebSiteId) {
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsKey(data.WebSiteId.toString()) 
-          });
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsCompleteKey(data.WebSiteId.toString()) 
-          });
-        }
+        // Batch invalidations
+        invalidateSectionQueries(id, data.WebSiteId?.toString());
       },
     });
   };
 
-  // Delete a section
+  // Delete a section - optimized to avoid unnecessary GET request
   const useDelete = (hardDelete: boolean = false) => {
     return useMutation({
       mutationFn: async (id: string): Promise<{ websiteId?: string }> => {
         try {
-          const { data: section } = await apiClient.get(`${endpoint}/${id}`);
-          const websiteId = section?.data?.WebSiteId;
+          // Get cached section data first to avoid unnecessary API call
+          const cachedSection = queryClient.getQueryData(queryKeys.detail(id));
+          let websiteId: string | undefined;
+          
+          if (cachedSection) {
+            websiteId = (cachedSection as any)?.data?.WebSiteId || (cachedSection as any)?.WebSiteId;
+          } else {
+            // Only fetch if not in cache
+            const { data: section } = await apiClient.get(`${endpoint}/${id}`);
+            websiteId = section?.data?.WebSiteId;
+          }
           
           await apiClient.delete(`${endpoint}/${id}`, {
             params: { hardDelete }
@@ -232,24 +268,16 @@ export function useSections() {
           
           return { websiteId };
         } catch (error) {
-          console.error(`Error deleting section ${id}:`, error);
-          throw error;
+          handleError(error, `deleting section ${id}`);
         }
       },
       onSuccess: ({ websiteId }, id) => {
-        queryClient.removeQueries({ queryKey: sectionKey(id) });
-        queryClient.removeQueries({ queryKey: completeDataKey(id) });
-        queryClient.invalidateQueries({ queryKey: sectionsKey });
-        queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        // Remove specific queries first
+        queryClient.removeQueries({ queryKey: queryKeys.detail(id) });
+        queryClient.removeQueries({ queryKey: queryKeys.complete(id) });
         
-        if (websiteId) {
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsKey(websiteId.toString()) 
-          });
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsCompleteKey(websiteId.toString()) 
-          });
-        }
+        // Then invalidate related queries
+        invalidateSectionQueries(undefined, websiteId);
       },
     });
   };
@@ -262,37 +290,38 @@ export function useSections() {
           const { data } = await apiClient.patch(`${endpoint}/order`, orderData);
           return data;
         } catch (error: any) {
-          console.error('Error updating section order:', error);
-          throw error;
+          handleError(error, 'updating section order');
         }
       },
       onSuccess: (updatedSections) => {
-        // Invalidate all section queries to ensure fresh data
-        queryClient.invalidateQueries({ queryKey: sectionsKey });
-        queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        // Batch cache updates for better performance
+        const websiteIds = new Set<string>();
         
-        // Update individual section cache and invalidate website-specific queries
         updatedSections.forEach(section => {
           if (section._id) {
-            queryClient.setQueryData(sectionKey(section._id), section);
+            queryClient.setQueryData(queryKeys.detail(section._id), section);
           }
           if (section.WebSiteId) {
-            queryClient.invalidateQueries({ 
-              queryKey: websiteSectionsKey(section.WebSiteId.toString()) 
-            });
-            queryClient.invalidateQueries({ 
-              queryKey: websiteSectionsCompleteKey(section.WebSiteId.toString()) 
-            });
+            websiteIds.add(section.WebSiteId.toString());
           }
+        });
+
+        // Invalidate general queries
+        queryClient.invalidateQueries({ queryKey: queryKeys.all });
+        queryClient.invalidateQueries({ queryKey: queryKeys.allComplete() });
+        
+        // Invalidate website-specific queries
+        websiteIds.forEach(websiteId => {
+          invalidateWebsiteQueries(websiteId);
         });
       },
     });
   };
 
   // Add a manual function to clear all section-related cache for a user
-  const clearUserSectionsCache = () => {
-    queryClient.invalidateQueries({ queryKey: sectionsKey });
-  };
+  const clearUserSectionsCache = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: queryKeys.all });
+  }, [queryClient, queryKeys]);
 
   // Return all hooks, including helper functions
   return {
@@ -311,4 +340,3 @@ export function useSections() {
     getSectionDescriptionByLanguage,
   };
 }
-

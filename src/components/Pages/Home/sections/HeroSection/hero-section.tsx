@@ -134,7 +134,7 @@ export default function HeroSection({ sectionId, websiteId }: HeroSectionProps) 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="container relative z-10 px-4 py-16 md:py-24 lg:py-10 h-[100vh]">
+      <div className="container relative z-10 px-4  md:py-24  h-[100vh]">
         {/* Main content area with arrows positioned outside */}
         <div className="relative flex items-center justify-center h-[500px] md:h-[600px] lg:h-[650px] w-full">
           {/* Left Arrow - Outside content */}

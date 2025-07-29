@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMemo, useCallback } from 'react';
 import apiClient from '../api-client';
 import { SubSection } from '@/api/types/subSection/subSection.type';
-
 
 // Define interface for activation options
 export interface SubSectionActivationOptions {
@@ -43,24 +43,55 @@ export interface ActivationResult {
   error?: string;
 }
 
+// Query key factory - optimized to prevent recreation
+const createSubSectionQueryKeys = () => ({
+  all: ['subsections'] as const,
+  lists: () => [...createSubSectionQueryKeys().all, 'list'] as const,
+  list: (filters: Record<string, any>) => [...createSubSectionQueryKeys().lists(), filters] as const,
+  details: () => [...createSubSectionQueryKeys().all, 'detail'] as const,
+  detail: (id: string | null, options?: Record<string, any>) => [...createSubSectionQueryKeys().details(), id, options] as const,
+  
+  // Section-related queries
+  sections: () => [...createSubSectionQueryKeys().all, 'section'] as const,
+  section: (sectionId: string, options?: Record<string, any>) => [...createSubSectionQueryKeys().sections(), sectionId, options] as const,
+  sectionMain: (sectionId: string) => [...createSubSectionQueryKeys().section(sectionId), 'main'] as const,
+  sectionComplete: (sectionId: string, options?: Record<string, any>) => [...createSubSectionQueryKeys().section(sectionId), 'complete', options] as const,
+  
+  // SectionItem-related queries
+  sectionItems: () => [...createSubSectionQueryKeys().all, 'sectionItem'] as const,
+  sectionItem: (sectionItemId: string, options?: Record<string, any>) => [...createSubSectionQueryKeys().sectionItems(), sectionItemId, options] as const,
+  sectionItemsBulk: (sectionItemIds: string[], options?: Record<string, any>) => [...createSubSectionQueryKeys().sectionItems(), 'bulk', sectionItemIds.join(','), options] as const,
+  
+  // Website-related queries
+  websites: () => [...createSubSectionQueryKeys().all, 'website'] as const,
+  website: (websiteId: string, options?: Record<string, any>) => [...createSubSectionQueryKeys().websites(), websiteId, options] as const,
+  websiteMain: (websiteId: string) => [...createSubSectionQueryKeys().website(websiteId), 'main'] as const,
+  websiteNavigation: (websiteId: string, options?: Record<string, any>) => [...createSubSectionQueryKeys().website(websiteId), 'navigation', options] as const,
+  websiteComplete: (websiteId: string, options?: Record<string, any>) => [...createSubSectionQueryKeys().website(websiteId), 'complete', options] as const,
+  
+  // Complete data queries
+  complete: (id: string, options?: Record<string, any>) => [...createSubSectionQueryKeys().detail(id), 'complete', options] as const,
+});
+
 // Base subsection hook
 export function useSubSections() {
   const queryClient = useQueryClient();
   const endpoint = '/subsections';
 
-  // Query keys
-  const subsectionsKey = ['subsections']; 
-  const subsectionKey = (id: string | null ) => [...subsectionsKey, id];
-  const subsectionBySectionItemKey = (sectionItemId: string) => [...subsectionsKey, 'sectionItem', sectionItemId];
-  const subsectionBySectionKey = (sectionId: string) => [...subsectionsKey, 'section', sectionId];
-  const mainSubsectionBySectionKey = (sectionId: string) => [...subsectionBySectionKey(sectionId), 'main'];
-  const completeSubsectionBySectionKey = (sectionId: string) => [...subsectionBySectionKey(sectionId), 'complete'];
-  const subsectionsByWebSiteKey = (websiteId: string) => [...subsectionsKey, 'website', websiteId];
-  const mainSubsectionByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'main'];
-  const navigationSubsectionByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'navigation'];
-  const sectionsKey = ['sections'];
-  const subsectionsBySectionItemsKey = (sectionItemIds: string[]) => [...subsectionsKey, 'sectionItems', sectionItemIds.join(',')];
-  const completeSubsectionsByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'complete'];
+  // Memoized query keys factory
+  const queryKeys = useMemo(() => createSubSectionQueryKeys(), []);
+
+  // Optimized error handler
+  const handleError = useCallback((error: any, context: string) => {
+    console.error(`Error ${context}:`, error);
+    throw error;
+  }, []);
+
+  // Common cache configuration
+  const cacheConfig = useMemo(() => ({
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  }), []);
 
   const useGetByWebSiteId = (
     websiteId: string,
@@ -70,40 +101,55 @@ export function useSubSections() {
     includeContentCount = false
   ) => {
     return useQuery({
-      queryKey: [...subsectionsByWebSiteKey(websiteId), { activeOnly, limit, skip, includeContentCount }],
+      queryKey: queryKeys.website(websiteId, { activeOnly, limit, skip, includeContentCount }),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}`, {
-          params: { activeOnly, limit, skip, includeContentCount }
-        });
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/website/${websiteId}`, {
+            params: { activeOnly, limit, skip, includeContentCount }
+          });
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching subsections for website ${websiteId}`);
+        }
       },
-      enabled: !!websiteId && websiteId !== "null"
+      enabled: !!websiteId && websiteId !== "null",
+      ...cacheConfig,
     });
   };
  
   const useGetAll = (activeOnly = true, limit = 100, skip = 0, includeContentCount = false) => {
     return useQuery({
-      queryKey: [...subsectionsKey, { activeOnly, limit, skip, includeContentCount }],
+      queryKey: queryKeys.list({ activeOnly, limit, skip, includeContentCount }),
       queryFn: async () => {
-        const { data } = await apiClient.get(endpoint, {
-          params: { activeOnly, limit, skip, includeContentCount }
-        });
-        return data;
-      }
+        try {
+          const { data } = await apiClient.get(endpoint, {
+            params: { activeOnly, limit, skip, includeContentCount }
+          });
+          return data;
+        } catch (error: any) {
+          handleError(error, 'fetching all subsections');
+        }
+      },
+      ...cacheConfig,
     });
   };
 
   // Get a single subsection by ID
   const useGetById = (id: string, populateSectionItem = true, includeContent = false) => {
     return useQuery({
-      queryKey: [...subsectionKey(id), { populateSectionItem, includeContent }],
+      queryKey: queryKeys.detail(id, { populateSectionItem, includeContent }),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/${id}`, {
-          params: { populate: populateSectionItem, includeContent }
-        });
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/${id}`, {
+            params: { populate: populateSectionItem, includeContent }
+          });
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching subsection ${id}`);
+        }
       },
-      enabled: !!id
+      enabled: !!id,
+      ...cacheConfig,
     });
   };
 
@@ -116,15 +162,19 @@ export function useSubSections() {
     populateSectionItem = true
   ) => {
     return useQuery({
-      queryKey: [...subsectionBySectionItemKey(sectionItemId), { activeOnly, limit, skip, includeContentCount }],
+      queryKey: queryKeys.sectionItem(sectionItemId, { activeOnly, limit, skip, includeContentCount, populateSectionItem }),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/sectionItem/${sectionItemId}`, {
-          params: { activeOnly, limit, skip, includeContentCount ,populateSectionItem }
-
-        });
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/sectionItem/${sectionItemId}`, {
+            params: { activeOnly, limit, skip, includeContentCount, populateSectionItem }
+          });
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching subsections for section item ${sectionItemId}`);
+        }
       },
-      enabled: !!sectionItemId && sectionItemId !== "null"
+      enabled: !!sectionItemId && sectionItemId !== "null",
+      ...cacheConfig,
     });
   };
 
@@ -136,14 +186,19 @@ export function useSubSections() {
     skip = 0
   ) => {
     return useQuery({
-      queryKey: [...subsectionBySectionKey(sectionId), { activeOnly, limit, skip }],
+      queryKey: queryKeys.section(sectionId, { activeOnly, limit, skip }),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/section/${sectionId}`, {
-          params: { activeOnly, limit, skip }
-        });
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/section/${sectionId}`, {
+            params: { activeOnly, limit, skip }
+          });
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching subsections for section ${sectionId}`);
+        }
       },
-      enabled: !!sectionId && sectionId !== "null"
+      enabled: !!sectionId && sectionId !== "null",
+      ...cacheConfig,
     });
   };
 
@@ -155,52 +210,72 @@ export function useSubSections() {
     skip = 0
   ) => {
     return useQuery({
-      queryKey: [...completeSubsectionBySectionKey(sectionId), { activeOnly, limit, skip }],
+      queryKey: queryKeys.sectionComplete(sectionId, { activeOnly, limit, skip }),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/section/${sectionId}/complete`, {
-          params: { activeOnly, limit, skip }
-        });
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/section/${sectionId}/complete`, {
+            params: { activeOnly, limit, skip }
+          });
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching complete subsections for section ${sectionId}`);
+        }
       },
-      enabled: !!sectionId && sectionId !== "null"
+      enabled: !!sectionId && sectionId !== "null",
+      ...cacheConfig,
     });
   };
 
   // Get main subsection for a section
   const useGetMainBySectionId = (sectionId: string) => {
     return useQuery({
-      queryKey: mainSubsectionBySectionKey(sectionId),
+      queryKey: queryKeys.sectionMain(sectionId),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/section/${sectionId}/main`);
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/section/${sectionId}/main`);
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching main subsection for section ${sectionId}`);
+        }
       },
-      enabled: !!sectionId && sectionId !== "null"
+      enabled: !!sectionId && sectionId !== "null",
+      ...cacheConfig,
     });
   };
 
   // Get complete subsection by ID (with all elements and translations)
   const useGetCompleteById = (id: string, populateSectionItem = true) => {
     return useQuery({
-      queryKey: [...subsectionKey(id), 'complete', { populateSectionItem }],
+      queryKey: queryKeys.complete(id, { populateSectionItem }),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/${id}/complete`, {
-          params: { populate: populateSectionItem }
-        });
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/${id}/complete`, {
+            params: { populate: populateSectionItem }
+          });
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching complete subsection ${id}`);
+        }
       },
-      enabled: !!id
+      enabled: !!id,
+      ...cacheConfig,
     });
   };
 
   // Get main subsection for a WebSite
   const useGetMainByWebSiteId = (websiteId: string) => {
     return useQuery({
-      queryKey: mainSubsectionByWebSiteKey(websiteId),
+      queryKey: queryKeys.websiteMain(websiteId),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/main`);
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/main`);
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching main subsection for website ${websiteId}`);
+        }
       },
-      enabled: !!websiteId && websiteId !== "null"
+      enabled: !!websiteId && websiteId !== "null",
+      ...cacheConfig,
     });
   };
 
@@ -212,14 +287,19 @@ export function useSubSections() {
     skip = 0
   ) => {
     return useQuery({
-      queryKey: [...navigationSubsectionByWebSiteKey(websiteId), { activeOnly, limit, skip }],
+      queryKey: queryKeys.websiteNavigation(websiteId, { activeOnly, limit, skip }),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/navigation`, {
-          params: { activeOnly, limit, skip }
-        });
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/navigation`, {
+            params: { activeOnly, limit, skip }
+          });
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching navigation subsections for website ${websiteId}`);
+        }
       },
-      enabled: !!websiteId && websiteId !== "null"
+      enabled: !!websiteId && websiteId !== "null",
+      ...cacheConfig,
     });
   };
 
@@ -232,33 +312,45 @@ export function useSubSections() {
       populateSectionItem = true
     ) => {
       return useQuery({
-        queryKey: [...subsectionsBySectionItemsKey(sectionItemIds), { activeOnly, limit, skip, includeContentCount }],
+        queryKey: queryKeys.sectionItemsBulk(sectionItemIds, { activeOnly, limit, skip, includeContentCount, populateSectionItem }),
         queryFn: async () => {
-          const { data } = await apiClient.post(`${endpoint}/sectionItems`, { sectionItemIds }, {
-            params: { activeOnly, limit, skip, includeContentCount, populateSectionItem }
-          });
-          return data;
+          try {
+            const { data } = await apiClient.post(`${endpoint}/sectionItems`, { sectionItemIds }, {
+              params: { activeOnly, limit, skip, includeContentCount, populateSectionItem }
+            });
+            return data;
+          } catch (error: any) {
+            handleError(error, `fetching subsections for section items: ${sectionItemIds.join(', ')}`);
+          }
         },
-        enabled: !!sectionItemIds && sectionItemIds.length > 0 && sectionItemIds.every(id => !!id && id !== "null")
+        enabled: !!sectionItemIds && sectionItemIds.length > 0 && sectionItemIds.every(id => !!id && id !== "null"),
+        ...cacheConfig,
       });
     };
-const useGetCompleteByWebSiteId = (
+
+  const useGetCompleteByWebSiteId = (
     websiteId: string,
     activeOnly = true,
     limit = 100,
     skip = 0
   ) => {
     return useQuery({
-      queryKey: [...completeSubsectionsByWebSiteKey(websiteId), { activeOnly, limit, skip }],
+      queryKey: queryKeys.websiteComplete(websiteId, { activeOnly, limit, skip }),
       queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/complete`, {
-          params: { activeOnly, limit, skip }
-        });
-        return data;
+        try {
+          const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/complete`, {
+            params: { activeOnly, limit, skip }
+          });
+          return data;
+        } catch (error: any) {
+          handleError(error, `fetching complete subsections for website ${websiteId}`);
+        }
       },
-      enabled: !!websiteId && websiteId !== "null"
+      enabled: !!websiteId && websiteId !== "null",
+      ...cacheConfig,
     });
   };
+
   // Return all hooks including the new navigation hook
   return {
     useGetAll,

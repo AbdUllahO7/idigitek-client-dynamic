@@ -39,9 +39,9 @@ function setStoredWebsiteId(id: string): void {
 
 function getStoredColorMode(): 'light' | 'dark' {
   if (typeof window !== 'undefined') {
-    return (localStorage.getItem('colorMode') as 'light' | 'dark') || 'light';
+    return (localStorage.getItem('colorMode') as 'light' | 'dark') || 'dark';
   }
-  return 'light';
+  return 'dark';
 }
 
 function setStoredColorMode(mode: 'light' | 'dark'): void {
@@ -305,4 +305,3 @@ function lighten(rgb: [number, number, number], factor: number): string {
 function darken(rgb: [number, number, number], factor: number): string {
   return rgb.map((c) => Math.round(c * (1 - factor))).join(', ');
 }
-

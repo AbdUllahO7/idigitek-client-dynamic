@@ -37,10 +37,16 @@ function setStoredWebsiteId(id: string): void {
   }
 }
 
-// Updated to default to 'dark' instead of 'light'
+// Fixed: This function should ONLY return what's actually in localStorage or default to 'dark'
 function getStoredColorMode(): 'light' | 'dark' {
   if (typeof window !== 'undefined') {
-    return (localStorage.getItem('colorMode') as 'light' | 'dark') || 'dark';
+    const stored = localStorage.getItem('colorMode') as 'light' | 'dark' | null;
+    // If nothing is stored, set 'dark' as default AND store it
+    if (!stored) {
+      localStorage.setItem('colorMode', 'dark');
+      return 'dark';
+    }
+    return stored;
   }
   return 'dark';
 }
@@ -58,15 +64,20 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
 
   const websites = websitesResponse?.data || [];
 
-  // Initialize states - now defaults to 'dark'
+  // Initialize states - IMPORTANT: Don't set a default here, let useEffect handle it
   const [currentWebsiteId, setCurrentWebsiteId] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [colorMode, setColorMode] = useState<'light' | 'dark'>('dark'); // Default to dark
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>(() => {
+    // Initialize with the stored value or default to 'dark' on first render
+    if (typeof window !== 'undefined') {
+      return getStoredColorMode();
+    }
+    return 'dark';
+  });
 
-  // Initialize websiteId and colorMode
+  // Initialize websiteId ONLY - colorMode is already set correctly
   useEffect(() => {
     const storedWebsiteId = getStoredWebsiteId();
-    const storedColorMode = getStoredColorMode();
     const websiteId = websites.length > 0 ? websites[0]._id : null;
 
     if (storedWebsiteId) {
@@ -76,12 +87,10 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
       setStoredWebsiteId(websiteId);
     }
 
-    // Set the stored color mode (which defaults to 'dark')
-    setColorMode(storedColorMode);
     setIsInitialized(true);
   }, [websites]);
 
-  // Sync localStorage
+  // Sync localStorage when colorMode changes
   useEffect(() => {
     if (currentWebsiteId) {
       setStoredWebsiteId(currentWebsiteId);
@@ -137,6 +146,8 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
 
   const handleSetColorMode = (mode: 'light' | 'dark') => {
     setColorMode(mode);
+    // Immediately sync to localStorage
+    setStoredColorMode(mode);
   };
 
   const contextValue: WebsiteThemeContextType = {

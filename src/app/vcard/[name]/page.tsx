@@ -20,29 +20,32 @@ export default function VCardPage() {
   const router = useRouter();
   const name = params.name as string;
   const [isAndroid, setIsAndroid] = useState(false);
-  const [contact, setContact] = useState(null);
+  const [contact, setContact] = useState<typeof CONTACTS[keyof typeof CONTACTS] | null>(null);
 
   useEffect(() => {
     if (!name) {
-      window.location.href = 'https://idigitek.com';
+      router.push('https://idigitek.com');
       return;
     }
 
     const contactData = CONTACTS[name.toLowerCase() as keyof typeof CONTACTS];
     if (!contactData) {
-      window.location.href = 'https://idigitek.com';
+      router.push('https://idigitek.com');
       return;
     }
 
     setContact(contactData);
-    const ua = navigator.userAgent.toLowerCase();
-    const isAndroidDevice = /android/.test(ua);
-    setIsAndroid(isAndroidDevice);
+    
+    // Check if running in browser environment
+    if (typeof navigator !== 'undefined') {
+      const ua = navigator.userAgent.toLowerCase();
+      const isAndroidDevice = /android/.test(ua);
+      setIsAndroid(isAndroidDevice);
 
-    if (!isAndroidDevice) {
-      // iOS - use the original VCF download method
-      const doDownload = () => {
-        const vcard = `BEGIN:VCARD
+      if (!isAndroidDevice) {
+        // iOS - use the original VCF download method
+        const doDownload = () => {
+          const vcard = `BEGIN:VCARD
 VERSION:3.0
 FN:${contactData.fullName}
 N:${contactData.lastName};${contactData.firstName};;;
@@ -53,36 +56,57 @@ EMAIL;TYPE=HOME:${contactData.email}
 URL:https://${contactData.website}
 END:VCARD`;
 
-        const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${contactData.firstName}_${contactData.lastName}.vcf`;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+          const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${contactData.firstName}_${contactData.lastName}.vcf`;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
 
-        setTimeout(() => {
-          try {
-            window.location.href = 'contacts://';
-          } catch (e) {
-            console.error('iOS contacts intent failed:', e);
-          }
-        }, 500);
+          setTimeout(() => {
+            try {
+              window.location.href = 'contacts://';
+            } catch (e) {
+              console.error('iOS contacts intent failed:', e);
+            }
+          }, 500);
 
-        setTimeout(() => {
-          window.location.href = 'https://idigitek.com';
-        }, 2000);
-      };
+          setTimeout(() => {
+            router.push('https://idigitek.com');
+          }, 2000);
+        };
 
-      const timer = setTimeout(doDownload, 1000);
-      return () => clearTimeout(timer);
+        const timer = setTimeout(doDownload, 1000);
+        return () => clearTimeout(timer);
+      }
     }
-  }, [name]);
+  }, [name, router]);
 
-  const handleAndroidAction = (action, value) => {
+  const fallbackAndroidContact = () => {
+    if (!contact) return;
+    
+    // Alternative Android contact intent
+    const fallbackIntent = `content://contacts/people/`;
+    try {
+      window.location.href = fallbackIntent;
+    } catch (e) {
+      console.error('Fallback Android contact intent failed:', e);
+      // Ultimate fallback - try to open default contacts app
+      try {
+        window.location.href = 'content://com.android.contacts/';
+      } catch (e2) {
+        console.error('All contact intents failed:', e2);
+      }
+    }
+  };
+
+  const handleAndroidAction = (action: string, value: string) => {
+    if (!contact) return;
+    
     switch (action) {
       case 'call':
         window.location.href = `tel:${value}`;
@@ -139,35 +163,8 @@ END:VCARD`;
     }
   };
 
-  const fallbackAndroidContact = () => {
-    // Alternative Android contact intents
-    const fallbackIntents = [
-      // Samsung Contacts
-      `intent://contacts/people/#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;S.name=${encodeURIComponent(contact.fullName)};S.phone=${encodeURIComponent(contact.phone)};S.email=${encodeURIComponent(contact.email)};package=com.samsung.android.contacts;end`,
-      
-      // Google Contacts
-      `intent://contacts/people/#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;S.name=${encodeURIComponent(contact.fullName)};S.phone=${encodeURIComponent(contact.phone)};S.email=${encodeURIComponent(contact.email)};package=com.google.android.contacts;end`,
-      
-      // Generic Android Contacts
-      `content://contacts/people/`,
-      
-      // Last resort - open contacts app
-      `intent://contacts/#Intent;action=android.intent.action.VIEW;end`
-    ];
-
-    let intentIndex = 0;
-    const tryNextIntent = () => {
-      if (intentIndex < fallbackIntents.length) {
-        try {
-          window.location.href = fallbackIntents[intentIndex];
-        } catch (e) {
-          intentIndex++;
-          setTimeout(tryNextIntent, 100);
-        }
-      }
-    };
-
-    tryNextIntent();
+  const handleDoneClick = () => {
+    router.push('https://idigitek.com');
   };
 
   if (isAndroid && contact) {
@@ -176,13 +173,13 @@ END:VCARD`;
         {/* Header */}
         <div className="bg-blue-600 text-white p-4 flex justify-between items-center">
           <button 
-            onClick={() => window.location.href = 'https://idigitek.com'}
+            onClick={handleDoneClick}
             className="text-white font-medium"
           >
             Done
           </button>
           <button 
-            onClick={() => handleAndroidAction('addContact')}
+            onClick={() => handleAndroidAction('addContact', contact.phone)}
             className="bg-white bg-opacity-20 px-3 py-1 rounded text-sm font-medium"
           >
             Add Contact
@@ -205,7 +202,7 @@ END:VCARD`;
           <div className="grid grid-cols-4 gap-4">
             <button 
               onClick={() => handleAndroidAction('sms', contact.phone)}
-              className="flex flex-col items-center p-3 rounded-lg bg-gray-50"
+              className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
             >
               <div className="w-8 h-8 mb-2 bg-green-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
@@ -217,7 +214,7 @@ END:VCARD`;
 
             <button 
               onClick={() => handleAndroidAction('call', contact.phone)}
-              className="flex flex-col items-center p-3 rounded-lg bg-gray-50"
+              className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
             >
               <div className="w-8 h-8 mb-2 bg-blue-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
@@ -227,7 +224,7 @@ END:VCARD`;
               <span className="text-xs font-medium">call</span>
             </button>
 
-            <button className="flex flex-col items-center p-3 rounded-lg bg-gray-50 opacity-50">
+            <button className="flex flex-col items-center p-3 rounded-lg bg-gray-50 opacity-50 cursor-not-allowed">
               <div className="w-8 h-8 mb-2 bg-gray-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
@@ -238,7 +235,7 @@ END:VCARD`;
 
             <button 
               onClick={() => handleAndroidAction('email', contact.email)}
-              className="flex flex-col items-center p-3 rounded-lg bg-gray-50"
+              className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
             >
               <div className="w-8 h-8 mb-2 bg-red-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
@@ -252,9 +249,9 @@ END:VCARD`;
 
         {/* Contact Details */}
         <div className="bg-white mx-4 rounded-lg shadow-lg overflow-hidden">
-          <div 
+          <button 
             onClick={() => handleAndroidAction('call', contact.phone)}
-            className="flex items-center p-4 border-b border-gray-100 active:bg-gray-50"
+            className="w-full flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors text-left"
           >
             <div className="flex-1">
               <div className="text-gray-500 text-sm">mobile</div>
@@ -263,11 +260,11 @@ END:VCARD`;
             <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
               <path d="M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5z"/>
             </svg>
-          </div>
+          </button>
 
-          <div 
+          <button 
             onClick={() => handleAndroidAction('email', contact.email)}
-            className="flex items-center p-4 border-b border-gray-100 active:bg-gray-50"
+            className="w-full flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors text-left"
           >
             <div className="flex-1">
               <div className="text-gray-500 text-sm">home</div>
@@ -276,11 +273,11 @@ END:VCARD`;
             <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
               <path d="M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5z"/>
             </svg>
-          </div>
+          </button>
 
-          <div 
+          <button 
             onClick={() => handleAndroidAction('website', contact.website)}
-            className="flex items-center p-4 active:bg-gray-50"
+            className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors text-left"
           >
             <div className="flex-1">
               <div className="text-gray-500 text-sm">homepage</div>
@@ -289,21 +286,21 @@ END:VCARD`;
             <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
               <path d="M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5z"/>
             </svg>
-          </div>
+          </button>
         </div>
 
         {/* Action Buttons */}
         <div className="p-4 space-y-3">
           <button 
-            onClick={() => handleAndroidAction('addContact')}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium"
+            onClick={() => handleAndroidAction('addContact', contact.phone)}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             Create New Contact
           </button>
           
           <button 
-            onClick={() => handleAndroidAction('addToExisting')}
-            className="w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-medium"
+            onClick={() => handleAndroidAction('addToExisting', contact.phone)}
+            className="w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
           >
             Add to Existing Contact
           </button>

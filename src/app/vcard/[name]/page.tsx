@@ -97,57 +97,77 @@ END:VCARD`;
         window.open(`https://${value}`, '_blank');
         break;
       case 'addContact':
-        // Try multiple methods to add contact on Android
-        const vcard = `BEGIN:VCARD
-VERSION:3.0
-FN:${contact.fullName}
-N:${contact.lastName};${contact.firstName};;;
-ORG:${contact.organization}
-TITLE:${contact.title}
-TEL;TYPE=CELL:${contact.phone}
-EMAIL;TYPE=HOME:${contact.email}
-URL:https://${contact.website}
-END:VCARD`;
-
-        // Method 1: Try Web Share API if available
-        if (navigator.share) {
-          const blob = new Blob([vcard], { type: 'text/vcard' });
-          const file = new File([blob], `${contact.firstName}_${contact.lastName}.vcf`, { type: 'text/vcard' });
-          
-          navigator.share({
-            files: [file],
-            title: `Add ${contact.fullName} to contacts`
-          }).catch(err => {
-            console.log('Web Share failed, falling back to download:', err);
-            downloadVCard();
-          });
-        } else {
-          downloadVCard();
+        // Create Android contact intent with all contact data
+        const intentUrl = `intent://contacts/people/#Intent;` +
+          `action=android.intent.action.INSERT;` +
+          `type=vnd.android.cursor.dir/contact;` +
+          `S.name=${encodeURIComponent(contact.fullName)};` +
+          `S.phone=${encodeURIComponent(contact.phone)};` +
+          `S.email=${encodeURIComponent(contact.email)};` +
+          `S.company=${encodeURIComponent(contact.organization)};` +
+          `S.job_title=${encodeURIComponent(contact.title)};` +
+          `S.website=${encodeURIComponent(`https://${contact.website}`)};` +
+          `end`;
+        
+        try {
+          window.location.href = intentUrl;
+        } catch (e) {
+          console.error('Android contact intent failed:', e);
+          // Fallback: Try alternative Android contact intent
+          fallbackAndroidContact();
         }
-
-        function downloadVCard() {
-          const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `${contact.firstName}_${contact.lastName}.vcf`;
-          link.style.display = 'none';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-
-          // Try Android contact intent
-          setTimeout(() => {
-            try {
-              window.location.href = 'intent://contacts/people/#Intent;action=android.intent.action.VIEW;end';
-            } catch (e) {
-              console.error('Android intent failed:', e);
-            }
-          }, 500);
+        break;
+      case 'addToExisting':
+        // Open contacts app to select existing contact
+        const selectContactIntent = `intent://contacts/people/#Intent;` +
+          `action=android.intent.action.PICK;` +
+          `type=vnd.android.cursor.dir/contact;` +
+          `end`;
+        
+        try {
+          window.location.href = selectContactIntent;
+        } catch (e) {
+          console.error('Android select contact intent failed:', e);
+          // Fallback to general contacts app
+          try {
+            window.location.href = 'content://contacts/people/';
+          } catch (e2) {
+            console.error('All Android contact intents failed:', e2);
+          }
         }
         break;
     }
+  };
+
+  const fallbackAndroidContact = () => {
+    // Alternative Android contact intents
+    const fallbackIntents = [
+      // Samsung Contacts
+      `intent://contacts/people/#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;S.name=${encodeURIComponent(contact.fullName)};S.phone=${encodeURIComponent(contact.phone)};S.email=${encodeURIComponent(contact.email)};package=com.samsung.android.contacts;end`,
+      
+      // Google Contacts
+      `intent://contacts/people/#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;S.name=${encodeURIComponent(contact.fullName)};S.phone=${encodeURIComponent(contact.phone)};S.email=${encodeURIComponent(contact.email)};package=com.google.android.contacts;end`,
+      
+      // Generic Android Contacts
+      `content://contacts/people/`,
+      
+      // Last resort - open contacts app
+      `intent://contacts/#Intent;action=android.intent.action.VIEW;end`
+    ];
+
+    let intentIndex = 0;
+    const tryNextIntent = () => {
+      if (intentIndex < fallbackIntents.length) {
+        try {
+          window.location.href = fallbackIntents[intentIndex];
+        } catch (e) {
+          intentIndex++;
+          setTimeout(tryNextIntent, 100);
+        }
+      }
+    };
+
+    tryNextIntent();
   };
 
   if (isAndroid && contact) {
@@ -282,7 +302,7 @@ END:VCARD`;
           </button>
           
           <button 
-            onClick={() => handleAndroidAction('addContact')}
+            onClick={() => handleAndroidAction('addToExisting')}
             className="w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-medium"
           >
             Add to Existing Contact

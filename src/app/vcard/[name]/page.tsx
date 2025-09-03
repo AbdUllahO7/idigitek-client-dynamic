@@ -298,11 +298,11 @@ END:VCARD`;
 
   // Loading state for iOS or while contact is loading
   return (
-    <div className="fixed inset-0 bg-white flex items-center justify-center">
+    <div className="fixed inset-0 bg-white dark:bg-gray-900 flex items-center justify-center">
       <div className="text-center">
-        <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-gray-600 text-sm mb-2">Loading contact...</p>
-        <p className="text-gray-400 text-xs">You will be redirected to idigitek.com</p>
+        <div className="w-10 h-10 border-4 border-gray-200 dark:border-gray-600 border-t-blue-500 dark:border-t-blue-400 rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">Loading contact...</p>
+        <p className="text-gray-400 dark:text-gray-500 text-xs">You will be redirected to idigitek.com</p>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ export default function PersonPageClient({  personData }: PersonPageClientProps)
   const { language, direction } = useLanguage();
 
   const currentLang = language as 'en' | 'ar' | 'tr';
-
+/* TEST */
   return (
     <div className="mt-20 bg-indigo-100 dark:bg-[#121212]" dir={direction}>
       {/* Header */}

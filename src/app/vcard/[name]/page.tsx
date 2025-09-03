@@ -305,7 +305,7 @@ END:VCARD`;
             className="w-full flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors text-left"
           >
             <div className="flex-1">
-              <div className="text-gray-500 text-sm">home</div>
+              <div className="text-gray-500 text-sm">Email</div>
               <div className="text-blue-600 font-medium">{contact.email}</div>
             </div>
             <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
@@ -318,7 +318,7 @@ END:VCARD`;
             className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors text-left"
           >
             <div className="flex-1">
-              <div className="text-gray-500 text-sm">homepage</div>
+              <div className="text-gray-500 text-sm">Web site</div>
               <div className="text-blue-600 font-medium">https://{contact.website}</div>
             </div>
             <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">

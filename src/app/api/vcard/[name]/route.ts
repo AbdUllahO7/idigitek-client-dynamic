@@ -1,18 +1,24 @@
-// app/vcard/[name]/route.js (App Router API Route)
-// This will handle URLs like: /vcard/isa.vcf or /vcard/onur.vcf
+// File: app/api/vcard/[name]/route.ts
+// This handles URLs like: /api/vcard/isa.vcf OR /api/vcard/isa
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
 // Available VCF files mapping
-const vcardFiles = {
+const vcardFiles: Record<string, string> = {
   'isa': 'İsa_Alomer (1).vcf',
-  'onur': 'onur.vcf', // if you have this file
+  'onur': 'onur.vcf', // add your other files
   // Add more mappings as needed
 };
 
-export async function GET(request, { params }) {
+interface RouteParams {
+  params: {
+    name: string;
+  };
+}
+
+export async function GET(request: NextRequest, { params }: RouteParams) {
   const { name } = params;
   
   // Remove .vcf extension if present
@@ -20,7 +26,12 @@ export async function GET(request, { params }) {
   
   // Check if the requested vcard exists
   if (!vcardFiles[cleanName]) {
-    return new NextResponse('VCard not found', { status: 404 });
+    return new NextResponse('VCard not found', { 
+      status: 404,
+      headers: {
+        'Content-Type': 'text/plain',
+      }
+    });
   }
 
   try {
@@ -28,50 +39,23 @@ export async function GET(request, { params }) {
     const filePath = path.join(process.cwd(), 'public', 'assets', vcardFiles[cleanName]);
     const fileContent = await readFile(filePath, 'utf-8');
 
-    // Return the VCF file with proper headers
+    // Return the VCF file with proper headers for download
     return new NextResponse(fileContent, {
+      status: 200,
       headers: {
-        'Content-Type': 'text/vcard',
+        'Content-Type': 'text/vcard; charset=utf-8',
         'Content-Disposition': `attachment; filename="${cleanName}.vcf"`,
-        'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+        'Cache-Control': 'no-cache', // Change this for production caching if needed
+        'Access-Control-Allow-Origin': '*', // Add CORS if needed
       },
     });
   } catch (error) {
     console.error('Error reading VCF file:', error);
-    return new NextResponse('File not found', { status: 404 });
+    return new NextResponse(`File not found: ${error}`, { 
+      status: 500,
+      headers: {
+        'Content-Type': 'text/plain',
+      }
+    });
   }
 }
-
-// Alternative: For Pages Router (pages/api/vcard/[name].js)
-/*
-import fs from 'fs';
-import path from 'path';
-
-const vcardFiles = {
-  'isa': 'İsa_Alomer (1).vcf',
-  'onur': 'onur.vcf',
-};
-
-export default function handler(req, res) {
-  const { name } = req.query;
-  const cleanName = name.replace('.vcf', '');
-  
-  if (!vcardFiles[cleanName]) {
-    return res.status(404).json({ error: 'VCard not found' });
-  }
-
-  try {
-    const filePath = path.join(process.cwd(), 'public', 'assets', vcardFiles[cleanName]);
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-
-    res.setHeader('Content-Type', 'text/vcard');
-    res.setHeader('Content-Disposition', `attachment; filename="${cleanName}.vcf"`);
-    res.setHeader('Cache-Control', 'public, max-age=31536000');
-    
-    res.status(200).send(fileContent);
-  } catch (error) {
-    console.error('Error reading VCF file:', error);
-    res.status(404).json({ error: 'File not found' });
-  }
-}
-*/

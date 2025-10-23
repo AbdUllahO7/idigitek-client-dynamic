@@ -126,7 +126,7 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
   }, [currentWebsiteId, colorMode]);
 
   const { useGetActiveTheme } = useWebSiteThemes();
-
+  
   // Fetch active theme
   interface ThemeResponse {
     data: WebSiteTheme;
@@ -138,6 +138,7 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
       console.error('❌ Theme fetch error:', err.message, { websiteId: currentWebsiteId });
     },
   });
+  console.log("themeData",themeData)
 
   const [activeTheme, setActiveTheme] = useState<WebSiteTheme | null>(null);
 

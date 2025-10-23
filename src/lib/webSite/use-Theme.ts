@@ -35,28 +35,28 @@ export function useWebSiteThemes() {
   };
 
 
-const useGetActiveTheme = (
-  websiteId: string,
-  options: {
-    enabled?: boolean;
-    retry?: number;
-    onError?: (err: any) => void;
-  } = {}
-) => {
-  return useQuery({
-    queryKey: activeThemeKey(websiteId),
-    queryFn: async () => {
-      const { data } = await apiClient.get(`${endpoint}/active/${websiteId}`);
-      return data;
-    },
-    enabled: options.enabled ?? !!websiteId,
-    staleTime: 5 * 60 * 1000, // ✅ Increase from 30s to 5 minutes
-    refetchOnMount: true, // ✅ Always refetch when component mounts
-    refetchOnWindowFocus: false, // Prevent unnecessary refetches
-    retry: options.retry ?? 2,
-    retryDelay: 1000,
-  });
-};
+  const useGetActiveTheme = (
+    websiteId: string,
+    options: {
+      enabled?: boolean;
+      retry?: number;
+      onError?: (err: any) => void;
+    } = {}
+  ) => {
+    return useQuery({
+      queryKey: activeThemeKey(websiteId),
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/active/${websiteId}`);
+        return data;
+      },
+      enabled: options.enabled ?? !!websiteId,
+      staleTime: 5 * 60 * 1000, // ✅ Increase from 30s to 5 minutes
+      refetchOnMount: true, // ✅ Always refetch when component mounts
+      refetchOnWindowFocus: false, // Prevent unnecessary refetches
+      retry: options.retry ?? 2,
+      retryDelay: 1000,
+    });
+  };
 
 
   return {

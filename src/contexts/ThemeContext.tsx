@@ -21,6 +21,8 @@ export function ThemeProvider({ children, websiteId }: ThemeProviderProps) {
   const { useGetActiveTheme } = useWebSiteThemes()
   const { data: themeData, isLoading, error, refetch } = useGetActiveTheme(websiteId)
   const [activeTheme, setActiveTheme] = useState<WebSiteTheme | null>(null)
+
+  console.log("themeData",themeData)
   // Extract theme from API response
   useEffect(() => {
     if (themeData?.data) {

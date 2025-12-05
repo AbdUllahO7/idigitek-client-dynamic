@@ -32,7 +32,6 @@ export function DynamicLanguageWrapper({ children }: DynamicLanguageWrapperProps
       setWebsiteId(id)
       // Set in localStorage for other components
       localStorage.setItem("websiteId", id)
-      console.log('Website ID set:', id) // Debug log
     }
   }, [websites, websitesLoading])
 
@@ -48,10 +47,7 @@ export function DynamicLanguageWrapper({ children }: DynamicLanguageWrapperProps
       const rtl = activeLanguages.filter((langId: string) => 
         commonRTLLanguages.includes(langId.toLowerCase())
       )
-      
-      console.log('Available languages from API:', activeLanguages) // Debug log
-      console.log('RTL languages detected:', rtl) // Debug log
-      console.log('Full language data:', languages.data) // Debug log
+
       
       if (activeLanguages.length > 0) {
         setAvailableLanguages(activeLanguages)
@@ -60,7 +56,6 @@ export function DynamicLanguageWrapper({ children }: DynamicLanguageWrapperProps
       setIsLanguagesLoaded(true)
     } else if (!languagesLoading && websiteId && (!languages?.data || languages?.data.length === 0)) {
       // Fallback if no languages found
-      console.log('No languages found, using fallback') // Debug log
       setAvailableLanguages(["en", "ar"])
       setRtlLanguages(["ar"])
       setIsLanguagesLoaded(true)

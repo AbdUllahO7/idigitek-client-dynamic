@@ -50,7 +50,6 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
     }
 
     const storedWebsiteId = localStorage.getItem('websiteId');
-    console.log('📦 Read from localStorage on mount:', storedWebsiteId);
     
     if (storedWebsiteId) {
       setCurrentWebsiteId(storedWebsiteId);
@@ -64,12 +63,7 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
     const storedWebsiteId = localStorage.getItem('websiteId');
     const firstWebsiteId = websites.length > 0 ? websites[0]._id : null;
 
-    console.log('🔍 Initialization check:', {
-      storedWebsiteId,
-      firstWebsiteId,
-      currentWebsiteId,
-      websitesCount: websites.length
-    });
+  
 
     // Priority: current state > stored ID > first website ID
     if (currentWebsiteId) {
@@ -84,11 +78,9 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
 
     if (storedWebsiteId && websites.some(w => w._id === storedWebsiteId)) {
       // Stored ID is valid
-      console.log('✅ Using stored websiteId:', storedWebsiteId);
       setCurrentWebsiteId(storedWebsiteId);
     } else if (firstWebsiteId) {
       // No valid stored ID, use first website
-      console.log('✅ Using first website:', firstWebsiteId);
       setCurrentWebsiteId(firstWebsiteId);
       localStorage.setItem('websiteId', firstWebsiteId);
     }
@@ -111,27 +103,17 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
     }
   );
 
-  console.log('🎨 Theme Debug:', { 
-    currentWebsiteId, 
-    isInitialized, 
-    isMounted,
-    themeLoading,
-    hasThemeData: !!themeData?.data,
-    queryEnabled: !!currentWebsiteId && isInitialized && isMounted
-  });
+
 
   // ✅ Apply theme when data changes
   useEffect(() => {
     if (!isMounted || !isInitialized) {
-      console.log('⏳ Waiting for initialization...');
       return;
     }
 
     if (themeData?.data) {
-      console.log('✅ Applying theme:', themeData.data._id);
       applyThemeToCSS(themeData.data, colorMode);
     } else if (!themeLoading) {
-      console.log('⚠️ No theme data, using defaults');
       resetToDefaultTheme(colorMode);
     }
   }, [themeData, colorMode, isMounted, isInitialized, themeLoading]);
@@ -146,26 +128,22 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
   // Sync websiteId to localStorage
   useEffect(() => {
     if (currentWebsiteId && isMounted) {
-      console.log('💾 Saving to localStorage:', currentWebsiteId);
       localStorage.setItem('websiteId', currentWebsiteId);
     }
   }, [currentWebsiteId, isMounted]);
 
   const refreshTheme = () => {
     if (currentWebsiteId) {
-      console.log('🔄 Refreshing theme for:', currentWebsiteId);
       refetch();
     }
   };
 
   const handleSetWebsiteId = (id: string) => {
-    console.log('🔧 Setting new websiteId:', id);
     setCurrentWebsiteId(id);
     localStorage.setItem('websiteId', id);
   };
 
   const handleSetColorMode = (mode: 'light' | 'dark') => {
-    console.log('🌓 Setting color mode:', mode);
     setColorMode(mode);
     localStorage.setItem('colorMode', mode);
   };
@@ -181,16 +159,7 @@ export function WebsiteThemeProvider({ children }: WebsiteThemeProviderProps) {
     setColorMode: handleSetColorMode,
   };
 
-  // Show loading state only on initial load
-  if (!isMounted || !isInitialized) {
-    return (
-      <div className="fixed inset-0 bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">
-          Loading theme...
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <WebsiteThemeContext.Provider value={contextValue}>
@@ -215,7 +184,6 @@ function applyThemeToCSS(theme: WebSiteTheme, mode: 'light' | 'dark') {
   const root = document.documentElement;
   const colors = theme.colors[mode];
 
-  console.log('🎨 Applying CSS variables for mode:', mode);
 
   // Apply color variables
   root.style.setProperty('--website-theme-primary', colors.primary);
@@ -263,14 +231,12 @@ function applyThemeToCSS(theme: WebSiteTheme, mode: 'light' | 'dark') {
   document.body.classList.add(`website-theme-${theme._id}`);
   document.body.classList.toggle('dark', mode === 'dark');
   
-  console.log('✅ Theme applied successfully');
 }
 
 // Function to reset to default theme
 function resetToDefaultTheme(mode: 'light' | 'dark') {
   if (typeof window === 'undefined') return;
 
-  console.log('🔄 Resetting to default theme, mode:', mode);
 
   const root = document.documentElement;
   

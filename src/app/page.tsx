@@ -55,7 +55,6 @@ export default function LandingPage() {
   useEffect(() => {
     if (websiteId) {
       localStorage.setItem("websiteId", websiteId);
-      console.log('Website ID set in localStorage:', websiteId); // Debug log
     }
   }, [websiteId]);
 
@@ -72,8 +71,6 @@ export default function LandingPage() {
         commonRTLLanguages.includes(langId.toLowerCase())
       );
       
-      console.log('Updating available languages from LandingPage:', activeLanguages); // Debug log
-      console.log('RTL languages detected:', rtl); // Debug log
       
       // Update the language context with available languages
       updateAvailableLanguages(activeLanguages, rtl);

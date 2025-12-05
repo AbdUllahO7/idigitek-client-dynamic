@@ -37,19 +37,10 @@ export function LanguageToggle() {
   }, [websites, websitesLoading])
   
   const handleLanguageChange = (languageID: string) => {
-    console.log('LanguageToggle: Changing language to:', languageID) // Debug log
-    console.log('LanguageToggle: Current language:', language) // Debug log
     setLanguage(languageID)
   }
 
-  // Debug: Log what's happening
-  useEffect(() => {
-    if (languages?.data) {
-      console.log('LanguageToggle: Languages loaded:', languages.data)
-      const activeLanguages = languages.data.filter((lang: any) => lang.isActive)
-      console.log('LanguageToggle: Active languages:', activeLanguages)
-    }
-  }, [languages])
+
 
   return (
     <DropdownMenu>

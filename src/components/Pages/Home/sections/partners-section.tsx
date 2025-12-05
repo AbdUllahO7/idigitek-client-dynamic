@@ -38,7 +38,6 @@ export default function PartnersSection({ websiteId, sectionId }) {
     filter: featureFilter,
   })
 
-  console.log("Partners Section Content Items:", contentItems)
 
   return (
     <section 

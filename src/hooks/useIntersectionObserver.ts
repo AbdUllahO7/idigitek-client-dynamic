@@ -58,9 +58,6 @@ export const useOptimizedIntersection = (
         {
           threshold,
           rootMargin,
-          // تحسين الأداء بتقليل التحديثات
-          trackVisibility: false,
-          delay: 100
         }
       )
       observerPool.set(observerKey, observer)

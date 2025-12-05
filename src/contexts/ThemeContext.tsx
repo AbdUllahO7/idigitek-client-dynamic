@@ -20,12 +20,8 @@ interface ThemeProviderProps {
 export function ThemeProvider({ children, websiteId }: ThemeProviderProps) {
   const { useGetActiveTheme } = useWebSiteThemes()
   const { data: themeData, isLoading, error, refetch } = useGetActiveTheme(websiteId)
-  console.log('ThemeProvider render:', { websiteId, isLoading, hasData: !!themeData?.data })
-  console.log("websiteId",websiteId)
 useEffect(() => {
-    console.log('themeData changed:', themeData)
     if (themeData?.data) {
-      console.log('Applying theme:', themeData.data)
       applyThemeToCSS(themeData.data)
     }
   }, [themeData])
@@ -67,16 +63,16 @@ function applyThemeToCSS(theme: WebSiteTheme) {
   const root = document.documentElement
 
   // Apply color variables
-  root.style.setProperty('--theme-primary', theme.colors.primary)
-  root.style.setProperty('--theme-secondary', theme.colors.secondary || theme.colors.primary)
-  root.style.setProperty('--theme-background', theme.colors.background)
-  root.style.setProperty('--theme-text', theme.colors.text)
-  root.style.setProperty('--theme-accent', theme.colors.accent || theme.colors.primary)
-  root.style.setProperty('--theme-border', theme.colors.border || '#e5e7eb')
-  root.style.setProperty('--theme-hover', theme.colors.hover || "#000000")
-  root.style.setProperty('--theme-error', theme.colors.error || '#ef4444')
-  root.style.setProperty('--theme-success', theme.colors.success || '#10b981')
-  root.style.setProperty('--theme-warning', theme.colors.warning || '#f59e0b')
+  root.style.setProperty('--theme-primary', theme.colors.light.primary)
+  root.style.setProperty('--theme-secondary', theme.colors.light.secondary || theme.colors.light.primary)
+  root.style.setProperty('--theme-background', theme.colors.light.background)
+  root.style.setProperty('--theme-text', theme.colors.light.text)
+  root.style.setProperty('--theme-accent', theme.colors.light.accent || theme.colors.light.primary)
+  root.style.setProperty('--theme-border', theme.colors.light.border || '#e5e7eb')
+  root.style.setProperty('--theme-hover', theme.colors.light.hover || "#000000")
+  root.style.setProperty('--theme-error', theme.colors.light.error || '#ef4444')
+  root.style.setProperty('--theme-success', theme.colors.light.success || '#10b981')
+  root.style.setProperty('--theme-warning', theme.colors.light.warning || '#f59e0b')
 
   // Apply font variables
   root.style.setProperty('--theme-font-heading', theme.fonts.heading.family)
@@ -94,14 +90,14 @@ function applyThemeToCSS(theme: WebSiteTheme) {
   }
 
   // Generate lighter and darker variants for primary color
-  const primaryRGB = hexToRGB(theme.colors.primary)
+  const primaryRGB = hexToRGB(theme.colors.light.primary)
   if (primaryRGB) {
     root.style.setProperty('--theme-primary-50', `rgb(${lighten(primaryRGB, 0.9)})`)
     root.style.setProperty('--theme-primary-100', `rgb(${lighten(primaryRGB, 0.8)})`)
     root.style.setProperty('--theme-primary-200', `rgb(${lighten(primaryRGB, 0.6)})`)
     root.style.setProperty('--theme-primary-300', `rgb(${lighten(primaryRGB, 0.4)})`)
     root.style.setProperty('--theme-primary-400', `rgb(${lighten(primaryRGB, 0.2)})`)
-    root.style.setProperty('--theme-primary-500', theme.colors.primary)
+    root.style.setProperty('--theme-primary-500', theme.colors.light.primary)
     root.style.setProperty('--theme-primary-600', `rgb(${darken(primaryRGB, 0.1)})`)
     root.style.setProperty('--theme-primary-700', `rgb(${darken(primaryRGB, 0.2)})`)
     root.style.setProperty('--theme-primary-800', `rgb(${darken(primaryRGB, 0.3)})`)

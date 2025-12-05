@@ -98,7 +98,6 @@ export function LanguageProvider({
 
   // Function to update available languages from external components
   const updateAvailableLanguages = useCallback((languages: string[], rtlLangs?: string[]) => {
-    console.log('Updating available languages:', languages) // Debug log
     setAvailableLanguages(prev => {
       // Only update if different to prevent unnecessary re-renders
       if (JSON.stringify(prev) !== JSON.stringify(languages)) {
@@ -126,7 +125,6 @@ export function LanguageProvider({
     
     if (storedLanguage) {
       finalLanguage = storedLanguage
-      console.log('Found stored language:', storedLanguage) // Debug log
     }
     
     const newDirection = rtlLanguages.includes(finalLanguage) ? "rtl" : "ltr"
@@ -152,9 +150,7 @@ export function LanguageProvider({
   useEffect(() => {
     if (!hasInitialized.current) return // Skip if not initialized
     if (previousLanguage.current === language) return // Skip if no change
-    
-    console.log('Language changed from', previousLanguage.current, 'to', language) // Debug log
-    console.log('Available languages:', availableLanguages) // Debug log
+   
     
     const newDirection = rtlLanguages.includes(language) ? "rtl" : "ltr"
     
@@ -180,16 +176,13 @@ export function LanguageProvider({
   }, [direction])
 
   const handleSetLanguage = (lang: string) => {
-    console.log('Attempting to set language:', lang) // Debug log
-    console.log('Available languages:', availableLanguages) // Debug log
+
     
     // Always allow setting any language - don't restrict based on availableLanguages
     // The restriction will be handled by components that call updateAvailableLanguages
     if (lang !== language) { // Only update if different
       setLanguageState(lang)
-      console.log('Language set to:', lang) // Debug log
     } else {
-      console.log('Language unchanged, already:', lang) // Debug log
     }
   }
 

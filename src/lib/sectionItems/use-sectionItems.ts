@@ -28,9 +28,9 @@ export function useSectionItems() {
         });
         return data;
       },
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes
-      refetchOnWindowFocus: false, // Disable refetch on window focus
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000, 
+      refetchOnWindowFocus: false, 
     });
   };
 
@@ -45,8 +45,8 @@ export function useSectionItems() {
         return data;
       },
       enabled: !!id && id !== 'null',
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000, 
       refetchOnWindowFocus: false,
     });
   };
@@ -68,8 +68,8 @@ export function useSectionItems() {
         return data;
       },
       enabled: !!sectionId && sectionId !== 'null',
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes
+      staleTime: 5 * 60 * 1000, 
+      gcTime: 10 * 60 * 1000, 
       refetchOnWindowFocus: false,
     });
   };

@@ -14,6 +14,7 @@ export interface SectionItem {
   subsections?: string[] | SubSection[];
   subsectionCount?: number;
   createdAt?: string;
+  data: SectionItem[];
   updatedAt?: string;
 }
 

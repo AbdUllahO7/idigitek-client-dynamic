@@ -6,10 +6,14 @@ import { useScrollAnimation } from "@/hooks/use-scroll-animation"
 import { useState, useRef, useEffect } from "react"
 import { useSectionLogic } from "@/hooks/useSectionLogic"
 import { useSectionContent } from "@/hooks/useSectionContent"
-import { motion } from 'framer-motion';
+import { motion, useAnimation, useAnimationControls } from 'framer-motion';
 import { FadeIn } from "@/utils/OptimizedAnimations"
 
-export default function PartnersSection({ websiteId, sectionId }) {
+// ----------------------------------------------------------------------
+// Main Component
+// ----------------------------------------------------------------------
+
+export default function PartnersSection({ websiteId, sectionId }: { websiteId: string, sectionId: string }) {
   const { ref, isInView } = useScrollAnimation()
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -19,6 +23,7 @@ export default function PartnersSection({ websiteId, sectionId }) {
     itemsKey: "partners",
   })
 
+  // Filter to ensure images exist
   const featureFilter = (item: { image: string }) => item.image && item.image.trim() !== ""
 
   const ContentItemsMappings = {
@@ -38,21 +43,20 @@ export default function PartnersSection({ websiteId, sectionId }) {
     filter: featureFilter,
   })
 
-
   return (
     <section 
       id="partners" 
-      className="relative w-full py-20 overflow-hidden"
+      className="relative w-full py-20 overflow-hidden bg-wtheme-background"
       dir="ltr"
       style={{ direction: 'ltr' }}
     >
-      {/* Background Elements */}
+      {/* 1. Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-wtheme-background via-wtheme-background to-primary/5"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(var(--primary),0.1)_0%,transparent_50%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(var(--primary),0.05)_0%,transparent_50%)]"></div>
 
       {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(6)].map((_, i) => (
           <FadeIn
             key={i}
@@ -66,44 +70,53 @@ export default function PartnersSection({ websiteId, sectionId }) {
       </div>
 
       <div className="relative container px-4 md:px-6" ref={containerRef}>
+        
+        {/* 2. Header Section */}
         <FadeIn
           ref={ref}
           className="flex flex-col items-center justify-center space-y-6 text-center mb-16"
         >
-          {/* Enhanced Label */}
+          {/* Label */}
           <FadeIn className="relative">
             <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl"></div>
-            <span className="inline-block mb-2 text-body text-primary tracking-wider uppercase">
-              {content.sectionLabel}
+            <span className="inline-block mb-2 text-body text-primary tracking-wider uppercase font-medium">
+              {content.sectionLabel || "Our Partners"}
             </span>
           </FadeIn>
 
-          {/* Enhanced Title */}
+          {/* Title */}
           <div className="space-y-4">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-wtheme-text relative">
               <span className="relative inline-block">
-                {content.sectionTitle}
-                <motion.div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-primary to-primary/60 rounded-full" />
+                {content.sectionTitle || "Trusted By Industry Leaders"}
+                <motion.div 
+                  className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-primary to-primary/60 rounded-full" 
+                  initial={{ width: 0 }}
+                  whileInView={{ width: '100%' }}
+                  transition={{ duration: 1, delay: 0.5 }}
+                />
               </span>
             </h2>
-            <p className="max-w-3xl text-lg text-wtheme-text/70 leading-relaxed">
+            <p className="max-w-3xl text-lg text-wtheme-text/70 leading-relaxed mx-auto">
               {content.sectionDescription}
             </p>
           </div>
         </FadeIn>
 
-        {/* Enhanced Partners Carousel */}
-        <div className="relative">
-          {/* Glow Effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent blur-3xl"></div>
-          <PartnersCarousel 
-            partners={contentItems} 
-            isInView={isInView} 
-            containerRef={containerRef} 
-          />
+        {/* 3. The Carousel (Fixed) */}
+        <div className="relative w-full">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent blur-3xl pointer-events-none"></div>
+          
+          {contentItems.length > 0 && (
+            <PartnersCarousel
+              partners={contentItems}
+              isInView={isInView}
+              containerRef={containerRef}
+            />
+          )}
         </div>
 
-        {/* Trust Indicator */}
+        {/* 4. Trust Dots */}
         <FadeIn className="text-center mt-12">
           <div className="inline-flex items-center space-x-2 text-wtheme-text/60">
             <div className="flex space-x-1">
@@ -111,6 +124,9 @@ export default function PartnersSection({ websiteId, sectionId }) {
                 <motion.div
                   key={i}
                   className="w-1 h-1 bg-primary/60 rounded-full"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ delay: i * 0.1 }}
                 />
               ))}
             </div>
@@ -121,35 +137,26 @@ export default function PartnersSection({ websiteId, sectionId }) {
   )
 }
 
+// ----------------------------------------------------------------------
+// Carousel Logic
+// ----------------------------------------------------------------------
+
 interface PartnersCarouselProps {
-  partners: {
-    logo?: string
-    jobAr?: string
-    job?: string
-    excerpt?: string
-    excerptAr?: any
-    color?: string
-    image: string
-    accent?: string
-    titleAr?: string
-    title?: string
-    id?: any
-    order?: number
-    isMain?: boolean
-  }[]
+  partners: any[]
   isInView: boolean
   containerRef: React.RefObject<HTMLDivElement>
 }
 
-function PartnersCarousel({ partners, isInView, containerRef }: PartnersCarouselProps) {
-  const [isPaused, setIsPaused] = useState(false)
+function PartnersCarousel({ partners, isInView }: PartnersCarouselProps) {
   const [screenSize, setScreenSize] = useState("desktop")
+  const controls = useAnimationControls()
 
-  // Duplicate partners array to create seamless loop
-  const duplicatedPartners = [...partners, ...partners, ...partners, ...partners]
+  const hasPartners = partners && partners.length > 0
 
-  // Handle responsive screen detection
+  // ✅ Hook always runs
   useEffect(() => {
+    if (!hasPartners) return
+
     const handleResize = () => {
       if (typeof window === "undefined") return
       if (window.innerWidth < 640) setScreenSize("mobile")
@@ -162,230 +169,113 @@ function PartnersCarousel({ partners, isInView, containerRef }: PartnersCarousel
     handleResize()
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
-  }, [])
+  }, [hasPartners])
 
-  // Responsive configuration
-  const getResponsiveConfig = () => {
-  switch (screenSize) {
-        case "mobile":
-          return {
-            logoWidth: "w-36 sm:w-40",  // زيادة من 28/32
-            logoHeight: "h-24",          // زيادة من 16
-            padding: "px-2",
-            duration: Math.max(partners.length * 5, 30),
-            gradientWidth: "w-8",
-          }
-        case "sm":
-          return {
-            logoWidth: "w-40 sm:w-44",  // زيادة من 32/36
-            logoHeight: "h-28",          // زيادة من 18
-            padding: "px-3",
-            duration: Math.max(partners.length * 4, 25),
-            gradientWidth: "w-10",
-          }
-        case "md":
-          return {
-            logoWidth: "w-44 md:w-48",  // زيادة من 36/40
-            logoHeight: "h-32",          // زيادة من 20
-            padding: "px-4",
-            duration: Math.max(partners.length * 3.5, 22),
-            gradientWidth: "w-12",
-          }
-        case "lg":
-          return {
-            logoWidth: "w-48 lg:w-52",  // زيادة من 40/44
-            logoHeight: "h-36",          // زيادة من 22
-            padding: "px-5",
-            duration: Math.max(partners.length * 3, 20),
-            gradientWidth: "w-16",
-          }
-        default:
-          return {
-            logoWidth: "w-52 xl:w-56",  // زيادة من 44/48
-            logoHeight: "h-40",          // زيادة من 24
-            padding: "px-6",
-            duration: Math.max(partners.length * 2.5, 18),
-            gradientWidth: "w-20",
-          }
-      }
-    }
+  // ✅ Hook always runs
+  useEffect(() => {
+    if (!hasPartners || !isInView) return
 
-  const config = getResponsiveConfig()
+    controls.start({
+      x: "-25%",
+      transition: {
+        duration: Math.max(partners.length * 2, 30),
+        ease: "linear",
+        repeat: Infinity,
+      },
+    })
+  }, [hasPartners, isInView, controls, partners.length])
+
+  // ✅ Render guard AFTER hooks
+  if (!hasPartners) {
+    return null
+  }
+
+  const duplicatedPartners = [...partners, ...partners, ...partners, ...partners]
 
   return (
-    <>
-      <style jsx>{`
-  @keyframes scroll-ltr {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-33.333%); }
-  }
-
-  @keyframes glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(var(--primary), 0.1); }
-    50% { box-shadow: 0 0 40px rgba(var(--primary), 0.2); }
-  }
-
-  .marquee-container {
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-    background: linear-gradient(135deg, rgba(var(--primary), 0.02) 0%, transparent 50%, rgba(var(--primary), 0.02) 100%);
-    border-radius: 24px;
-    padding: 32px 0;
-    direction: ltr !important;
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 8%,
-      black 92%,
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 8%,
-      black 92%,
-      transparent 100%
-    );
-  }
-
-  .marquee-content {
-    display: flex;
-    width: fit-content;
-    will-change: transform;
-    animation: scroll-ltr ${config.duration}s linear infinite;
-    animation-play-state: ${isPaused ? "paused" : "running"};
-    direction: ltr !important;
-  }
-
-  .marquee-content:hover {
-    animation-play-state: paused;
-  }
-
-  .partner-logo:hover {
-    animation: glow 2s ease-in-out infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .marquee-content {
-      animation-duration: ${config.duration * 2}s;
-    }
-  }
-`}
-  </style>
-
-      <FadeIn 
-        className="marquee-container relative w-full"
-        style={{ direction: 'ltr' }}
-        dir="ltr"
+    <div className="relative w-full overflow-hidden" dir="ltr">
+      <motion.div
+        className="flex w-max"
+        initial={{ x: 0 }}
+        animate={controls}
       >
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary),0.1)_0%,transparent_50%)]"></div>
-        </div>
-
-        <div 
-          className="marquee-content"
-          style={{ direction: 'ltr' }}
-          dir="ltr"
-        >
-          {duplicatedPartners.map((partner, index) => (
-            <div 
-              key={`partner-${index}`} 
-              className={`flex-shrink-0 ${config.padding} ${config.logoWidth}`}
-            >
-              <PartnerLogo 
-                partner={partner} 
-                index={index} 
-                heightClass={config.logoHeight} 
-                screenSize={screenSize} 
-              />
-            </div>
-          ))}
-        </div>
-      </FadeIn>
-    </>
+        {duplicatedPartners.map((partner, index) => (
+          <div key={index} className="flex-shrink-0 px-4 w-40">
+            <PartnerLogo
+              partner={partner}
+              index={index}
+              heightClass="h-20"
+              screenSize={screenSize}
+            />
+          </div>
+        ))}
+      </motion.div>
+    </div>
   )
 }
 
+
+// ----------------------------------------------------------------------
+// Logo Item
+// ----------------------------------------------------------------------
+
 interface PartnerLogoProps {
-  partner: {
-    image: string
-  }
+  partner: { image: string }
   index: number
   heightClass: string
   screenSize: string
 }
 
 function PartnerLogo({ partner, index, heightClass, screenSize }: PartnerLogoProps) {
-  const [imageOrientation, setImageOrientation] = useState<'landscape' | 'portrait' | 'loading'>('loading')
-
   const getImageSize = () => {
     switch (screenSize) {
-      case "mobile":
-        return { width: 100, height: 50, maxHeight: "max-h-8" }
-      case "sm":
-        return { width: 120, height: 60, maxHeight: "max-h-10" }
-      case "md":
-        return { width: 140, height: 70, maxHeight: "max-h-12" }
-      case "lg":
-        return { width: 160, height: 80, maxHeight: "max-h-14" }
-      default:
-        return { width: 180, height: 90, maxHeight: "max-h-16" }
+      case "mobile": return { width: 100, height: 50, maxHeight: "max-h-8" }
+      case "sm": return { width: 120, height: 60, maxHeight: "max-h-10" }
+      case "md": return { width: 140, height: 70, maxHeight: "max-h-12" }
+      case "lg": return { width: 160, height: 80, maxHeight: "max-h-14" }
+      default: return { width: 180, height: 90, maxHeight: "max-h-16" }
     }
   }
 
- const imageConfig = getImageSize()
+  const imageConfig = getImageSize()
 
- // Handle image load to determine orientation
-  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const img = e.currentTarget
-    const isLandscape = img.naturalWidth > img.naturalHeight
-    setImageOrientation(isLandscape ? 'landscape' : 'portrait')
-  }
-
-
-return (
+  return (
     <div
       className={`
         partner-logo flex items-center justify-center 
-        rounded-2xl 
-      
+        rounded-2xl border border-white/10 
+        bg-gradient-to-br from-white/5 to-white/[0.02]
         backdrop-blur-sm
         p-4 sm:p-5 md:p-6 lg:p-7
-        shadow-lg hover:shadow-2xl
+        shadow-lg hover:shadow-primary/20
         ${heightClass} w-full 
-        transition-all duration-500 ease-out
+        transition-all duration-300 ease-out
         group cursor-pointer
         relative overflow-hidden
       `}
-      style={{ direction: 'ltr' }}
-      dir="ltr"
     >
-      {/* Animated Background */}
+      {/* Background Hover Flash */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-      {/* Shimmer Effect */}
-      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-
-      <Image
-        src={partner.image || "/placeholder.svg"}
-        alt={partner.image || `Partner ${index + 1}`}
-        width={imageConfig.width}
-        height={imageConfig.height}
-        onLoad={handleImageLoad}
-        className={`
-          ${imageOrientation === 'landscape' ? 'w-full h-auto' : imageOrientation === 'portrait' ? 'h-full w-auto' : 'w-auto h-auto'}
-          ${imageConfig.maxHeight} max-w-full 
-          object-contain filter
-          transition-all duration-700 ease-out
-          group-hover:scale-110 relative z-10 bg-white
-        `}
-        loading="lazy"
-      />
-
-      {/* Hover Glow Effect */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-primary/10 via-transparent to-primary/10"></div>
+      {/* Image */}
+      <div className="relative z-10 w-full h-full flex items-center justify-center">
+        <Image
+          src={partner.image || "/placeholder.svg"}
+          alt={`Partner logo ${index}`}
+          width={imageConfig.width}
+          height={imageConfig.height}
+          className={`
+            w-auto h-auto 
+            ${imageConfig.maxHeight} 
+            max-w-full 
+            object-contain 
+            filter
+            transition-transform duration-500
+            group-hover:scale-110
+          `}
+          loading="lazy"
+        />
+      </div>
     </div>
   )
 }

@@ -39,3 +39,4 @@ api-client.ts
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.github/workflows/deploy.yml

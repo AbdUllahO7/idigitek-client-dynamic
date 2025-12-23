@@ -597,7 +597,7 @@ export default function Header({
       }`}
       dir={direction}
     >
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`flex h-16 items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
           {/* Logo */}
           <motion.div
@@ -618,7 +618,7 @@ export default function Header({
           </motion.div>
 
           {/* Desktop Navigation */}
-          <nav className={`hidden lg:flex items-center ${isRTL ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
+          <nav className={`hidden lg:flex items-center ${isRTL ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
             {navItems.map((item) => (
               <motion.div
                 key={item.id}
@@ -631,14 +631,14 @@ export default function Header({
                 <Link
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href, false, item)}
-                  className={`flex items-center gap-1 px-0.5 py-0.5 text-sm font-semibold text-primary hover:text-wtheme-hover transition-colors duration-200 ${
+                  className={`flex items-center gap-1 px-1 py-1 text-primary font-bold hover:text-wtheme-hover transition-colors duration-200 ${
                     isRTL ? '' : ''
                   }`}
                 >
                   <span className={isRTL ? 'font-arabic' : ''}>{item.label}</span>
                   {item.subNavItems.length > 0 && (
                     <ChevronDown
-                      className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                      className={`h-4 w-4 transition-transform duration-200 ${
                         hoveredNavId === item.id ? "rotate-180" : ""
                       } ${isRTL ? 'ml-1' : 'mr-1'}`}
                     />

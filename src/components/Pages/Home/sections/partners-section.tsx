@@ -242,13 +242,13 @@ function PartnerLogo({ partner, index, heightClass, screenSize }: PartnerLogoPro
   return (
     <div
       className={`
-        partner-logo flex items-center justify-center 
-        rounded-2xl border border-white/10 
-        bg-gradient-to-br from-white/5 to-white/[0.02]
-        backdrop-blur-sm
+        partner-logo flex items-center justify-center
+        rounded-2xl border border-gray-200
+        dark:border-gray-300
+        bg-white
         p-4 sm:p-5 md:p-6 lg:p-7
         shadow-lg hover:shadow-primary/20
-        ${heightClass} w-full 
+        ${heightClass} w-full
         transition-all duration-300 ease-out
         group cursor-pointer
         relative overflow-hidden
@@ -265,11 +265,10 @@ function PartnerLogo({ partner, index, heightClass, screenSize }: PartnerLogoPro
           width={imageConfig.width}
           height={imageConfig.height}
           className={`
-            w-auto h-auto 
-            ${imageConfig.maxHeight} 
-            max-w-full 
-            object-contain 
-            filter
+            w-auto h-auto
+            ${imageConfig.maxHeight}
+            max-w-full
+            object-contain
             transition-transform duration-500
             group-hover:scale-110
           `}
